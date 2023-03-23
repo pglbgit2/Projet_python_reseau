@@ -53,8 +53,10 @@ class Game:
             self.events()
             self.update()
             self.draw()
-            #self.network.map_to_file(l.m.Mat_batiment, 40, 40)
-            self.network.file_to_map(l.m.Mat_batiment, 40, 40)
+            # self.network.map_to_file(l.m.Mat_batiment, 40, 40)
+            # self.network.file_to_map(l.m.Mat_batiment, 40, 40)
+            self.network.delta_to_file(l.m.delta)
+            self.network.file_to_modif()
 
 
         return self.playing
@@ -155,7 +157,6 @@ class Game:
     def update(self):
         Test_l.Tour_jeu()
         self.camera.update()
-        # self.map.create_map()
 
     def draw(self):
         self.screen.fill(BLACK)

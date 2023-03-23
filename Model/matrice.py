@@ -188,6 +188,7 @@ unemployed = 0  # Le nombre de chômeurs
 Nb_immigrant = 20  # Le nombre de migrants
 Mat_fire = []
 Mat_water = []
+delta = ''
 Population = 0 
 init_matrice_terrain(Mat_batiment, nb_cases_x, nb_cases_y)
 init_matrice_perso(Mat_perso, nb_cases_x, nb_cases_y)

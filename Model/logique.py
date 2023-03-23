@@ -99,7 +99,17 @@ def Add_bat_game(x, y, id_bat):
             if i+x > 39 or y+j > 39 or m.Mat_batiment[y + j][x + i].name != "Herb":
                 return -1
     m.add_bat(x, y, id_bat, m.Mat_batiment)
+    m.delta += ('l.Add_bat_game_delta('+str(x)+','+str(y)+','+str(id_bat)+');')
     return 0
+
+def Add_bat_game_delta(x, y, id_bat):
+    for i in range(m.id_size[id_bat]):
+        for j in range(m.id_size[id_bat]):
+            if i + x > 39 or y + j > 39 or m.Mat_batiment[y + j][x + i].name != "Herb":
+                return -1
+    m.add_bat(x, y, id_bat, m.Mat_batiment)
+    return 0
+
 
 def get_speed_game() : return Speed_game
 
@@ -451,6 +461,14 @@ def build_grid(x1, y1, x2, y2 , id_bat):
             Add_bat_game(i, j,id_bat)
 
 def destroy_grid(x1,y1,x2,y2):
+    # print("grid")
+    # print(x1,y1,x2,y2)
+    for i in range(min(x1,x2), max(x1,x2)+1):
+        for j in range(min(y1,y2), max(y1,y2)+1):
+            m.suppr_Batiment(i,j,m.Mat_batiment)
+    m.delta += ('l.destroy_grid_delta('+str(x1)+','+str(y1)+','+str(x2)+','+str(y2)+');')
+
+def destroy_grid_delta(x1,y1,x2,y2):
     # print("grid")
     # print(x1,y1,x2,y2)
     for i in range(min(x1,x2), max(x1,x2)+1):

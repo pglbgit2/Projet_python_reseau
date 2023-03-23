@@ -11,6 +11,8 @@
 import os
 import Model.matrice as m
 from View.settings import path_to_temp_file
+from Model import logique as l
+import copy as cp
 
 class Network:
 
@@ -39,14 +41,13 @@ class Network:
         return (int(t[0]),int(t[1]))
 
     def file_to_map(self, matrice, SIZE_X, SIZE_Y):
-        if os.path.exists(path_to_temp_file + "temp.txt"):
+        if os.path.exists(path_to_temp_file + "\\temp.txt"):
             print("No file 'temp.txt' found.")
             return 0
 
         f = open("temp.txt", "r")
         text = f.read()
         f.close()
-        arg_parse = []
         Bat_list = text.split('\n')
         for k in range(len(Bat_list)):
             arg_parse = Bat_list[k].split(';')
@@ -56,6 +57,26 @@ class Network:
             idbat = m.name_id[arg_parse[0]]
             m.add_bat(x,y,idbat)
             batiment = matrice[y][x]
+
+    def delta_to_file(self,delta):
+        if os.path.exists(path_to_temp_file + "temp.txt"):
+            os.remove(path_to_temp_file + "temp.txt")
+        f = open("temp.txt", "w")
+        f.write(delta)
+        delta = ''
+        f.close()
+
+    def file_to_modif(self):
+        if os.path.exists(path_to_temp_file + "\\temp.txt"):
+            return 0
+
+        f = open("temp.txt", "r")
+        text = f.read()
+        f.close()
+        instruction_list = text.split(';')
+        for k in range(len(instruction_list)):
+            exec(instruction_list[k])
+        os.remove(path_to_temp_file + "\\temp.txt")
 
 
 
