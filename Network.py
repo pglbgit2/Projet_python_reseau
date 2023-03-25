@@ -69,14 +69,17 @@ class Network:
     def file_to_modif(self):
         if os.path.exists(path_to_temp_file + "\\temp.txt"):
             return 0
-
+        if os.path.exists(path_to_temp_file + "/temp.txt"):
+            return 0
         f = open("temp.txt", "r")
         text = f.read()
         f.close()
         instruction_list = text.split(';')
         for k in range(len(instruction_list)):
             exec(instruction_list[k])
-        os.remove(path_to_temp_file + "\\temp.txt")
+        try:
+            os.remove(path_to_temp_file + "\\temp.txt")
+        except: os.remove(path_to_temp_file + "/temp.txt")
 
 
 

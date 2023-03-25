@@ -2,10 +2,15 @@ import pygame as pg
 import sys
 from os import getcwd
 
-sys.path.insert(0, '..')
-from Model.logique import *
-
-
+try: 
+    sys.path.insert(0, '../')
+    from Model.logique import *
+except: 
+    import os
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Model'))
+    import logique
+   
+ 
 Path_font = f"{getcwd()}/Interface/C3_policy.TTF"
 Textefont = pg.font.Font( Path_font , 14 )
 Chiffrefont = pg.font.Font(None, 20)
@@ -153,8 +158,9 @@ class Hud:
 
 
         # Menu bandeau
-
-        self.bandeau = pg.image.load("View/Graphique/Paneling_bandeau.PNG")
+        try:
+            self.bandeau = pg.image.load("View/Graphique/Paneling_bandeau.PNG")
+        except: self.bandeau = pg.image.load("View/Graphique/paneling_bandeau.PNG")
         self.value = pg.image.load("View/Graphique/paneling_00015.PNG")
         self.bandeau_size = self.bandeau.get_size()
 

@@ -2,10 +2,11 @@ import pygame as pg
 import pickle
 import sys
 import random
-sys.path.insert(0, '..')
-
-from Model import matrice as m
-
+try:
+    sys.path.insert(0, '..')
+    from Model import matrice as m
+except:
+    import matrice as m
 
 #walker nx ny, batiment detruire plusieurs cases, maisons construires plusieurs cases
 # Definition des Userevents
@@ -35,8 +36,6 @@ Unalterable = [0,1,2,3,4,5,6,666,116,115 , 91 ]
 # En jeu (dans le main), on n'utilisera que les fonctions de logique.py, celles prÃ©sente dans les autres fichiers servent de briques pour celles prÃ©sentes ici
 
 
-# pour les variables globales: il nous faut la liste des greniers et des entrepots, et faire une methode qui dit s'ils sont plein ou pas
-# pour eviter de devoir faire un scan sur toute la matrice a chaque fois qu'on a besoin de faire une livraison
 
 # cree un walker pour effectuer une livraison
 # prend en parametre le batiment qui invoque la livraison, le type de marchandise, la quantité
@@ -532,11 +531,10 @@ def Tour_jeu() :
 
 def get_overlay() :
     global val_overlay
-    match val_overlay :
-        case 1 : return "water"
-        case 2 : return "bat"
-        case 3 : return "fire"
-        case _ : return ""
+    if val_overlay == 1: return "water"
+    if val_overlay == 2: return "bat"
+    if val_overlay == 3: return "fire"
+    else : return ""
 
 def get_water(x,y) : 
     return m.Mat_water[x][y]
