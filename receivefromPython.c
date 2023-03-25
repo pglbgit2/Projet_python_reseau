@@ -19,7 +19,7 @@ int main(int argc, char ** argv)
 {
     struct sockaddr_un addr;
     char buffer[1024];
-    int fd, bytes_read;
+    int fd, bytes;
 
     if((fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
         stop(socket);
@@ -38,10 +38,10 @@ int main(int argc, char ** argv)
     }
 
     if ((bytes == -1)){
-        stop("recv";)
+        stop("recv");
     }
 
-    close(fd;)
+    close(fd);
 
     return 0;
 }
