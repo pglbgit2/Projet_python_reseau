@@ -21,10 +21,9 @@ import copy as cp
 # faire une fonction qui va gérer la connexion d'un nouvel utilisateur: envoi de l'ensemble des données du jeu            #
 # sachant que les données sont collectées à partir de map_to_file                                                         #
 # faire fonction qui gère le cas où on est le nouvel utilisateur: reception et mise a jours des données du jeu            #
+# sachant que les donnée peuvent etre extraite a partir de file_to_map                                                    #
 # mettre a jours les deltas: gérer effondrement et feu                                                                    #
 ###########################################################################################################################
-
-
 
 
 
@@ -71,24 +70,27 @@ class Network:
             m.add_bat(x,y,idbat)
 
     def delta_to_file(self,delta):
-        if os.path.exists(path_to_temp_file + "temp.txt"):
-            os.remove(path_to_temp_file + "temp.txt")
-        f = open("temp.txt", "w")
+        if delta == '': return 0
+        if os.path.exists(path_to_temp_file + "\\mydelta.txt"):
+            os.remove(path_to_temp_file + "\\mydelta.txt")
+        if os.path.exists(path_to_temp_file + "/mydelta.txt"):
+            os.remove(path_to_temp_file + "/mydelta.txt")
+        f = open("mydelta.txt", "w")
         f.write(delta)
         delta = ''
         f.close()
 
+
+    #to test: create file otherDelta.txt with text: l.destroy_grid_delta(19,21,3,5); 
     def file_to_modif(self):
-        if os.path.exists(path_to_temp_file + "\\temp.txt"):
+        if not os.path.exists(path_to_temp_file + "\\otherDelta.txt") and not os.path.exists(path_to_temp_file + "/otherDelta.txt"):
             return 0
-        if os.path.exists(path_to_temp_file + "/temp.txt"):
-            return 0
-        f = open("temp.txt", "r")
+        f = open("otherDelta.txt", "r")
         text = f.read()
         f.close()
         instruction_list = text.split(';')
         for k in range(len(instruction_list)):
             exec(instruction_list[k])
         try:
-            os.remove(path_to_temp_file + "\\temp.txt")
-        except: os.remove(path_to_temp_file + "/temp.txt")
+            os.remove(path_to_temp_file + "\\otherDelta.txt")
+        except: os.remove(path_to_temp_file + "/otherDelta.txt")
