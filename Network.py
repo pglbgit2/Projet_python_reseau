@@ -14,6 +14,20 @@ from View.settings import path_to_temp_file
 from Model import logique as l
 import copy as cp
 
+################################### LISTE DES OBJECTIFS PARTIE LOGIQUE ####################################################
+# map_to_file doit pouvoir transformer l'integralité du jeu: walker + contenu des batiments -> texte                      #
+# file_to_map doit pouvoir transformer du texte en elements de jeu: texte -> walker  + contenu des batiments              #
+# les batiments sont déjà géré par les deux fonctions, mais pas leur contenu                                              #
+# faire une fonction qui va gérer la connexion d'un nouvel utilisateur: envoi de l'ensemble des données du jeu            #
+# sachant que les données sont collectées à partir de map_to_file                                                         #
+# faire fonction qui gère le cas où on est le nouvel utilisateur: reception et mise a jours des données du jeu            #
+# mettre a jours les deltas: gérer effondrement et feu                                                                    #
+###########################################################################################################################
+
+
+
+
+
 class Network:
 
     def map_to_file(self, matrice, SIZE_X, SIZE_Y):
@@ -28,12 +42,12 @@ class Network:
                 if matrice[y][x] not in visited:
                     visited.append(matrice[y][x])
                     phrase = str(matrice[y][x].name) + ';' + str(matrice[y][x].ret_coord())
-
                     phrase += "\n"
                     text += phrase
         text += 'end;'
         f.write(text)
         f.close()
+    
     def get_coord_tuple(self,string): # '(x,y)' to (x,y)
         temp = string.replace('(', '', 1)
         temp = temp.replace(')', '', 1)
@@ -44,7 +58,6 @@ class Network:
         if os.path.exists(path_to_temp_file + "\\temp.txt"):
             print("No file 'temp.txt' found.")
             return 0
-
         f = open("temp.txt", "r")
         text = f.read()
         f.close()
@@ -56,7 +69,6 @@ class Network:
             (x,y) = self.get_coord_tuple(arg_parse[1])
             idbat = m.name_id[arg_parse[0]]
             m.add_bat(x,y,idbat)
-            batiment = matrice[y][x]
 
     def delta_to_file(self,delta):
         if os.path.exists(path_to_temp_file + "temp.txt"):
@@ -80,8 +92,3 @@ class Network:
         try:
             os.remove(path_to_temp_file + "\\temp.txt")
         except: os.remove(path_to_temp_file + "/temp.txt")
-
-
-
-
-
