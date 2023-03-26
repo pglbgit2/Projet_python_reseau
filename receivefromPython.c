@@ -6,8 +6,10 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
+#include <errno.h>
 
-#define SOCKET_FILE "./socket"
+#define SSOCKET_FILE "./sscocket"
+#define CSOCKET_FILE "./csocket"
 
 void stop(char * err)
 {
@@ -17,28 +19,55 @@ void stop(char * err)
 
 int main(int argc, char ** argv)
 {
-    struct sockaddr_un addr;
-    char buffer[1024];
+    struct sockaddr_un svaddr, claddr;
+    char buffer[BUFSIZ];
     int fd, bytes;
 
     if((fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-        stop(socket);
+        stop("socket");
     }
 
-    bzero(&addr, sizeof(addr));
-    addr.sun_family = AF_UNIX;
-    strncpy(addr.sun_family, SOCKET_FILE, sizeof(addr.sun_path)-1);
-
-    if (connect(fd, (struct sockaddr *)&addr, sizeof(addr)) == -1){
-        stop("connect");
+    if(remove(SSOCKET_FILE) == -1 && errno != ENOENT)
+    {
+        stop("remove");
     }
 
-    while((bytes = recv(fd, buffer, sizeof(buffer), 0)) > 0) {
-        printf("reçu : %s", bytes, buffer);
+    bzero(&svaddr, sizeof(svaddr));
+    svaddr.sun_family = AF_UNIX;
+    strncpy(svaddr.sun_path, SSOCKET_FILE, sizeof(svaddr.sun_path) - 1);
+
+    if (bind(fd, (struct sockaddr *)&svaddr, sizeof(svaddr)) == -1){
+        stop("binding");
     }
 
-    if ((bytes == -1)){
-        stop("recv");
+    bzero(&claddr, sizeof(claddr));
+    claddr.sun_family = AF_UNIX;
+    strncpy(claddr.sun_path, CSOCKET_FILE, sizeof(claddr.sun_path) - 1);
+
+    if (listen(fd, 1) != 0){
+        stop("listen");
+    }
+    else{
+        printf("listening\n");
+    }
+
+    while(1)
+    {
+        if(recv(fd, buffer, BUFSIZ, 0)==-1)
+        {
+            stop("recv\n");
+        }
+        else
+        {
+            puts("received from Python ");
+            printf(bytes);
+
+            //envoie des données en broadcast
+        }
+
+
+        //réception des données des autres
+
     }
 
     close(fd);

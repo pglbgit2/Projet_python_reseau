@@ -12,6 +12,8 @@ import functools
 import os
 import Model.matrice as m
 import socket
+import errno
+
 from View.settings import path_to_temp_file
 from Model import logique as l
 import copy as cp
@@ -81,30 +83,34 @@ class Network:
         os.remove(path_to_temp_file + "\\temp.txt")
 
 
+    sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+
+    #
+    csocket_file='./csocket'
+    ssocket_file='./sscocket'
+    try:
+        os.remove(csocket_file)
+    except OSError:
+        pass
+    sock.bind(csocket_file)
+
+    sock.connect(ssocket_file)
+
     def sendToSender(self):
-        #Création socket
-        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-
-        #
-        socket_file='./socket'
-        try:
-            os.remove(socket_file)
-        except OSError:
-            pass
-        sock.bind(socket_file)
-
-        sock.listen(1)
-
-        print('Attente connection')
-        connection, client_address = sock.accept()
 
         try:
-
             with open('./temp.txt', 'r') as toSend:
                 data = toSend.read()
-
-            connection.sendall(data.encode())
-
+                self.sock.send(data, self.ssocket_file)
         finally:
-            connection.close()
-            sock.close()
+            pass
+
+    def receiveFromServer(self):
+        while True:
+            try:
+                (bytes, address) = self.sock.recv(1024)
+                print("reçu "+ bytes)
+                #traitement des modifications
+            except socket.error as e:
+                print(e)
+            
