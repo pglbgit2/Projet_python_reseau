@@ -7,7 +7,7 @@
 #include <sys/un.h>
 #include <unistd.h>
 
-#define SOCKET_FILE "./"
+#define SOCKET_FILE "./socket"
 
 void stop(char * err)
 {
