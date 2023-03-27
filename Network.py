@@ -8,8 +8,12 @@
                             500ms Acceptable Max), Tout les joueurs reçoivent un 'Done!' et le tour suivant débute.
 
                             """
+import functools
 import os
 import Model.matrice as m
+import socket
+import errno
+
 from View.settings import path_to_temp_file
 from Model import logique as l
 import copy as cp
@@ -26,6 +30,7 @@ import copy as cp
 # mettre a jours les deltas: gérer effondrement et feu                                                                    #
 # Probleme identification walker-batiment: utiliser numerotation ? SOLUTION : SUPPRIMER LE D2PLACEMENT AL2ATOIRE          #
 ###########################################################################################################################
+
 
 
 class Network:
@@ -246,3 +251,35 @@ class Network:
             os.remove(path_to_temp_file + "\\otherDelta.txt")
         except:
             os.remove(path_to_temp_file + "/otherDelta.txt")
+
+
+    sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+
+    #
+    csocket_file='./csocket'
+    ssocket_file='./sscocket'
+    try:
+        os.remove(csocket_file)
+    except OSError:
+        pass
+    sock.bind(csocket_file)
+
+    sock.connect(ssocket_file)
+
+    def sendToServer(self): #not actually a server
+
+        try:
+            with open('./temp.txt', 'r') as toSend:
+                data = toSend.read()
+                self.sock.send(data, self.ssocket_file)
+        finally:
+            pass
+
+    def receiveFromServer(self):
+        while True:
+            try:
+                (bytes, address) = self.sock.recv(1024)
+                print("reçu "+ bytes)
+                #traitement des modifications
+            except socket.error as e:
+                print(e)
