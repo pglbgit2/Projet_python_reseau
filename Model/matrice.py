@@ -718,6 +718,35 @@ def Deplacement_basique(x, y, Mat=Mat_perso, no_walker=0):
         # print("demis tours : ", x,y ,Mat_perso[y][x][no_walker].prev_x, Mat_perso[y][x][no_walker].prev_y)
         return (Mat_perso[y][x][no_walker].prev_x, Mat_perso[y][x][no_walker].prev_y)
 
+    
+def Deplacement_basique_2(x, y, Mat=Mat_perso, no_walker=0):
+    # print(Mat_perso[y][x][no_walker].ttl, x, y)
+    if Mat_perso[y][x][no_walker].ttl <= 0 and (
+            Mat_perso[y][x][no_walker].dest_x, Mat_perso[y][x][no_walker].dest_y) == (-1, -1):
+        kill_walker(Mat_perso[y][x][no_walker])
+        return (666, 666)
+
+    tab_possibles_chemins = []
+    if x < nb_cases_x - 1:
+        if Mat_route[y][x + 1] and (Mat_perso[y][x][no_walker].prev_x, Mat_perso[y][x][no_walker].prev_y) != (x + 1, y):
+            tab_possibles_chemins.append((x + 1, y))
+    if x > 0:
+        if Mat_route[y][x - 1] and (Mat_perso[y][x][no_walker].prev_x, Mat_perso[y][x][no_walker].prev_y) != (x - 1, y):
+            tab_possibles_chemins.append((x - 1, y))
+    if y < nb_cases_y - 1:
+        if Mat_route[y + 1][x] and (Mat_perso[y][x][no_walker].prev_x, Mat_perso[y][x][no_walker].prev_y) != (x, y + 1):
+            tab_possibles_chemins.append((x, y + 1))
+    if y > 0:
+        if Mat_route[y - 1][x] and (Mat_perso[y][x][no_walker].prev_x, Mat_perso[y][x][no_walker].prev_y) != (x, y - 1):
+            tab_possibles_chemins.append((x, y - 1))
+    if len(tab_possibles_chemins) > 0:
+        Mat_perso[y][x][no_walker].ttl -= 1
+        return tab_possibles_chemins[0]  # Deterministe
+    else:
+        Mat_perso[y][x][no_walker].ttl -= -1
+        # print("demis tours : ", x,y ,Mat_perso[y][x][no_walker].prev_x, Mat_perso[y][x][no_walker].prev_y)
+        return (Mat_perso[y][x][no_walker].prev_x, Mat_perso[y][x][no_walker].prev_y)    
+    
 
 # verifie que la distance entre deux cases est de 1 (y compris en diagonale)
 def dist(x1, y1, x2, y2):
