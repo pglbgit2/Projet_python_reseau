@@ -788,7 +788,6 @@ def collecte(fg: F_G.Food_Guy):
 
 
 def livraison(fg: F_G.Food_Guy):
-    print('livraison')
     fg.bat_destination.nourriture[0][1] += fg.cargaison_nourriture[0][1]
     fg.cargaison_nourriture[0][1] = 0
     fg.bat_destination.nourriture[0][1] += fg.cargaison_nourriture[1][1]
@@ -1093,7 +1092,7 @@ def update_road_texture(x, y, Mat=Mat_batiment):
         Mat[y][x].texture = tile
 
 
-def get_neighbors_4(grid, grid_x, grid_y):
+def get_neighbors_4(grid, grid_y, grid_x):
     if grid_y >= nb_cases_y - 1:
         if grid_x >= nb_cases_x - 1:
             return [

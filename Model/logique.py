@@ -404,7 +404,6 @@ def test_bat_logique():
                         if bat.Walk == []:
                             m.invoke_walker(bat, "Prefect")
                     elif bat.name == "EngineersPost":
-                        print(bat.Walk)
                         if bat.Walk == []:
                             m.invoke_walker(bat, "Engineer")
                     elif bat.name == "Temple":
