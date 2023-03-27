@@ -139,6 +139,6 @@ class Network:
             except socket.error as e:
                 print(e)
             
-n=Network()
-n.sendToServer()
-n.receiveFromServer()
+#n=Network()
+#n.sendToServer()
+#n.receiveFromServer()
