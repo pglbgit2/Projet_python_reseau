@@ -47,17 +47,19 @@ class Game:
     def run(self):
         
         self.playing = True
-
+        a=0
         while self.playing:
+            a+=1
             self.clock.tick(60)
             self.events()
             self.update()
             self.draw()
-            self.network.map_to_file(l.m.Mat_batiment,l.m.Mat_perso, 40, 40)
-            self.network.file_to_map(l.m.Mat_batiment, 40, 40)
+            # self.network.map_to_file(l.m.Mat_batiment, l.m.Mat_perso, 40, 40)
+            if a == 50:
+                self.network.file_to_map(l.m.Mat_batiment, 40, 40)
+
             #self.network.delta_to_file(l.m.delta)
             #self.network.file_to_modif()
-
 
         return self.playing
 

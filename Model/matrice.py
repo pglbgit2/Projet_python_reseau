@@ -381,20 +381,20 @@ def add_bat(x, y, id_bat, Mat=Mat_batiment):
         Mat_route[y][x] = 1
         update_road_texture(y, x)
         grid = get_neighbors_4(Mat, y, x)  # Return list of 4 neighbors of [x][y] pointing to a road object or else
-        print("voisins :")
+        # print("voisins :")
         if grid[0] == "Path":
-            print("  Dessue :")
+            # print("  Dessue :")
             update_road_texture(y - 1, x)
         if grid[1][0] == "Path":
-            print("  Gauche :")
+            # print("  Gauche :")
             update_road_texture(y, x - 1)
         if grid[1][1] == "Path":
-            print("  Droite :")
+            # print("  Droite :")
             update_road_texture(y, x + 1)
         if grid[2] == "Path":
-            print("  Dessous :")
+            # print("  Dessous :")
             update_road_texture(y + 1, x)
-        print(" --- ")
+        # print(" --- ")
     elif id_bat == 84:
         Forum = admin.Forum1(x, y)
         put_bat_mat(x, y, Forum, Mat)
@@ -463,6 +463,12 @@ def add_perso(x, y, type_, Mat, Bat, Bat_cible, type_bouffe='ble', dest_x=-1, de
         add_perso_mat(Mat, DV, x, y)
         Bat.Walk.append(DV)
         return DV
+    elif type_ == 'Delivery_Guy':
+        DV = dv.Delivery_Guy(x, y, Bat, Bat_cible, type_bouffe)
+        add_perso_mat(Mat, DV, x, y)
+        Bat.Walk.append(DV)
+        return DV
+
     elif type_ == "Food_Guy":
         FG = F_G.Food_Guy(x, y, Bat, role, Bat_cible)
         add_perso_mat(Mat, FG, x, y)
@@ -782,6 +788,7 @@ def collecte(fg: F_G.Food_Guy):
 
 
 def livraison(fg: F_G.Food_Guy):
+    print('livraison')
     fg.bat_destination.nourriture[0][1] += fg.cargaison_nourriture[0][1]
     fg.cargaison_nourriture[0][1] = 0
     fg.bat_destination.nourriture[0][1] += fg.cargaison_nourriture[1][1]
@@ -1036,7 +1043,7 @@ def update_road_texture(x, y, Mat=Mat_batiment):
 
     grid = get_neighbors_4(Mat, x, y)
 
-    print(grid)
+    # print(grid)
 
     grid_up = grid[0]
     grid_down = grid[2]

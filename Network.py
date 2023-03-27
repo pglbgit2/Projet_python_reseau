@@ -69,29 +69,55 @@ class Network:
                     walkers = matrice_walk[y][x]
                     if walkers[0].name != "no Walker":
                         for k in range(len(walkers)):
-                            phrase = ""
-                            phrase += str(walkers[k].name) + ';(' + str(walkers[k].x) + ',' + str(walkers[k].y) + ');'\
-                            + str(walkers[k].ttl) + ';' + self.get_string_tab_path(walkers[k].tab_path) + ';' + str(walkers[k].batiment.ret_coord())\
-                            + ';(' + str(walkers[k].dest_x) + ',' + str(walkers[k].dest_y) + ');(' + str(walkers[k].prev_x)\
-                            + ',' + str(walkers[k].prev_y) + ')'
-                            if walkers[k].name == "Food_guy" or walkers[k].name == "Delivery_Guy":
-                                phrase += ';' + str(walkers[k].role) +';'
-                                phrase += str(walkers[k].cargaison_nourriture[0][1])
-                            if hasattr(walkers[k],"bat_destination") != False:
-                                phrase += ';' + str(walkers[k].bat_destination.ret_coor())
-                            else:
-                                phrase += ';None'
-                            phrase += "\n"
-                            text += phrase
+                            if walkers[k].dest_x == -1 or walkers[k].tab_path != []:
+                                phrase = ""
+                                phrase += str(walkers[k].name) + ';(' + str(walkers[k].x) + ',' + str(walkers[k].y) + ');'\
+                                + str(walkers[k].ttl) + ';' + self.get_string_tab_path(walkers[k].tab_path) + ';' + str(walkers[k].batiment.ret_coord())\
+                                + ';(' + str(walkers[k].dest_x) + ',' + str(walkers[k].dest_y) + ');(' + str(walkers[k].prev_x)\
+                                + ',' + str(walkers[k].prev_y) + ')'
+                                if walkers[k].name == "Food_guy":
+                                    phrase += ';' + str(walkers[k].role) + ';'
+                                    phrase += str(walkers[k].cargaison_nourriture[0][1])
+                                if  walkers[k].name == "Delivery_Guy":
+                                    phrase += ';' + str(walkers[k].cargaison_nourriture[0][1])
+                                if hasattr(walkers[k], "bat_destination") != False and walkers[k].bat_destination is not None:
+                                    phrase += ';' + str(walkers[k].bat_destination.ret_coord())
+                                else:
+                                    phrase += ';None'
+                                phrase += "\n"
+                                text += phrase
+        text += '---;\n'
+        text += str(m.get_Population()) + ';' + str(m.unemployed) + ';' + str(m.Nb_immigrant) + ';\n'
+        text += str(m.Mat_route) + ';\n'
+        text += str(m.Mat_fire) + ';\n'
+        text += str(m.Mat_water) + ';\n'
         text += 'end;'
         f.write(text)
         f.close()
     def get_string_tab_path(self,tab_path):
+
+        print("called")
         txt = ''
+        if len(tab_path) == 0:
+            return ''
+        print(tab_path)
         for x in tab_path :
+            print(x)
             (a,b) = x
             txt += '('+str(a)+','+str(b)+')'+'|'
+        if len(txt) != 0:
+            txt = txt[:-1]
+        print('txt:',txt)
         return txt
+    def get_tab_path_string(self, string):
+        if string == '':
+            return []
+        tab = []
+        coord_list = string.split('|')
+        for x in coord_list:
+            tab.append(self.get_coord_tuple(x))
+        return tab
+
     def get_coord_tuple(self, string):  # '(x,y)' to (x,y)
         temp = string.replace('(', '', 1)
         temp = temp.replace(')', '', 1)
@@ -134,7 +160,7 @@ class Network:
         k+=1
         while True:
             arg_parse = list[k].split(';')
-            if arg_parse[0] == 'end':
+            if arg_parse[0] == '---':
                 break
             walker_name = arg_parse[0]
             (x, y) = self.get_coord_tuple(arg_parse[1])
@@ -144,19 +170,46 @@ class Network:
                 (bdx,bdy) = self.get_coord_tuple(t)
                 (dx,dy) = self.get_coord_tuple(arg_parse[5])
                 (px,py) = self.get_coord_tuple(arg_parse[6])
+                print(walker_name)
                 perso = m.add_perso(x, y, walker_name, m.Mat_perso, matrice[by][bx], matrice[bdy][bdx])
                 perso.dest_x = dx
                 perso.dest_y = dy
                 perso.prev_x = px
                 perso.prev_y = py
-                if perso.name == "Food_guy" or perso.name == "Delivery_Guy":
+                if perso.name == "Food_guy":
                     perso.cargaison_nourriture[0][1] = int(arg_parse[len(arg_parse)-2])
                     perso.role = arg_parse[len(arg_parse)-3]
+                    perso.tab_path = self.get_tab_path_string(arg_parse[3])
+                elif perso.name == "Delivery_Guy":
+                    perso.cargaison_nourriture[0][1] = int(arg_parse[len(arg_parse) - 2])
+                    perso.tab_path = self.get_tab_path_string(arg_parse[3])
             else:
                 if walker_name == "Immigrant":
-                    m.add_perso(x, y, walker_name, m.Mat_perso, matrice[by][bx], matrice[by][bx])
+                    perso = m.add_perso(x, y, walker_name, m.Mat_perso, matrice[by][bx], matrice[by][bx])
+                    perso.tab_path = self.get_tab_path_string(arg_parse[3])
                 else:
-                    m.add_perso(x, y, walker_name, m.Mat_perso, matrice[by][bx], None)
+                    perso = m.add_perso(x, y, walker_name, m.Mat_perso, matrice[by][bx], None)
+            perso.batiment.Walk.append(perso)
+            k+=1
+
+        k+=1
+
+        arg_parse = list[k].split(';')
+        l.m.Population = arg_parse[0]
+        l.m.unemployed = arg_parse[1]
+        l.m.Nb_immigrant = arg_parse[2]
+
+        k+=1
+        arg_parse = list[k].split(';')
+        l.m.Mat_route =eval(arg_parse[0])
+
+        k += 1
+        arg_parse = list[k].split(';')
+        l.m.Mat_fire = eval(arg_parse[0])
+
+        k += 1
+        arg_parse = list[k].split(';')
+        l.m.Mat_water = eval(arg_parse[0])
 
 
 

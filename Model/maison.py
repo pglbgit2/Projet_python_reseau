@@ -79,7 +79,7 @@ class Maison_1(Maison):
 
 class Maison_2(Maison):
     def __init__(self, x, y):
-        b.Batiment.__init__(self, 1, 11, x, y, 0, -3, 1, 1, 3, 0)
+        Maison.__init__(self, 1, 11, x, y, 0, -3, 1, 1, 3, 0)
         self.name = 'Maison 2'
         self.acces_eau = 0
         self.des_prev = -12  # cf https://gamefaqs.gamespot.com/pc/63635-caesar-iii/faqs/14466
@@ -107,7 +107,7 @@ class Maison_2(Maison):
 
 class Maison_3(Maison):
     def __init__(self, x, y):
-        b.Batiment.__init__(self, 1, 12, x, y, 0, -2, 1, 1, 2, 0)
+        Maison.__init__(self, 1, 12, x, y, 0, -2, 1, 1, 2, 0)
         self.name = 'Maison 3'
         
         self.acces_eau = 0
