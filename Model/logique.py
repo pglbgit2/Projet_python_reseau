@@ -254,7 +254,9 @@ def test_walker_logique():
             if m.Mat_perso[j][i][0].name != "no Walker":
                 count = 0
                 for k in range(len(m.Mat_perso[j][i])):
-                    perso = m.Mat_perso[j][i][count]
+                    try:
+                        perso = m.Mat_perso[j][i][count]
+                    except: break
                     count +=1
                     if perso.name == "Prefect":
                         proxy = m.get_bat_prox(i, j, 5)

@@ -14,9 +14,9 @@ class Granary(b.Batiment):
         self.texture = "granary"
 
     def get_delivery(self, chargement):
-        print("chargement", chargement)
+        #print("chargement", chargement)
         if (chargement[0] == 'ble'):
-            print("chargement de ble")
+            #print("chargement de ble")
             self.nourriture[0][1] = self.nourriture[0][1] + chargement[1]
         if chargement[0] == 'fruits':
             self.nourriture[1][1] += chargement[1]
