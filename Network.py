@@ -127,6 +127,7 @@ class Network:
                 self.sock.send(arr)
         finally:
             pass
+        
 
     def receiveFromServer(self):
         while True:
