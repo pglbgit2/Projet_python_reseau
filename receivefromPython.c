@@ -21,7 +21,7 @@ int main(int argc, char ** argv)
 {
     struct sockaddr_un svaddr, claddr;
     char buffer[BUFSIZ];
-    int fd, bytes;
+    int fd, clfd, bytes;
 
     if((fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
         stop("socket");
@@ -40,9 +40,9 @@ int main(int argc, char ** argv)
         stop("binding");
     }
 
-    bzero(&claddr, sizeof(claddr));
+    /*bzero(&claddr, sizeof(claddr));
     claddr.sun_family = AF_UNIX;
-    strncpy(claddr.sun_path, CSOCKET_FILE, sizeof(claddr.sun_path) - 1);
+    strncpy(claddr.sun_path, CSOCKET_FILE, sizeof(claddr.sun_path) - 1);*/
 
     if (listen(fd, 1) != 0){
         stop("listen");
@@ -51,22 +51,24 @@ int main(int argc, char ** argv)
         printf("listening\n");
     }
 
+    clfd = accept(fd, &claddr, sizeof(claddr));
+
     while(1)
     {
         if(recv(fd, buffer, BUFSIZ, 0)==-1)
         {
-            stop("recv\n");
+            stop("recv");
         }
         else
         {
-            puts("received from Python ");
+            puts("received from Python");
             printf(bytes);
 
             //envoie des données en broadcast
         }
 
 
-        //réception des données des autres
+        //réception des données des autres et envoie au programme Python
 
     }
 

@@ -113,7 +113,7 @@ class Network:
 
     sock.connect(ssocket_file)
 
-    def sendToSender(self):
+    def sendToServer(self): #not actually a server
 
         try:
             with open('./temp.txt', 'r') as toSend:
