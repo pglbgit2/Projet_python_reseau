@@ -1,0 +1,1 @@
+l.destroy_grid_delta(6,7,15,16);l.destroy_grid_delta(12,10,20,19);

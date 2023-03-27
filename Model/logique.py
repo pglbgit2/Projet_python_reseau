@@ -505,7 +505,7 @@ def increase_speed():
         speed_level += 1 
         Speed_game = tab_speed[speed_level]
 
-val_overlay = 0   
+val_overlay = 0
 
 def decrease_speed():
     global Speed_game, speed_level

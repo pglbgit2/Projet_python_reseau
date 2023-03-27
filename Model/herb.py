@@ -10,3 +10,4 @@ class Herb(b.Batiment):
         self.ind_fire = -1
         self.ind_eff = -1
         self.name = "Herb"
+        self.texture = 'block'
