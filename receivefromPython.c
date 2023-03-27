@@ -7,6 +7,7 @@
 #include <sys/un.h>
 #include <unistd.h>
 #include <errno.h>
+#include <strings.h>
 
 #define SSOCKET_FILE "./sscocket"
 #define CSOCKET_FILE "./csocket"
@@ -65,15 +66,24 @@ int main(int argc, char ** argv)
             printf(bytes);
 
             //envoie des données en broadcast
+            //TODO
         }
 
+        bzero(&buffer, sizeof(buffer));
+        //réception des données des autres 
+        
+        //TODO
 
-        //réception des données des autres et envoie au programme Python
+        //et envoie au programme Python
 
+        if(send(fd, buffer, BUFSIZ, 0)<0)
+        {
+            stop("send python");
+        }
+        
     }
 
     close(fd);
-
     return 0;
 }
 
