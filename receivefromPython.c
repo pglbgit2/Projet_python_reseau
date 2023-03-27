@@ -8,8 +8,10 @@
 #include <unistd.h>
 #include <errno.h>
 #include <strings.h>
+#include <string.h>
 
-#define SSOCKET_FILE "./sscocket"
+
+#define SSOCKET_FILE "./ssocket"
 #define CSOCKET_FILE "./csocket"
 
 void stop(char * err)
@@ -21,8 +23,11 @@ void stop(char * err)
 int main(int argc, char ** argv)
 {
     struct sockaddr_un svaddr, claddr;
+
     char buffer[BUFSIZ];
     int fd, clfd, bytes;
+
+    int clilen=sizeof(claddr);
 
     if((fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
         stop("socket");
@@ -41,9 +46,8 @@ int main(int argc, char ** argv)
         stop("binding");
     }
 
-    /*bzero(&claddr, sizeof(claddr));
-    claddr.sun_family = AF_UNIX;
-    strncpy(claddr.sun_path, CSOCKET_FILE, sizeof(claddr.sun_path) - 1);*/
+    bzero(&claddr, sizeof(claddr));
+
 
     if (listen(fd, 1) != 0){
         stop("listen");
@@ -52,18 +56,23 @@ int main(int argc, char ** argv)
         printf("listening\n");
     }
 
-    clfd = accept(fd, &claddr, sizeof(claddr));
-
+    clfd = accept(fd, (struct sockaddr *)&claddr, &clilen);
+    printf("accepted\n");
+    printf("%i\n", claddr.sun_family);
+    int received = 0;
     while(1)
     {
-        if(recv(fd, buffer, BUFSIZ, 0)==-1)
+        bzero(&buffer, sizeof(buffer));
+        if((received = recv(clfd, buffer, BUFSIZ, 0))==-1)
         {
             stop("recv");
+            continue;
         }
+        else if (received == 0) continue;
         else
         {
             puts("received from Python");
-            printf(bytes);
+            printf("%s\n",buffer);
 
             //envoie des données en broadcast
             //TODO
@@ -75,8 +84,8 @@ int main(int argc, char ** argv)
         //TODO
 
         //et envoie au programme Python
-
-        if(send(fd, buffer, BUFSIZ, 0)<0)
+        strncpy(buffer,"azerty",6);
+        if(send(clfd, buffer, strlen(buffer), 0)<0)
         {
             stop("send python");
         }
