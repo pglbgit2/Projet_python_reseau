@@ -1,33 +1,58 @@
 import sys
 import random
-
-sys.path.insert(0, '..')
-from Model import Priest as pr
-from Model import Food_guy as F_G
-from Model import terrain as t
-from Model import maison as mais
-from Model import Walker as w
-from Model import water as wa
-from Model import engineering as eng
-from Model import security as sec
-from Model import herb as h
-from Model import delivery_guy as dv
-from Model import administration as admin
-from Model import path as pa
-from Model import tree as tr
-from Model import ferme as f
-from Model import granary as g
-from Model import warehouse as war
-from Model import Immigrant as imm
-from Model import ruines
-from Model import market as mar
-from Model import prefet as pref
-from Model import engineer
-from Model import temple
-from copy import copy
-from Model import Recruteur as rec
-from Model import market as mar
-
+try: 
+    sys.path.insert(0, '..')
+    from Model import Priest as pr
+    from Model import Food_guy as F_G
+    from Model import terrain as t
+    from Model import maison as mais
+    from Model import Walker as w
+    from Model import water as wa
+    from Model import engineering as eng
+    from Model import security as sec
+    from Model import herb as h
+    from Model import delivery_guy as dv
+    from Model import administration as admin
+    from Model import path as pa
+    from Model import tree as tr
+    from Model import ferme as f
+    from Model import granary as g
+    from Model import warehouse as war
+    from Model import Immigrant as imm
+    from Model import ruines
+    from Model import market as mar
+    from Model import prefet as pref
+    from Model import engineer
+    from Model import temple
+    from copy import copy
+    from Model import Recruteur as rec
+    from Model import market as mar
+except:
+    import Priest as pr
+    import Food_guy as F_G
+    import terrain as t
+    import maison as mais
+    import Walker as w
+    import water as wa
+    import engineering as eng
+    import security as sec
+    import herb as h
+    import delivery_guy as dv
+    import administration as admin
+    import path as pa
+    import tree as tr
+    import ferme as f
+    import granary as g
+    import warehouse as war
+    import Immigrant as imm
+    import ruines
+    import market as mar
+    import prefet as pref
+    import engineer
+    import temple
+    from copy import copy
+    import Recruteur as rec
+    import market as mar
 # matrice de depart par defaut
 
 
