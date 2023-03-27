@@ -9,4 +9,4 @@ class Path(b.Batiment):
         b.Batiment.__init__(self, 1, 5, x, y, 4, 0, 0, 0, 0, 0)
         self.isOnAquaduct = 0
         self.name = 'Path'
-        self.texture = "road0"
+        self.texture = "road8"

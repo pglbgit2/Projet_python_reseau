@@ -6,6 +6,9 @@ from random import *
 
 
 class Batiment(t.Terrain):
+
+
+    class_counter = 0
     def __init__(self, nbr_cases, id_bat, posx, posy, cst, des, stp, sze, rge, emp):
         t.Terrain.__init__(self, posx, posy, id_bat)
 
@@ -25,7 +28,8 @@ class Batiment(t.Terrain):
         self.Walk = []
         self.hasCheck = 0
         self.hasRecruteur = 0
-        self.burning = 0 
+        self.burning = 0
+        Batiment.class_counter += 1
 
     def ret_coord(self):
         return (self.pos_x, self.pos_y)
