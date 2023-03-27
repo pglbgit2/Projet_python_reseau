@@ -13,6 +13,8 @@ import os
 import Model.matrice as m
 import socket
 import errno
+import struct
+import time
 
 from View.settings import path_to_temp_file
 from Model import logique as l
@@ -104,7 +106,7 @@ class Network:
 
     #
     csocket_file='./csocket'
-    ssocket_file='./sscocket'
+    ssocket_file='./ssocket'
     try:
         os.remove(csocket_file)
     except OSError:
@@ -117,17 +119,25 @@ class Network:
 
         try:
             with open('./temp.txt', 'r') as toSend:
-                data = toSend.read()
-                self.sock.send(data, self.ssocket_file)
+                data=toSend.read()
+                arr = bytes(data, 'utf-8')
+                arr2=struct.pack(">H", 8)
+                #print(arr2)
+                time.sleep(1)
+                self.sock.send(arr)
         finally:
             pass
 
     def receiveFromServer(self):
         while True:
             try:
-                (bytes, address) = self.sock.recv(1024)
-                print("reçu "+ bytes)
+                bytes = self.sock.recv(1024)
+                print("reçu ")
+                print(bytes.decode('utf-8'))
                 #traitement des modifications
             except socket.error as e:
                 print(e)
             
+n=Network()
+n.sendToServer()
+n.receiveFromServer()
