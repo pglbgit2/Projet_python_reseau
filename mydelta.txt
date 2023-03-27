@@ -1,1 +1,1 @@
-l.destroy_grid_delta(20,23,11,7);l.Add_bat_game_delta(20,15,7);l.Add_bat_game_delta(20,12,7);l.Add_bat_game_delta(20,10,7);l.Add_bat_game_delta(20,18,7);l.Add_bat_game_delta(20,16,7);
+l.destroy_grid_delta(6,7,15,16);l.destroy_grid_delta(12,10,20,19);

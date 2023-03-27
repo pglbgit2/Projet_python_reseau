@@ -31,9 +31,10 @@ import copy as cp
 class Network:
 
     def map_to_file(self, matrice_bat, matrice_walk, SIZE_X, SIZE_Y):
-        if os.path.exists(path_to_temp_file + "temp.txt"):
-            os.remove(path_to_temp_file + "temp.txt")
-
+        if os.path.exists(path_to_temp_file + "/temp.txt"):
+            os.remove(path_to_temp_file + "/temp.txt")
+        if os.path.exists(path_to_temp_file + "\\temp.txt"):
+            os.remove(path_to_temp_file + "\\temp.txt")
         f = open("temp.txt", "w")
         visited = []
         text = ""
@@ -44,47 +45,42 @@ class Network:
                     visited.append(obj)
                     phrase = str(obj.name) + ';' + str(obj.ret_coord()) + ';' + obj.texture
 
-                    if issubclass(obj, l.m.pa.b.Batiment):
+                    if issubclass(type(obj), l.m.pa.b.Batiment):
                         phrase += ';' + str(obj.curEmployees)
 
-                        if issubclass(obj, l.m.mais.Maison):
+                        if issubclass(type(obj), l.m.mais.Maison):
                             phrase += ';'
                             phrase += str(obj.curpop) + ';' + str(obj.employed) + ';'
                             phrase += str(obj.nourriture[0][1])
 
-                        elif issubclass(obj, l.m.war.Warehouse) or issubclass(obj, l.m.g.Granary) or issubclass(obj,
-                                                                                                                l.m.mar.Market):
+                        elif issubclass(type(obj), l.m.war.Warehouse) or issubclass(type(obj), l.m.g.Granary) or issubclass(type(obj),l.m.mar.Market):
                             phrase += ';'
                             phrase += str(obj.nourriture[0][1])
 
-                        elif issubclass(obj, l.m.f.Ferme):
+                        elif issubclass(type(obj), l.m.f.Ferme):
                             phrase += ';'
                             phrase += str(obj.ind_Harv)
-
-                            # Les walkers ne peuvent pas être relié a un batiment puisqu'ils n'existent pas encore
-                            """ walkers = matrice_walk[y][x]   # Ils seront reliés après dans la décapsulation de temp.txt
-                            if walkers[0].name != "no Walker":
-                                phrase += ';'
-                                for k in len(walkers):
-                                    phrase += str(walkers[k].name) + '(' + str(walkers[k].x) + ',' + str(walkers[k].y) + ');'
-                                    + str(walkers[k].)
-                            """
-
-
                     phrase += "\n"
                     text += phrase
         text += "---;\n"
         for x in range(0, SIZE_X):
             for y in range(0, SIZE_Y):
-                if issubclass(matrice_bat[y][x], l.m.pa.Path):
+                if issubclass(type(matrice_bat[y][x]), l.m.pa.Path):
                     walkers = matrice_walk[y][x]
                     if walkers[0].name != "no Walker":
-                        for k in len(walkers):
+                        for k in range(len(walkers)):
                             phrase = ""
                             phrase += str(walkers[k].name) + ';(' + str(walkers[k].x) + ',' + str(walkers[k].y) + ');'\
                             + str(walkers[k].ttl) + ';' + self.get_string_tab_path(walkers[k].tab_path) + ';' + str(walkers[k].batiment.ret_coord())\
                             + ';(' + str(walkers[k].dest_x) + ',' + str(walkers[k].dest_y) + ');(' + str(walkers[k].prev_x)\
-                            + ',' + str(walkers[k].prev_y) + ');(' + str(walkers[k].nx) + ',' + str(walkers[k].ny) + ');'
+                            + ',' + str(walkers[k].prev_y) + ')'
+                            if walkers[k].name == "Food_guy" or walkers[k].name == "Delivery_Guy":
+                                phrase += ';' + str(walkers[k].role) +';'
+                                phrase += str(walkers[k].cargaison_nourriture[0][1])
+                            if hasattr(walkers[k],"bat_destination") != False:
+                                phrase += ';' + str(walkers[k].bat_destination.ret_coor())
+                            else:
+                                phrase += ';None'
                             phrase += "\n"
                             text += phrase
         text += 'end;'
@@ -103,7 +99,7 @@ class Network:
         return (int(t[0]), int(t[1]))
 
     def file_to_map(self, matrice, SIZE_X, SIZE_Y):
-        if os.path.exists(path_to_temp_file + "\\temp.txt"):
+        if not os.path.exists(path_to_temp_file + "\\temp.txt") and not os.path.exists(path_to_temp_file + "/temp.txt"):
             print("No file 'temp.txt' found.")
             return 0
         f = open("temp.txt", "r")
@@ -120,15 +116,15 @@ class Network:
             m.add_bat(x, y, idbat)
             bat = matrice[y][x]
             bat.texture = arg_parse[2]
-            if issubclass(bat, l.m.pa.b.Batiment):
+            if issubclass(type(bat), l.m.pa.b.Batiment):
                 bat.curEmployees = int(arg_parse[3])
-                if issubclass(bat, l.m.mais.Maison):
+                if issubclass(type(bat), l.m.mais.Maison):
                     bat.curpop = int(arg_parse[4])
                     bat.employed = int(arg_parse[5])
                     bat.nourriture[0][1] = int(arg_parse[6])
-                elif issubclass(bat, l.m.war.Warehouse) or issubclass(bat, l.m.g.Granary) or issubclass(bat, l.m.mar.Market):
+                elif issubclass(type(bat), l.m.war.Warehouse) or issubclass(type(bat), l.m.g.Granary) or issubclass(type(bat), l.m.mar.Market):
                     bat.nourriture[0][1] = int(arg_parse[4])
-                elif issubclass(bat, l.m.f.Ferme):
+                elif issubclass(type(bat), l.m.f.Ferme):
                     bat.ind_Harv = int(arg_parse[4])
                 else:
                     pass
@@ -142,8 +138,25 @@ class Network:
                 break
             walker_name = arg_parse[0]
             (x, y) = self.get_coord_tuple(arg_parse[1])
-
-            m.add_perso(x, y, walker_name, m.Mat_perso, matrice[y][x], )
+            (bx,by) = self.get_coord_tuple(arg_parse[4])
+            t = arg_parse[len(arg_parse)-1]
+            if t != 'None':
+                (bdx,bdy) = self.get_coord_tuple(t)
+                (dx,dy) = self.get_coord_tuple(arg_parse[5])
+                (px,py) = self.get_coord_tuple(arg_parse[6])
+                perso = m.add_perso(x, y, walker_name, m.Mat_perso, matrice[by][bx], matrice[bdy][bdx])
+                perso.dest_x = dx
+                perso.dest_y = dy
+                perso.prev_x = px
+                perso.prev_y = py
+                if perso.name == "Food_guy" or perso.name == "Delivery_Guy":
+                    perso.cargaison_nourriture[0][1] = int(arg_parse[len(arg_parse)-2])
+                    perso.role = arg_parse[len(arg_parse)-3]
+            else:
+                if walker_name == "Immigrant":
+                    m.add_perso(x, y, walker_name, m.Mat_perso, matrice[by][bx], matrice[by][bx])
+                else:
+                    m.add_perso(x, y, walker_name, m.Mat_perso, matrice[by][bx], None)
 
 
 
