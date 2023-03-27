@@ -54,7 +54,7 @@ class Game:
             self.events()
             self.update()
             self.draw()
-            # self.network.map_to_file(l.m.Mat_batiment, l.m.Mat_perso, 40, 40)
+            #self.network.map_to_file(l.m.Mat_batiment, l.m.Mat_perso, 40, 40)
             if a == 50:
                 self.network.file_to_map(l.m.Mat_batiment, 40, 40)
 
