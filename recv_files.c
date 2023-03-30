@@ -6,7 +6,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
-#define PORT 8888
+#define PORT 8899
 
 int main(int argc, char const *argv[]) {
     int sockfd;

@@ -15,6 +15,7 @@ import socket
 import errno
 import struct
 import time
+import select
 
 from View.settings import path_to_temp_file
 from Model import logique as l
@@ -36,6 +37,14 @@ import copy as cp
 
 
 class Network:
+
+    def __init__(self) -> None:
+        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        self.ssocket_file=path_to_temp_file+'/ssocket'
+        self.sock.connect(self.ssocket_file)
+        self.rdescriptors = []
+        self.wdescriptors = []
+        self.xdescriptors = []
 
     def map_to_file(self, matrice_bat, matrice_walk, SIZE_X, SIZE_Y):
         if os.path.exists(path_to_temp_file + "/temp.txt"):
@@ -254,20 +263,8 @@ class Network:
         except:
             os.remove(path_to_temp_file + "/otherDelta.txt")
 
-
-    sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-
-    #
-    csocket_file='./csocket'
-    ssocket_file='./ssocket'
-    try:
-        os.remove(csocket_file)
-    except OSError:
-        pass
-    sock.bind(csocket_file)
-
-    sock.connect(ssocket_file)
-
+    
+   
     def sendToServer(self): #not actually a server
 
         try:
@@ -287,7 +284,48 @@ class Network:
             try:
                 bytes = self.sock.recv(1024)
                 print("reçu ")
-                print(bytes.decode('utf-8'))
+                buf = bytes.decode('utf-8')
                 #traitement des modifications
+                return buf
             except socket.error as e:
                 print(e)
+                return -1
+
+
+    def GestionEntreesSortie(self):
+        if self.rdescriptors == []:
+            self.rdescriptors.append(self.sock)
+
+        rlist, wlist, xlist = select.select(self.rdescriptors, self.wdescriptors, self.xdescriptors)
+        
+        if rlist != []:
+            assert rlist[0] == self.sock
+            buf = self.receiveFromServer()
+            if buf == -1:
+                assert False
+            else:
+                if buf[0] == '#':
+                    
+                    fline = buf.split('\n')
+                    print("fline = ",fline)
+                    if fline[0] == '#newco': #cas demande d'envoie de données complete
+                        print('newconnection')
+
+                    if fline[0] == '#delta': # cas envoi de delta
+                        pass
+
+                    if fline[0] == '#welcome': # cas reception ensemble donne jeu
+                        pass
+                    assert False
+
+
+                else:
+                    print(buf)
+                    print('ERROR: buffer seems to be corrupted')
+                    print('quitting now...')
+                    assert False
+
+
+Net = Network()
+while True:
+    Net.GestionEntreesSortie()
