@@ -63,32 +63,33 @@ int main(int argc, char ** argv)
     while(1)
     {
         bzero(&buffer, sizeof(buffer));
-        if((received = recv(clfd, buffer, BUFSIZ, 0))==-1)
-        {
-            stop("recv");
-            continue;
-        }
-        else if (received == 0) continue;
-        else
-        {
-            puts("received from Python");
-            printf("%s\n",buffer);
+        // if((received = recv(clfd, buffer, BUFSIZ, 0))==-1)
+        // {
+        //     stop("recv");
+        //     continue;
+        // }
+        // else if (received == 0) continue;
+        // else
+        // {
+        //     puts("received from Python");
+        //     printf("%s\n",buffer);
 
-            //envoie des données en broadcast
-            //TODO
-        }
+        //     //envoie des données en broadcast
+        //     //TODO
+        // }
 
         bzero(&buffer, sizeof(buffer));
         //réception des données des autres 
         
         //TODO
-
+        printf("TEST\n");
         //et envoie au programme Python
-        strncpy(buffer,"azerty",6);
+        strncpy(buffer,"#newco\ntoto",12);
         if(send(clfd, buffer, strlen(buffer), 0)<0)
         {
             stop("send python");
         }
+        sleep(1);
         
     }
 
