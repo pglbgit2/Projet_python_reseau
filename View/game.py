@@ -55,8 +55,7 @@ class Game:
             self.update()
             self.draw()
             #self.network.map_to_file(l.m.Mat_batiment, l.m.Mat_perso, 40, 40)
-            if a == 50:
-                self.network.file_to_map(l.m.Mat_batiment, 40, 40)
+
 
             #self.network.delta_to_file(l.m.delta)
             #self.network.file_to_modif()
@@ -105,11 +104,13 @@ class Game:
                 if event.key == pg.K_F5 : 
                     Test_l.Construction_maison_5()
 
-                if event.key == pg.K_F6 : 
-                    Test_l.Construction_maison_6()
+                if event.key == pg.K_F6 :
+                    self.network.map_to_file(l.m.Mat_batiment, l.m.Mat_perso, 40, 40)
+                    # Test_l.Construction_maison_6()
 
-                if event.key == pg.K_F7 : 
-                    Test_l.Construction_maison_7()
+                if event.key == pg.K_F7 :
+                    self.network.file_to_map(l.m.Mat_batiment, 40, 40)
+                    # Test_l.Construction_maison_7()
 
                 
             self.mouse_button = pg.mouse.get_pressed()

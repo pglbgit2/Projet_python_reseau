@@ -34,7 +34,6 @@ import copy as cp
 ###########################################################################################################################
 
 
-
 class Network:
 
     def map_to_file(self, matrice_bat, matrice_walk, SIZE_X, SIZE_Y):
@@ -63,7 +62,7 @@ class Network:
 
                         elif issubclass(type(obj), l.m.war.Warehouse) or issubclass(type(obj),
                                                                                     l.m.g.Granary) or issubclass(
-                                type(obj), l.m.mar.Market):
+                            type(obj), l.m.mar.Market):
                             phrase += ';'
                             phrase += str(obj.nourriture[0][1])
 
@@ -93,7 +92,8 @@ class Network:
                                     phrase += str(walkers[k].cargaison_nourriture[0][1])
                                 if walkers[k].name == "Delivery_Guy":
                                     phrase += ';' + str(walkers[k].cargaison_nourriture[0][1])
-                                if hasattr(walkers[k], "bat_destination") != False and walkers[k].bat_destination is not None:
+                                if hasattr(walkers[k], "bat_destination") is not False and walkers[
+                                    k].bat_destination is not None:
                                     phrase += ';' + str(walkers[k].bat_destination.ret_coord())
                                 else:
                                     phrase += ';None'
@@ -254,33 +254,31 @@ class Network:
         except:
             os.remove(path_to_temp_file + "/otherDelta.txt")
 
-
-    sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    """    sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
     #
-    csocket_file='./csocket'
-    ssocket_file='./ssocket'
+    csocket_file = './csocket'
+    ssocket_file = './ssocket'
     try:
         os.remove(csocket_file)
     except OSError:
         pass
     sock.bind(csocket_file)
 
-    sock.connect(ssocket_file)
+    sock.connect(ssocket_file)"""
 
-    def sendToServer(self): #not actually a server
+    def sendToServer(self):  # not actually a server
 
         try:
             with open('./temp.txt', 'r') as toSend:
-                data=toSend.read()
+                data = toSend.read()
                 arr = bytes(data, 'utf-8')
-                arr2=struct.pack(">H", 8)
-                #print(arr2)
+                arr2 = struct.pack(">H", 8)
+                # print(arr2)
                 time.sleep(1)
                 self.sock.send(arr)
         finally:
             pass
-
 
     def receiveFromServer(self):
         while True:
@@ -288,6 +286,6 @@ class Network:
                 bytes = self.sock.recv(1024)
                 print("reçu ")
                 print(bytes.decode('utf-8'))
-                #traitement des modifications
+                # traitement des modifications
             except socket.error as e:
                 print(e)

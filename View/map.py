@@ -196,7 +196,7 @@ class Map:
         for x in range(self.grid_length_x):
             for y in range(self.grid_length_y):
                 render_pos = self.map[y][x]["render_pos"]
-                if overlay == "":
+                if self.overlay == "":
 
                     if m.Mat_batiment[x][y].id_bat == 55 and m.Mat_batiment[x][y].curEmployees == l.m.Mat_batiment[x][y].neededEmployees:
                         m.Mat_batiment[x][y].texture = "security_occupied"
@@ -227,9 +227,9 @@ class Map:
                             screen.blit(self.tiles[tile],
                                         (render_pos[0] + self.grass_tiles.get_width() / 2 + camera.scroll.x,
                                          render_pos[1] - (self.tiles[tile].get_height() - TILE_SIZE) + camera.scroll.y))
-                elif overlay == "fire":
+                elif self.overlay == "fire":
 
-                    risk = l.get_fire_level(x, y)
+                    risk = l.get_fire_level(y, x)
 
                     if risk >= 24:  # WORST : need Pin-Pon asap
                         tile = "red"
@@ -259,6 +259,9 @@ class Map:
                     elif m.Mat_batiment[x][y].id_bat in (1, 2, 3, 5, 666, 116, 115):
                         tile = m.Mat_batiment[x][y].texture
 
+                    else:
+                        tile = ""
+
                     if tile != "":
                         if tile in sizedbuildings_2:
                             screen.blit(self.tiles[tile],
@@ -273,31 +276,91 @@ class Map:
                             screen.blit(self.tiles[tile],
                                         (render_pos[0] + self.grass_tiles.get_width() / 2 + camera.scroll.x,
                                          render_pos[1] - (self.tiles[tile].get_height() - TILE_SIZE) + camera.scroll.y))
-                elif overlay == "eff":
-                    if m.Mat_batiment[x][y].id_bat == 81 and l.m.Mat_batiment[x][y].curEmployees == l.m.Mat_batiment[x][
-                        y].neededEmployees:
-                        m.Mat_batiment[x][y].texture = "engineer_occupied"
-                        if tile != "":
-                            if tile in sizedbuildings_2:
-                                screen.blit(self.tiles[tile],
-                                            (render_pos[
+                elif self.overlay == "bat":
+
+                    risk = l.get_eff_level(y, x)
+
+                    if risk >= 24:  # WORST : need a dispenser here
+                        tile = "red"
+                    elif 24 > risk >= 18:
+                        tile = "orange"
+                    elif 18 > risk >= 12:
+                        tile = "yellow"
+                    elif 12 > risk >= 6:
+                        tile = "green"
+                    elif 6 > risk >= 0:  # BEST : No spy around
+                        tile = "blue"
+
+                    elif m.Mat_batiment[x][y].id_bat == 81:
+                        if l.m.Mat_batiment[x][y].curEmployees == l.m.Mat_batiment[x][y].neededEmployees:
+                            tile = "engineer_occupied"
+                        else:
+                            tile = "engineer"
+
+                    elif m.Mat_batiment[x][y].id_bat == 555:
+                        tile = "ruine"
+
+                    elif m.Mat_batiment[x][y].id_bat in (1, 2, 3, 5, 666, 116, 115):
+                        tile = m.Mat_batiment[x][y].texture
+
+                    else:
+                        tile = ""
+
+                    if tile != "":
+                        if tile in sizedbuildings_2:
+                             screen.blit(self.tiles[tile],
+                                             (render_pos[
                                                  0] + self.grass_tiles.get_width() / 2 - TILE_SIZE + camera.scroll.x,
                                              render_pos[1] - (
                                                          self.tiles[tile].get_height() - TILE_SIZE) + camera.scroll.y))
 
-                            elif tile in sizedbuildings_3:
-                                screen.blit(self.tiles[tile],
+                        elif tile in sizedbuildings_3:
+                            screen.blit(self.tiles[tile],
                                             (render_pos[
                                                  0] + self.grass_tiles.get_width() / 2 - TILE_SIZE * 2 + camera.scroll.x,
                                              render_pos[1] - (
                                                          self.tiles[tile].get_height() - TILE_SIZE) + camera.scroll.y))
-                            else:
-                                screen.blit(self.tiles[tile],
+                        else:
+                            screen.blit(self.tiles[tile],
                                             (render_pos[0] + self.grass_tiles.get_width() / 2 + camera.scroll.x,
                                              render_pos[1] - (
                                                          self.tiles[tile].get_height() - TILE_SIZE) + camera.scroll.y))
-                elif overlay == "water":
-                    pass
+                elif self.overlay == "water":
+                    if l.get_water(y, x):
+
+                        if m.Mat_batiment[x][y].id_bat in (10, 11, 12):
+                            tile = "house_watered"
+                        else:
+                            tile = "watered"
+
+                    elif not l.get_water(y, x):
+                        tile = "unwatered"
+
+                    else:
+                        tile = ""
+
+                        # Water services
+
+                    if m.Mat_batiment[x][y].id_bat == 92:
+                        tile = "well"
+
+                    elif m.Mat_batiment[x][y].id_bat == 91:
+                        tile = "fountain_full"
+
+                    elif m.Mat_batiment[x][y].id_bat == 9100:
+                        tile = "fountain_full"
+
+                    elif m.Mat_batiment[x][y].id_bat == 90:
+                        tile = "reservoir_empty"
+
+                    elif m.Mat_batiment[x][y].id_bat == 9000:
+                        tile = "reservoir_full"
+
+                    if tile != "":
+                        screen.blit(self.tiles[tile],
+                                    (render_pos[0] + self.grass_tiles.get_width() / 2 + camera.scroll.x,
+                                     render_pos[1] - (
+                                             self.tiles[tile].get_height() - TILE_SIZE) + camera.scroll.y))
                     
                 if l.getWalker(y, x).name != 'no Walker':  # Vérifier si un/des walkeur/s est/sont sur la case actuelle
                     tile = self.grid_to_walkeur(y, x, l.getWalker(y, x))

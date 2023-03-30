@@ -676,12 +676,13 @@ def suppr_Batiment(x, y, Mat):
     if Mat[y][x].name in ["Maison 1", "Panneau", "Maison 2", "Maison 3"]:
         global Population
         Population -= Mat[y][x].curpop
-
+    isPath_check = False
     if not InTable(Mat[y][x].name, ["Herb", "Rock", "Enter_Pannel", "Exit_Pannel", "Water"]):
         genocide(Mat[y][x])
         if Mat[y][x].name == "Path":
             for e in range(len(Mat_perso[y][x])):
                 kill_walker(Mat_perso[y][x][0])
+                isPath_check = True
         # for i in range(0, Mat[y][x].nbr_cases):
         #     for j in range(0, Mat[y][x].nbr_cases):
         for i in range(Mat[y][x].nbr_cases - 1, -1, -1):
@@ -689,6 +690,21 @@ def suppr_Batiment(x, y, Mat):
                 if y + j <= 39 and x + i <= 39 and Mat[y][x].name != "Herb":
                     Mat[Mat[y][x].pos_y + j][Mat[y][x].pos_x + i] = h.Herb(Mat[y][x].pos_x + i, Mat[y][x].pos_y + j)
                     Mat_fire[y + j][x + i] = 0
+        if isPath_check:
+            grid = get_neighbors_4(Mat, y, x)  # Return list of 4 neighbors of [x][y] pointing to a road object or else
+            # print("voisins :")
+            if grid[0] == "Path":
+                # print("  Dessue :")
+                update_road_texture(y - 1, x)
+            if grid[1][0] == "Path":
+                # print("  Gauche :")
+                update_road_texture(y, x - 1)
+            if grid[1][1] == "Path":
+                # print("  Droite :")
+                update_road_texture(y, x + 1)
+            if grid[2] == "Path":
+                # print("  Dessous :")
+                update_road_texture(y + 1, x)
 
     restructure_water_map()
 
@@ -1054,32 +1070,32 @@ def update_road_texture(x, y, Mat=Mat_batiment):
         tile = "road17"
 
     elif all([grid_up != "Path", grid_down != "Path", grid_left == "Path", grid_right == "Path"]):  # ROAD LINES
-        tile = "road0"
-    elif all([grid_up == "Path", grid_down == "Path", grid_left != "Path", grid_right != "Path"]):
         tile = "road1"
+    elif all([grid_up == "Path", grid_down == "Path", grid_left != "Path", grid_right != "Path"]):
+        tile = "road0"
 
     elif all([grid_up != "Path", grid_left == "Path", grid_right == "Path", grid_down == "Path"]):  # THREE WAYS
-        tile = "road13"
-    elif all([grid_up == "Path", grid_left == "Path", grid_right != "Path", grid_down == "Path"]):
-        tile = "road16"
-    elif all([grid_up == "Path", grid_left != "Path", grid_right == "Path", grid_down == "Path"]):
         tile = "road14"
-    elif all([grid_up == "Path", grid_left == "Path", grid_right == "Path", grid_down != "Path"]):
+    elif all([grid_up == "Path", grid_left == "Path", grid_right != "Path", grid_down == "Path"]):
         tile = "road15"
+    elif all([grid_up == "Path", grid_left != "Path", grid_right == "Path", grid_down == "Path"]):
+        tile = "road13"
+    elif all([grid_up == "Path", grid_left == "Path", grid_right == "Path", grid_down != "Path"]):
+        tile = "road16"
 
     elif all([grid_up == "Path", grid_left != "Path", grid_right != "Path", grid_down != "Path"]):  # CAPS
-        tile = "road11"
-    elif all([grid_up != "Path", grid_left == "Path", grid_right != "Path", grid_down != "Path"]):
         tile = "road8"
+    elif all([grid_up != "Path", grid_left == "Path", grid_right != "Path", grid_down != "Path"]):
+        tile = "road11"
     elif all([grid_up != "Path", grid_left != "Path", grid_right == "Path", grid_down != "Path"]):
-        tile = "road12"
-    elif all([grid_up != "Path", grid_left != "Path", grid_right != "Path", grid_down == "Path"]):
         tile = "road9"
+    elif all([grid_up != "Path", grid_left != "Path", grid_right != "Path", grid_down == "Path"]):
+        tile = "road12"
 
     elif all([grid_up == "Path", grid_left != "Path", grid_right == "Path", grid_down != "Path"]):  # TURNS
-        tile = "road6"
-    elif all([grid_up != "Path", grid_left == "Path", grid_right != "Path", grid_down == "Path"]):
         tile = "road4"
+    elif all([grid_up != "Path", grid_left == "Path", grid_right != "Path", grid_down == "Path"]):
+        tile = "road6"
     elif all([grid_up != "Path", grid_left != "Path", grid_right == "Path", grid_down == "Path"]):
         tile = "road5"
     elif all([grid_up == "Path", grid_left == "Path", grid_right != "Path", grid_down != "Path"]):
@@ -1088,11 +1104,11 @@ def update_road_texture(x, y, Mat=Mat_batiment):
     else:
         tile = "road8"
 
-    if Mat[y][x].name == "Path":
-        Mat[y][x].texture = tile
+    if Mat[x][y].name == "Path":
+        Mat[x][y].texture = tile
 
 
-def get_neighbors_4(grid, grid_y, grid_x):
+def get_neighbors_4(grid, grid_x, grid_y):
     if grid_y >= nb_cases_y - 1:
         if grid_x >= nb_cases_x - 1:
             return [
