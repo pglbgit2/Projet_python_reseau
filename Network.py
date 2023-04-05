@@ -34,6 +34,8 @@ import threading
 # Probleme identification walker-batiment: utiliser numerotation ? SOLUTION : SUPPRIMER LE D2PLACEMENT AL2ATOIRE          #
 ###########################################################################################################################
 
+#fonction c / python : recevoir envoyer
+# astuce: fichier commence par #machin et se termine par end 
 
 class Network:
 

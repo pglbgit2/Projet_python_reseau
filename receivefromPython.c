@@ -24,7 +24,7 @@ int main(int argc, char ** argv)
 {
     struct sockaddr_un svaddr, claddr;
 
-    char buffer[BUFSIZ];
+    char buffer[30000];
     int fd, clfd, bytes;
 
     int clilen=sizeof(claddr);
@@ -89,11 +89,13 @@ int main(int argc, char ** argv)
             else
             {
                 puts("received from Python");
-                //printf("%s\n",buffer);
-
+                
+                printf("%s\n",buffer);
+                return 0;
                 //envoie des données en broadcast
                 // TODO
             }
+        }
 
         bzero(&buffer, sizeof(buffer));
         //réception des données des autres 
