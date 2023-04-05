@@ -51,6 +51,7 @@ class Network:
         if os.path.exists(path_to_temp_file + "\\temp.txt"):
             os.remove(path_to_temp_file + "\\temp.txt")
         f = open("temp.txt", "w")
+        f.write('#welcome\n')
         visited = []
         text = ""
         for x in range(0, SIZE_X):
@@ -156,7 +157,7 @@ class Network:
         text = f.read()
         f.close()
         list = text.split('\n')
-        k = 0
+        k = 1
         while True:
             arg_parse = list[k].split(';')
             if arg_parse[0] == '---':
@@ -243,6 +244,7 @@ class Network:
         if os.path.exists(path_to_temp_file + "/mydelta.txt"):
             os.remove(path_to_temp_file + "/mydelta.txt")
         f = open("mydelta.txt", "w")
+        f.write("#delta;")
         f.write(delta)
         delta = ''
         f.close()
@@ -256,7 +258,7 @@ class Network:
         text = f.read()
         f.close()
         instruction_list = text.split(';')
-        for k in range(len(instruction_list)):
+        for k in range(1,len(instruction_list)):
             exec(instruction_list[k])
         try:
             os.remove(path_to_temp_file + "\\otherDelta.txt")
@@ -313,10 +315,10 @@ class Network:
                         self.sendToServer('temp.txt')
 
                     if fline[0] == '#delta': # cas envoi de delta
-                        if delta_to_file(l.m.delta) == 0:
+                        if self.delta_to_file(l.m.delta) == 0:
                             pass
                         else:
-                            pass
+                            self.sendToServer("delta.txt")
                             # envoi du fichier delta
 
                     if fline[0] == '#welcome': # cas reception ensemble donne jeu
