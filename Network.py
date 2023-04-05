@@ -20,8 +20,8 @@ import select
 from View.settings import path_to_temp_file
 from Model import logique as l
 import copy as cp
-
-
+import subprocess
+import threading
 ################################### LISTE DES OBJECTIFS PARTIE LOGIQUE ####################################################
 # map_to_file doit pouvoir transformer l'integralité du jeu: walker + contenu des batiments -> texte                      #
 # file_to_map doit pouvoir transformer du texte en elements de jeu: texte -> walker  + contenu des batiments              #
@@ -38,9 +38,19 @@ import copy as cp
 class Network:
 
     def __init__(self) -> None:
+        threadprogc = threading.Thread( target = subprocess.call, args = ['./pyrecv'])
+        threadprogc.start()
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self.ssocket_file=path_to_temp_file+'/ssocket'
-        self.sock.connect(self.ssocket_file)
+        print('avant')
+        test = 0
+        while test == 0:
+            try:
+                self.sock.connect(self.ssocket_file)
+                test = 1
+            except:
+                continue
+        print('apres')
         self.rdescriptors = []
         self.wdescriptors = []
         self.xdescriptors = []
@@ -311,8 +321,9 @@ class Network:
                     print("fline = ",fline)
                     if fline[0] == '#newco': #cas demande d'envoie de données complete
                         
-                        self.map_to_file(l.m.Mat_batiment, m.nb_cases_x, m.nb_cases_y)
+                        self.map_to_file(l.m.Mat_batiment, l.m.Mat_perso, m.nb_cases_x, m.nb_cases_y)
                         self.sendToServer('temp.txt')
+                        print('send newco')
 
                     if fline[0] == '#delta': # cas envoi de delta
                         if self.delta_to_file(l.m.delta) == 0:
@@ -323,8 +334,7 @@ class Network:
 
                     if fline[0] == '#welcome': # cas reception ensemble donne jeu
                         self.file_to_map(l.m.Mat_batiment, m.nb_cases_x, m.nb_cases_y)
-
-                    assert False
+                        print('receiv welcome')
 
 
                 else:
@@ -332,6 +342,7 @@ class Network:
                     print('ERROR: buffer seems to be corrupted')
                     print('quitting now...')
                     assert False
+                assert False
 
 
 Net = Network()
