@@ -265,10 +265,10 @@ class Network:
 
 
 
-    def sendToServer(self): #not actually a server
+    def sendToServer(self, file_name): #not actually a server
 
         try:
-            with open('./temp.txt', 'r') as toSend:
+            with open('./'+ file_name, 'r') as toSend:
                 data = toSend.read()
                 arr = bytes(data, 'utf-8')
                 arr2 = struct.pack(">H", 8)
@@ -284,7 +284,7 @@ class Network:
                 bytes = self.sock.recv(1024)
                 print("reçu ")
                 buf = bytes.decode('utf-8')
-                #traitement des modifications
+                # traitement des modifications
                 return buf
             except socket.error as e:
                 print(e)
@@ -309,12 +309,19 @@ class Network:
                     print("fline = ",fline)
                     if fline[0] == '#newco': #cas demande d'envoie de données complete
                         print('newconnection')
+                        self.map_to_file(l.m.Mat_batiment, m.nb_cases_x, m.nb_cases_y)
+                        self.sendToServer('temp.txt')
 
                     if fline[0] == '#delta': # cas envoi de delta
-                        pass
+                        if delta_to_file(l.m.delta) == 0:
+                            pass
+                        else:
+                            pass
+                            # envoi du fichier delta
 
                     if fline[0] == '#welcome': # cas reception ensemble donne jeu
-                        pass
+                        self.file_to_map(l.m.Mat_batiment, m.nb_cases_x, m.nb_cases_y)
+
                     assert False
 
 
