@@ -308,14 +308,14 @@ class Network:
                     fline = buf.split('\n')
                     print("fline = ",fline)
                     if fline[0] == '#newco': #cas demande d'envoie de données complete
-                        print('newconnection')
+                        pass
 
                     if fline[0] == '#delta': # cas envoi de delta
                         pass
 
                     if fline[0] == '#welcome': # cas reception ensemble donne jeu
                         pass
-                    assert False
+                    #assert False
 
 
                 else:
