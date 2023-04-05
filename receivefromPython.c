@@ -9,7 +9,7 @@
 #include <errno.h>
 #include <strings.h>
 #include <string.h>
-
+#include <sys/select.h>
 
 #define SSOCKET_FILE "./ssocket"
 #define CSOCKET_FILE "./csocket"
@@ -24,7 +24,7 @@ int main(int argc, char ** argv)
 {
     struct sockaddr_un svaddr, claddr;
 
-    char buffer[BUFSIZ];
+    char buffer[30000];
     int fd, clfd, bytes;
 
     int clilen=sizeof(claddr);
@@ -60,37 +60,46 @@ int main(int argc, char ** argv)
     printf("accepted\n");
     printf("%i\n", claddr.sun_family);
     int received = 0;
-    while(1)
-    {
-        bzero(&buffer, sizeof(buffer));
-        // if((received = recv(clfd, buffer, BUFSIZ, 0))==-1)
-        // {
-        //     stop("recv");
-        //     continue;
-        // }
-        // else if (received == 0) continue;
-        // else
-        // {
-        //     puts("received from Python");
-        //     printf("%s\n",buffer);
-
-        //     //envoie des données en broadcast
-        //     //TODO
-        // }
-
-        bzero(&buffer, sizeof(buffer));
-        //réception des données des autres 
-        
-        //TODO
-        printf("TEST\n");
-        //et envoie au programme Python
-        strncpy(buffer,"#newco\ntoto",12);
+    strncpy(buffer,"#newco\ntoto",12);
         if(send(clfd, buffer, strlen(buffer), 0)<0)
         {
             stop("send python");
         }
-        sleep(1);
-        
+    fd_set readfds;
+    int max_sd, activity;
+    while(1)
+    {   
+        FD_ZERO(&readfds);
+        FD_SET(clfd, &readfds);
+        max_sd = clfd;
+        activity = select(max_sd+1,&readfds,NULL,NULL,NULL);
+        if ((activity < 0) && (errno != EINTR)) 
+        {
+            stop("select error");
+        }
+        if (FD_ISSET(clfd, &readfds))
+        {
+            bzero(&buffer, sizeof(buffer));
+            if((received = recv(clfd, buffer, BUFSIZ, 0))==-1)
+            {
+                stop("recv");
+                continue;
+            }
+            else if (received == 0) continue;
+            else
+            {
+                puts("received from Python");
+                
+                printf("%s\n",buffer);
+                return 0;
+                //envoie des données en broadcast
+                // TODO
+            }
+        }
+
+        bzero(&buffer, sizeof(buffer));
+        //réception des données des autres 
+                
     }
 
     close(fd);

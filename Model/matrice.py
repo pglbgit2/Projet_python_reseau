@@ -853,7 +853,7 @@ def deplacement_perso(Mat, tx=nb_cases, ty=nb_cases):
                         else:
                             # print("cas basique", i, j)
                             # print(Mat[j][i][count].name)
-                            (nx, ny) = Deplacement_basique(i, j, no_walker=count)
+                            (nx, ny) = Deplacement_basique_2(i, j, no_walker=count)
                             # print((nx, ny))
                             if nx == 666 and ny == 666:
                                 count -= 1
