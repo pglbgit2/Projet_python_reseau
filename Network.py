@@ -313,7 +313,7 @@ class Network:
                         self.sendToServer('temp.txt')
 
                     if fline[0] == '#delta': # cas envoi de delta
-                        if delta_to_file(l.m.delta) == 0:
+                        if self.delta_to_file(l.m.delta) == 0:
                             pass
                         else:
                             pass
