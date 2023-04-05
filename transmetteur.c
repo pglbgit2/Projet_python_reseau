@@ -210,6 +210,7 @@ int main(int argc, char ** argv)
     list_joueur * list_it = list;
     list_joueur * new_cell = NULL;
     list_joueur * list_bind = NULL;
+    char ** iptables;
 
     if(argc == 3 || argc == 4){
         strcpy(buffer, argv[1]); // ./prog port ip
@@ -218,6 +219,9 @@ int main(int argc, char ** argv)
         //printf("tamp: %s\n",tamp);
 
         create_connect(buffer, tamp, list_bind);
+        // créer char** iptable
+        // faire une fonction char** getiptables()
+        // faire une fonction update_iptable()
     }
     //printf("avant le while\n");
     while(TRUE) 
@@ -225,6 +229,7 @@ int main(int argc, char ** argv)
         //printf("dans le while\n");
         FD_ZERO(&readfds);
         FD_SET(bindsock, &readfds);
+        // penser à cet la socket de l'api
         max_sd = bindsock;
         list_it = list;
         //printf("test1\n");
@@ -288,6 +293,8 @@ int main(int argc, char ** argv)
                     }
                     else
                     {
+                        // liste des cas possibles
+                        // on peut se servir d'un cas ici genre si le buffer contient '?askforip?' on renvoie iptables
 
 
 
@@ -297,6 +304,7 @@ int main(int argc, char ** argv)
                 list_it = list_it->next;
             }
         }
+        // rajouter API en C ici 
     }
 
 
