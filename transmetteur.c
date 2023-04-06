@@ -157,49 +157,49 @@ int main(int argc, char ** argv)
         return -1;
     }
 
-    printf("argv1: %s\n", argv[1]);
-    printf("argv2: %s\n", argv[2]);
+    // printf("argv1: %s\n", argv[1]);
+    // printf("argv2: %s\n", argv[2]);
 
     char* buffer = calloc(sizeof(char),BUFSIZE+5);
 
 
-    struct sockaddr_un svaddr, claddr;
+    // struct sockaddr_un svaddr, claddr;
 
-    int fd, clfd, bytes;
+    // int fd, clfd, bytes;
 
-    int clilen=sizeof(claddr);
+    // int clilen=sizeof(claddr);
 
-    if((fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-        stop("socket");
-    }
+    // if((fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+    //     stop("socket");
+    // }
 
-    if(remove(SSOCKET_FILE) == -1 && errno != ENOENT)
-    {
-        stop("remove");
-    }
+    // if(remove(SSOCKET_FILE) == -1 && errno != ENOENT)
+    // {
+    //     stop("remove");
+    // }
 
-    bzero(&svaddr, sizeof(svaddr));
-    svaddr.sun_family = AF_UNIX;
-    strncpy(svaddr.sun_path, SSOCKET_FILE, sizeof(svaddr.sun_path) - 1);
+    // bzero(&svaddr, sizeof(svaddr));
+    // svaddr.sun_family = AF_UNIX;
+    // strncpy(svaddr.sun_path, SSOCKET_FILE, sizeof(svaddr.sun_path) - 1);
 
-    if (bind(fd, (struct sockaddr *)&svaddr, sizeof(svaddr)) == -1){
-        stop("binding");
-    }
+    // if (bind(fd, (struct sockaddr *)&svaddr, sizeof(svaddr)) == -1){
+    //     stop("binding");
+    // }
 
-    bzero(&claddr, sizeof(claddr));
+    // bzero(&claddr, sizeof(claddr));
 
 
-    if (listen(fd, 1) != 0){
-        stop("listen");
-    }
-    else{
-        printf("listening\n");
-    }
+    // if (listen(fd, 1) != 0){
+    //     stop("listen");
+    // }
+    // else{
+    //     printf("listening\n");
+    // }
 
-    clfd = accept(fd, (struct sockaddr *)&claddr, &clilen);
-    printf("accepted\n");
-    printf("%i\n", claddr.sun_family);
-    int received = 0;
+    // clfd = accept(fd, (struct sockaddr *)&claddr, &clilen);
+    // printf("accepted\n");
+    // printf("%i\n", claddr.sun_family);
+    // int received = 0;
 
     int bindsock, len, activity, max_sd, sd, new_socket,valread;
     struct sockaddr_in address;
@@ -276,7 +276,7 @@ int main(int argc, char ** argv)
         //printf("dans le while\n");
         FD_ZERO(&readfds);
         FD_SET(bindsock, &readfds);
-        FD_SET(clfd, &readfds);
+        // FD_SET(clfd, &readfds);
 
         // penser à cet la socket de l'api
         max_sd = bindsock;
@@ -334,7 +334,7 @@ int main(int argc, char ** argv)
                 if (FD_ISSET( sd , &readfds)) 
                 {
                     bzero(buffer, BUFSIZE);
-                    if ((valread = recv( sd , buffer, 1024, MSG_DONTWAIT)) == 0)
+                    if ((valread = recv( sd , buffer, 65536, 0)) == 0)
                     {
                         //cas de deconnection 
                         getpeername(sd , (struct sockaddr*)&address , (socklen_t*)&len);
@@ -361,23 +361,23 @@ int main(int argc, char ** argv)
                 list_it = list_it->next;
             }
             // API
-            if(FD_ISSET( clfd , &readfds)){
-                bzero(&buffer, sizeof(buffer));
-                if((received = recv(clfd, buffer, BUFSIZ, 0))==-1)
-                {
-                    stop("recv");
-                    continue;
-                }
-                else if (received == 0) continue;
-                else
-                {
-                    puts("received from Python");                
-                    printf("%s\n",buffer);
-                    return 0;
-                    //envoie des données en broadcast
-                    // TODO
-                }
-            }
+            // if(FD_ISSET( clfd , &readfds)){
+            //     bzero(&buffer, sizeof(buffer));
+            //     if((received = recv(clfd, buffer, BUFSIZ, 0))==-1)
+            //     {
+            //         stop("recv");
+            //         continue;
+            //     }
+            //     else if (received == 0) continue;
+            //     else
+            //     {
+            //         puts("received from Python");                
+            //         printf("%s\n",buffer);
+            //         return 0;
+            //         //envoie des données en broadcast
+            //         // TODO
+            //     }
+            // }
         }
         
     }
