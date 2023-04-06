@@ -218,10 +218,15 @@ int main(int argc, char ** argv)
         //printf("buffer: %s\n",buffer);
         //printf("tamp: %s\n",tamp);
 
-        create_connect(buffer, tamp, list_bind);
-        // créer char** iptable
+        new_cell = create_connect(buffer, tamp, list_bind);
         // faire une fonction char** getiptables()
         // faire une fonction update_iptable()
+        // et du coup on appelle create_connect pour chaque ip dans iptables
+        // faut envoyer son port, son ip avec la socket de new_cell avec un truc du style: '?voilamonip?ip?port'
+        // du coup on aura besoin ici de la fonction de shériff pour récupérer l'ip 
+
+        // il y a deux listes: list contient la liste des sockets sur lesquelles on écoute
+        // liste_bind contient la liste des socket sur les quelles on envoie (et du coup l'autre écoute dessus de l'autre coté)
     }
     //printf("avant le while\n");
     while(TRUE) 
@@ -294,9 +299,14 @@ int main(int argc, char ** argv)
                     else
                     {
                         // liste des cas possibles
-                        // on peut se servir d'un cas ici genre si le buffer contient '?askforip?' on renvoie iptables
+                        // on peut se servir d'un cas ici genre si le buffer contient '?askforip?' l'autre renvoie iptables, avec sa propre ip dedans
+                        // cas de reception ip du coup 
 
 
+
+                        // cas commence par '?' : message destiné à C (c vers c)
+                        // cas commence par '#' : message destiné à python
+                        // aucun des deux precedents: erreurs 
 
 
                     }
