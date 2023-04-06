@@ -12,6 +12,7 @@
 #include <sys/select.h>
 #include <math.h>
 
+#define BUFSIZE 65536
 #define SSOCKET_FILE "./ssocket"
 #define CSOCKET_FILE "./csocket"
 
@@ -25,7 +26,7 @@ int main(int argc, char ** argv)
 {
     struct sockaddr_un svaddr, claddr;
 
-    char buffer[30000];
+    char buffer[BUFSIZE];
     int fd, clfd, bytes;
 
     int clilen=sizeof(claddr);
@@ -66,6 +67,10 @@ int main(int argc, char ** argv)
         {
             stop("send python");
         }
+        else
+        {
+            printf("sent %s\n", buffer);
+        }
     fd_set readfds;
     int max_sd, activity;
     while(1)
@@ -81,12 +86,11 @@ int main(int argc, char ** argv)
         if (FD_ISSET(clfd, &readfds))
         {
             bzero(&buffer, sizeof(buffer));
-            if((received = recv(clfd, buffer, BUFSIZ, 0))==-1)
+            if((received = recv(clfd, buffer, BUFSIZE-1, 0)==-1))
             {
                 stop("recv");
                 continue;
             }
-            else if (received == 0) continue;
             else
             {
                 puts("received from Python");
@@ -100,7 +104,6 @@ int main(int argc, char ** argv)
 	  }
 
                 printf("%s\n",buffer);
-                return 0;
                 //envoie des données en broadcast
                 // TODO
             }

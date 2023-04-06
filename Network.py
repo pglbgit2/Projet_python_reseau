@@ -42,20 +42,25 @@ import threading
 # fonction c / python : recevoir envoyer
 # astuce: fichier commence par #machin et se termine par end 
 
+def FillWithZero(valLim,buffer):
+    while len(buffer) < valLim:
+        buffer += '\0'
+
+
 class Network:
 
     def __init__(self) -> None:
-        if len(sys.argv) == 1:
-            threadprogc = threading.Thread( target = subprocess.call, args = ['./transm'])
-        if len(sys.argv) == 3:
-            print(sys.argv[1])
-            print(sys.argv[2])
-            threadprogc = threading.Thread( target = subprocess.call, args = [['./transm', sys.argv[1], sys.argv[2]]])
-        if len(sys.argv) == 4:
-            threadprogc = threading.Thread( target = subprocess.call, args = [['./transm', sys.argv[1], sys.argv[2], sys.argv[3]]])
+        # if len(sys.argv) == 1:
+        #     threadprogc = threading.Thread( target = subprocess.call, args = ['./transm'])
+        # if len(sys.argv) == 3:
+        #     print(sys.argv[1])
+        #     print(sys.argv[2])
+        #     threadprogc = threading.Thread( target = subprocess.call, args = [['./transm', sys.argv[1], sys.argv[2]]])
+        # if len(sys.argv) == 4:
+        #     threadprogc = threading.Thread( target = subprocess.call, args = [['./transm', sys.argv[1], sys.argv[2], sys.argv[3]]])
 
 
-        threadprogc.start()
+        # threadprogc.start()
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self.ssocket_file = path_to_temp_file + '/ssocket'
         print('avant')
@@ -328,7 +333,7 @@ class Network:
     def receiveFromServer(self):
         while True:
             try:
-                bytes = self.sock.recv(1024)  # 1024 bytes ?!
+                bytes = self.sock.recv(65536, 0)
                 print("reçu ")
                 buf = bytes.decode('utf-8')
                 # traitement des modifications
@@ -408,7 +413,7 @@ class Network:
                     print('ERROR: buffer seems to be corrupted')
                     print('quitting now...')
                     assert False
-                assert False
+                # assert False
 
 
 Net = Network()
