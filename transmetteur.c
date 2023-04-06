@@ -13,6 +13,8 @@
 #include <sys/un.h>
 
 #define SSOCKET_FILE "./ssocket"
+#define SSOCKET_FILE2 "./ssocket2"
+
 #define TRUE 1
 #define FALSE 0
 #define PORT 8000
@@ -157,49 +159,59 @@ int main(int argc, char ** argv)
         return -1;
     }
 
-    // printf("argv1: %s\n", argv[1]);
-    // printf("argv2: %s\n", argv[2]);
+    printf("argv1: %s\n", argv[1]);
+    printf("argv2: %s\n", argv[2]);
 
     char* buffer = calloc(sizeof(char),BUFSIZE+5);
 
 
-    // struct sockaddr_un svaddr, claddr;
+    struct sockaddr_un svaddr, claddr;
 
-    // int fd, clfd, bytes;
+    int fd, clfd, bytes;
 
-    // int clilen=sizeof(claddr);
+    socklen_t clilen=sizeof(claddr);
 
-    // if((fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-    //     stop("socket");
-    // }
+    if((fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+        stop("socket");
+    }
+    if (argc == 1){
+        if( remove(SSOCKET_FILE) == -1 && errno != ENOENT)
+        {
+            stop("remove");
+        }
+    }
+    if (argc == 3){
+        if( remove(SSOCKET_FILE2) == -1 && errno != ENOENT)
+        {
+            stop("remove");
+        }
+    }
 
-    // if(remove(SSOCKET_FILE) == -1 && errno != ENOENT)
-    // {
-    //     stop("remove");
-    // }
+    bzero(&svaddr, sizeof(svaddr));
+    svaddr.sun_family = AF_UNIX;
+    if (argc == 1){
+        strncpy(svaddr.sun_path, SSOCKET_FILE, sizeof(svaddr.sun_path) - 1);
+    }
+    if (argc == 3){
+        strncpy(svaddr.sun_path, SSOCKET_FILE2, sizeof(svaddr.sun_path) - 1);
+    }
+    if (bind(fd, (struct sockaddr *)&svaddr, sizeof(svaddr)) == -1){
+        stop("binding");
+    }
 
-    // bzero(&svaddr, sizeof(svaddr));
-    // svaddr.sun_family = AF_UNIX;
-    // strncpy(svaddr.sun_path, SSOCKET_FILE, sizeof(svaddr.sun_path) - 1);
-
-    // if (bind(fd, (struct sockaddr *)&svaddr, sizeof(svaddr)) == -1){
-    //     stop("binding");
-    // }
-
-    // bzero(&claddr, sizeof(claddr));
+    bzero(&claddr, sizeof(claddr));
 
 
-    // if (listen(fd, 1) != 0){
-    //     stop("listen");
-    // }
-    // else{
-    //     printf("listening\n");
-    // }
-
-    // clfd = accept(fd, (struct sockaddr *)&claddr, &clilen);
-    // printf("accepted\n");
-    // printf("%i\n", claddr.sun_family);
-    // int received = 0;
+    if (listen(fd, 1) != 0){
+        stop("listen");
+    }
+    else{
+        printf("listening\n");
+    }
+    clfd = accept(fd, (struct sockaddr *)&claddr, &clilen);
+    printf("accepted\n");
+    printf("%i\n", claddr.sun_family);
+    int received = 0;
 
     int bindsock, len, activity, max_sd, sd, new_socket,valread;
     struct sockaddr_in address;
@@ -361,23 +373,23 @@ int main(int argc, char ** argv)
                 list_it = list_it->next;
             }
             // API
-            // if(FD_ISSET( clfd , &readfds)){
-            //     bzero(&buffer, sizeof(buffer));
-            //     if((received = recv(clfd, buffer, BUFSIZ, 0))==-1)
-            //     {
-            //         stop("recv");
-            //         continue;
-            //     }
-            //     else if (received == 0) continue;
-            //     else
-            //     {
-            //         puts("received from Python");                
-            //         printf("%s\n",buffer);
-            //         return 0;
-            //         //envoie des données en broadcast
-            //         // TODO
-            //     }
-            // }
+            if(FD_ISSET( clfd , &readfds)){
+                bzero(&buffer, sizeof(buffer));
+                if((received = recv(clfd, buffer, BUFSIZ, 0))==-1)
+                {
+                    stop("recv");
+                    continue;
+                }
+                else if (received == 0) continue;
+                else
+                {
+                    puts("received from Python");                
+                    printf("%s\n",buffer);
+                    return 0;
+                    //envoie des données en broadcast
+                    // TODO
+                }
+            }
         }
         
     }
