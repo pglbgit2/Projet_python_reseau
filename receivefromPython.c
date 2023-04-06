@@ -10,6 +10,7 @@
 #include <strings.h>
 #include <string.h>
 #include <sys/select.h>
+#include <math.h>
 
 #define SSOCKET_FILE "./ssocket"
 #define CSOCKET_FILE "./csocket"
@@ -89,7 +90,15 @@ int main(int argc, char ** argv)
             else
             {
                 puts("received from Python");
-                
+                if((int size = strlen(buffer)) >= 1400)
+	  {
+		//big file to send, required to cut
+		float calc = size/1400;
+		int needed_buffers = round(calc) + 1;
+		char ** buffers = malloc(sizeof(char *);
+		
+	  }
+
                 printf("%s\n",buffer);
                 return 0;
                 //envoie des données en broadcast

@@ -16,12 +16,16 @@ import errno
 import struct
 import time
 import select
+import random
 
 from View.settings import path_to_temp_file
 from Model import logique as l
+from math import *
 import copy as cp
 import subprocess
 import threading
+
+
 ################################### LISTE DES OBJECTIFS PARTIE LOGIQUE ####################################################
 # map_to_file doit pouvoir transformer l'integralité du jeu: walker + contenu des batiments -> texte                      #
 # file_to_map doit pouvoir transformer du texte en elements de jeu: texte -> walker  + contenu des batiments              #
@@ -34,16 +38,16 @@ import threading
 # Probleme identification walker-batiment: utiliser numerotation ? SOLUTION : SUPPRIMER LE D2PLACEMENT AL2ATOIRE          #
 ###########################################################################################################################
 
-#fonction c / python : recevoir envoyer
+# fonction c / python : recevoir envoyer
 # astuce: fichier commence par #machin et se termine par end 
 
 class Network:
 
     def __init__(self) -> None:
-        threadprogc = threading.Thread( target = subprocess.call, args = ['./pyrecv'])
+        threadprogc = threading.Thread(target=subprocess.call, args=['./pyrecv'])
         threadprogc.start()
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        self.ssocket_file=path_to_temp_file+'/ssocket'
+        self.ssocket_file = path_to_temp_file + '/ssocket'
         print('avant')
         test = 0
         while test == 0:
@@ -270,40 +274,90 @@ class Network:
         text = f.read()
         f.close()
         instruction_list = text.split(';')
-        for k in range(1,len(instruction_list)):
+        for k in range(1, len(instruction_list)):
             exec(instruction_list[k])
         try:
             os.remove(path_to_temp_file + "\\otherDelta.txt")
         except:
             os.remove(path_to_temp_file + "/otherDelta.txt")
 
-
-
-    def sendToServer(self, file_name): #not actually a server
+    def sendToServer(self, file_name):  # not actually a server
 
         try:
-            with open('./'+ file_name, 'r') as toSend:
+            with open('./' + file_name, 'r') as toSend:
                 data = toSend.read()
-                arr = bytes(data, 'utf-8')
-                arr2 = struct.pack(">H", 8)
-                # print(arr2)
-                time.sleep(1)
-                self.sock.send(arr)
+                size = len(data)
+                if size > 1400:
+
+                    # nb_buffers = floor(size/1400) + 1
+                    # [None for buffers in range(nb_buffers - 1)]
+                    id = random.randint(0,9)
+                    buffers = [data[1400 * i:1400 * (i + 1)] for i in range(size / 1400 + 1)]
+
+                    k = 0
+                    for i in range(0, len(buffers) - 2):
+                        buffers[i] = 'MULTIPLE;' + id + ';' + str(i) + ';' + str(len(buffers)-1) + '///' + data[k:k + 1400] # SIZE : <1500
+                        k = k + 1400 + 1
+
+                    buffers[len(buffers) - 1] = arr[k:size]
+
+                    for i in range(0, len(buffers)):
+                        arr = bytes(buffers[i], 'utf-8')
+                        self.sock.send(arr)
+
+                else:
+                    arr = bytes(data, 'utf-8')
+                    # arr2 = struct.pack(">H", 8)
+                    # print(arr2)
+                    # time.sleep(1)
+                    self.sock.send(arr)
+
         finally:
             pass
 
     def receiveFromServer(self):
         while True:
             try:
-                bytes = self.sock.recv(1024)
+                bytes = self.sock.recv(1024)  # 1024 bytes ?!
                 print("reçu ")
                 buf = bytes.decode('utf-8')
                 # traitement des modifications
+                if buf[0:7] == 'MULTIPLE':
+                    #id = int(buf[9])
+                    separ = buf.split('///') # separ[0] = header /// separ[1] = data
+                    header = separ.split(';')
+
+                    size = int(header[3])
+                    row = int(header[2])
+
+                    buf_wait = []
+                    buf_wait[row] = separ[1]
+                    buf_wait_trigger = 1
+
+                    while buf_wait_trigger != buf_wait_size:
+                        bytes = self.sock.recv(1024)
+                        temp = bytes.decode('utf-8')
+                        if temp[0:7] != 'MULTIPLE':
+                            #Unrelated packet received, treatment discarded at this time.
+                            pass
+                        else:
+                            separ = temp.split('///')  # separ[0] = header /// separ[1] = data
+                            header = separ.split(';')
+
+                            row = int(header[2])
+                            buf_wait[row] = separ[1]
+                            buf_wait_trigger += 1
+
+                    # I HATE THE ANTICHRIST
+
+                    # Okay, now we somehow have the whole message inside buf_wait[] (Don't ask how)
+
+                    buf = ''.join(buf_wait)
+
                 return buf
             except socket.error as e:
                 print(e)
                 return -1
-
 
     def GestionEntreesSortie(self):
         if self.rdescriptors == []:
@@ -320,24 +374,23 @@ class Network:
                 if buf[0] == '#':
 
                     fline = buf.split('\n')
-                    print("fline = ",fline)
-                    if fline[0] == '#newco': #cas demande d'envoie de données complete
-                        
+                    print("fline = ", fline)
+                    if fline[0] == '#newco':  # cas demande d'envoie de données complete
+
                         self.map_to_file(l.m.Mat_batiment, l.m.Mat_perso, m.nb_cases_x, m.nb_cases_y)
                         self.sendToServer('temp.txt')
                         print('send newco')
 
-                    if fline[0] == '#delta': # cas envoi de delta
+                    if fline[0] == '#delta':  # cas envoi de delta
                         if self.delta_to_file(l.m.delta) == 0:
                             pass
                         else:
                             self.sendToServer("delta.txt")
                             # envoi du fichier delta
 
-                    if fline[0] == '#welcome': # cas reception ensemble donne jeu
+                    if fline[0] == '#welcome':  # cas reception ensemble donne jeu
                         self.file_to_map(l.m.Mat_batiment, m.nb_cases_x, m.nb_cases_y)
                         print('receiv welcome')
-
 
                 else:
                     print(buf)
