@@ -222,7 +222,7 @@ int main(int argc, char ** argv)
         // faire une fonction char** getiptables()
         // faire une fonction update_iptable()
         // et du coup on appelle create_connect pour chaque ip/port dans iptables
-        // faut envoyer son port (le port sur lequel notre socket bindée écoute), son ip avec la socket de new_cell avec un truc du style: '?voilamonip?ip?port'
+        // faut envoyer son port (le port sur lequel notre socket bindée écoute), son ip (127.0.0.1 pour les test) avec la socket de new_cell avec un truc du style: '?voilamonip?ip?port'
         // du coup on aura besoin ici de la fonction de shériff pour récupérer l'ip 
 
         // il y a deux listes: list contient la liste des sockets sur lesquelles on écoute
@@ -299,8 +299,11 @@ int main(int argc, char ** argv)
                     else
                     {
                         // liste des cas possibles
-                        // on peut se servir d'un cas ici genre si le buffer contient '?askforip?' l'autre renvoie iptables, avec sa propre ip dedans
-                        // cas de reception ip du coup 
+                        // on peut se servir d'un cas ici genre si le buffer contient '?askforip?' l'autre renvoie iptables, avec sa propre ip dedans, et il faut les ports aussi
+                        // cas de reception ip du coup : l'autre nous indique simplement quel est son ip
+                        // c'est important de faire la distinction entre les deux precedents, parce que:
+                        // on demande une fois la liste des addresse ip, mais on doit indiquer son ip /port à chaque joueur
+                        // quand on recoit une addresse ip et un port, il faut appeller create_connect dessus
 
 
 
