@@ -221,8 +221,8 @@ int main(int argc, char ** argv)
         new_cell = create_connect(buffer, tamp, list_bind);
         // faire une fonction char** getiptables()
         // faire une fonction update_iptable()
-        // et du coup on appelle create_connect pour chaque ip dans iptables
-        // faut envoyer son port, son ip avec la socket de new_cell avec un truc du style: '?voilamonip?ip?port'
+        // et du coup on appelle create_connect pour chaque ip/port dans iptables
+        // faut envoyer son port (le port sur lequel notre socket bindée écoute), son ip avec la socket de new_cell avec un truc du style: '?voilamonip?ip?port'
         // du coup on aura besoin ici de la fonction de shériff pour récupérer l'ip 
 
         // il y a deux listes: list contient la liste des sockets sur lesquelles on écoute
@@ -304,7 +304,7 @@ int main(int argc, char ** argv)
 
 
 
-                        // cas commence par '?' : message destiné à C (c vers c)
+                        // cas commence par '?' : message destiné à C (juste du c vers c)
                         // cas commence par '#' : message destiné à python
                         // aucun des deux precedents: erreurs 
 
