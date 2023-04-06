@@ -156,10 +156,48 @@ int main(int argc, char ** argv)
         printf("Error: you're supposed to either give IP and Port number as arguments, or nothing\n");
         return -1;
     }
+    char* buffer = calloc(sizeof(char),BUFSIZE+5);
 
+
+    struct sockaddr_un svaddr, claddr;
+
+    int fd, clfd, bytes;
+
+    int clilen=sizeof(claddr);
+
+    if((fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+        stop("socket");
+    }
+
+    if(remove(SSOCKET_FILE) == -1 && errno != ENOENT)
+    {
+        stop("remove");
+    }
+
+    bzero(&svaddr, sizeof(svaddr));
+    svaddr.sun_family = AF_UNIX;
+    strncpy(svaddr.sun_path, SSOCKET_FILE, sizeof(svaddr.sun_path) - 1);
+
+    if (bind(fd, (struct sockaddr *)&svaddr, sizeof(svaddr)) == -1){
+        stop("binding");
+    }
+
+    bzero(&claddr, sizeof(claddr));
+
+
+    if (listen(fd, 1) != 0){
+        stop("listen");
+    }
+    else{
+        printf("listening\n");
+    }
+
+    clfd = accept(fd, (struct sockaddr *)&claddr, &clilen);
+    printf("accepted\n");
+    printf("%i\n", claddr.sun_family);
+    int received = 0;
 
     int bindsock, len, activity, max_sd, sd, new_socket,valread;
-    char* buffer = calloc(sizeof(char),BUFSIZE+5);
     struct sockaddr_in address;
     struct sockaddr_in jaddr;
     int opt = TRUE;
@@ -234,6 +272,8 @@ int main(int argc, char ** argv)
         //printf("dans le while\n");
         FD_ZERO(&readfds);
         FD_SET(bindsock, &readfds);
+        FD_SET(clfd, &readfds);
+
         // penser à cet la socket de l'api
         max_sd = bindsock;
         list_it = list;
@@ -316,8 +356,25 @@ int main(int argc, char ** argv)
                 }
                 list_it = list_it->next;
             }
+            if(FD_ISSET( clfd , &readfds)){
+                bzero(&buffer, sizeof(buffer));
+                if((received = recv(clfd, buffer, BUFSIZ, 0))==-1)
+                {
+                    stop("recv");
+                    continue;
+                }
+                else if (received == 0) continue;
+                else
+                {
+                    puts("received from Python");                
+                    printf("%s\n",buffer);
+                    return 0;
+                    //envoie des données en broadcast
+                    // TODO
+                }
+            }
         }
-        // rajouter API en C ici 
+        
     }
 
 
