@@ -18,6 +18,7 @@ import time
 import select
 import random
 
+import sys
 from View.settings import path_to_temp_file
 from Model import logique as l
 from math import *
@@ -44,7 +45,16 @@ import threading
 class Network:
 
     def __init__(self) -> None:
-        threadprogc = threading.Thread(target=subprocess.call, args=['./pyrecv'])
+        if len(sys.argv) == 1:
+            threadprogc = threading.Thread( target = subprocess.call, args = ['./transm'])
+        if len(sys.argv) == 3:
+            print(sys.argv[1])
+            print(sys.argv[2])
+            threadprogc = threading.Thread( target = subprocess.call, args = [['./transm', sys.argv[1], sys.argv[2]]])
+        if len(sys.argv) == 4:
+            threadprogc = threading.Thread( target = subprocess.call, args = [['./transm', sys.argv[1], sys.argv[2], sys.argv[3]]])
+
+
         threadprogc.start()
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self.ssocket_file = path_to_temp_file + '/ssocket'
@@ -358,6 +368,7 @@ class Network:
             except socket.error as e:
                 print(e)
                 return -1
+
 
     def GestionEntreesSortie(self):
         if self.rdescriptors == []:

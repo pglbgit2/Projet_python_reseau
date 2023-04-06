@@ -532,7 +532,7 @@ def departureMatrice(Mat):
                 add_bat(j, i, map_depart[j][i], Mat)
 
     add_bat(20, 0, name_id["Panneau Entree"])
-    afficher_matrice_bat(Mat, nb_cases_x, nb_cases_y)
+    #afficher_matrice_bat(Mat, nb_cases_x, nb_cases_y)
 
 
 # teste si l'emplacement x,y d'une matrice correspond a un chemin
