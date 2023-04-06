@@ -156,6 +156,10 @@ int main(int argc, char ** argv)
         printf("Error: you're supposed to either give IP and Port number as arguments, or nothing\n");
         return -1;
     }
+
+    printf("argv1: %s\n", argv[1]);
+    printf("argv2: %s\n", argv[2]);
+
     char* buffer = calloc(sizeof(char),BUFSIZE+5);
 
 
@@ -356,6 +360,7 @@ int main(int argc, char ** argv)
                 }
                 list_it = list_it->next;
             }
+            // API
             if(FD_ISSET( clfd , &readfds)){
                 bzero(&buffer, sizeof(buffer));
                 if((received = recv(clfd, buffer, BUFSIZ, 0))==-1)

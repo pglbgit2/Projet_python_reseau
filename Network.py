@@ -43,9 +43,11 @@ class Network:
         if len(sys.argv) == 1:
             threadprogc = threading.Thread( target = subprocess.call, args = ['./transm'])
         if len(sys.argv) == 3:
-            threadprogc = threading.Thread( target = subprocess.call, args = ['./transm', sys.argv[1], sys.argv[2]])
+            print(sys.argv[1])
+            print(sys.argv[2])
+            threadprogc = threading.Thread( target = subprocess.call, args = [['./transm', sys.argv[1], sys.argv[2]]])
         if len(sys.argv) == 4:
-            threadprogc = threading.Thread( target = subprocess.call, args = ['./transm', sys.argv[1], sys.argv[2], sys.argv[3]])
+            threadprogc = threading.Thread( target = subprocess.call, args = [['./transm', sys.argv[1], sys.argv[2], sys.argv[3]]])
         
         
         threadprogc.start()
