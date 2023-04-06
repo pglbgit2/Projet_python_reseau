@@ -13,6 +13,8 @@ from Model import Test_logique as Test_l
 from Interface.InputBoxName import SP_input
 from Interface.Data_controller import set_screen_HP
 from Network import Network
+import subprocess
+import select as s
 
 list_event = {l.Nume_administratif, l.Nume_eau, l.Nume_ingenieur, l.Nume_maison, l.Nume_nourriture, l.Nume_pelle,
               l.Nume_prefecure, l.Nume_route, l.Nume_sante, l.Nume_theatre}
@@ -54,9 +56,7 @@ class Game:
             self.events()
             self.update()
             self.draw()
-            #self.network.map_to_file(l.m.Mat_batiment, l.m.Mat_perso, 40, 40)
-            if a == 50:
-                self.network.file_to_map(l.m.Mat_batiment, 40, 40)
+            s.select(self.network.ssocket_file)
 
             #self.network.delta_to_file(l.m.delta)
             #self.network.file_to_modif()

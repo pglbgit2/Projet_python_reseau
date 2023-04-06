@@ -15,6 +15,7 @@ import socket
 import errno
 import struct
 import time
+# import select
 
 from View.settings import path_to_temp_file
 from Model import logique as l
@@ -258,13 +259,7 @@ class Network:
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
     #
-    csocket_file='./csocket'
     ssocket_file='./ssocket'
-    try:
-        os.remove(csocket_file)
-    except OSError:
-        pass
-    sock.bind(csocket_file)
 
     sock.connect(ssocket_file)
 
@@ -274,21 +269,25 @@ class Network:
             with open('./temp.txt', 'r') as toSend:
                 data=toSend.read()
                 arr = bytes(data, 'utf-8')
-                arr2=struct.pack(">H", 8)
-                #print(arr2)
-                time.sleep(1)
                 self.sock.send(arr)
         finally:
             pass
         
 
     def receiveFromServer(self):
-        while True:
+        # while True:
             try:
-                bytes = self.sock.recv(1024)
+                bytes = self.sock.recv(8192)
                 print("reçu ")
+                # print(bytes)
                 print(bytes.decode('utf-8'))
                 #traitement des modifications
             except socket.error as e:
                 print(e)
             
+n = Network()
+n.sendToServer()
+n.receiveFromServer()
+time.sleep(1)
+n.receiveFromServer()
+n.receiveFromServer()

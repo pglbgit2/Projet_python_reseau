@@ -12,7 +12,6 @@
 
 
 #define SSOCKET_FILE "./ssocket"
-#define CSOCKET_FILE "./csocket"
 
 void stop(char * err)
 {
@@ -24,7 +23,7 @@ int main(int argc, char ** argv)
 {
     struct sockaddr_un svaddr, claddr;
 
-    char buffer[BUFSIZ];
+    char buffer[30000];
     int fd, clfd, bytes;
 
     int clilen=sizeof(claddr);
@@ -63,16 +62,16 @@ int main(int argc, char ** argv)
     while(1)
     {
         bzero(&buffer, sizeof(buffer));
-        if((received = recv(clfd, buffer, BUFSIZ, 0))==-1)
+        if((received = recv(clfd, buffer, 30000, 0))==-1)
         {
             stop("recv");
-            continue;
+            // continue;
         }
-        else if (received == 0) continue;
+        // else if (received == 0) continue;
         else
         {
             puts("received from Python");
-            printf("%s\n",buffer);
+            // printf("%s\n",buffer);
 
             //envoie des données en broadcast
             //TODO
@@ -88,6 +87,9 @@ int main(int argc, char ** argv)
         if(send(clfd, buffer, strlen(buffer), 0)<0)
         {
             stop("send python");
+        }
+        else{
+            printf("envoyé %s\n", buffer);
         }
         
     }
