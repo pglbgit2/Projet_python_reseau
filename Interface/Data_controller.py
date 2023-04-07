@@ -36,6 +36,7 @@ Path_HP_load_game = f"{getcwd()}{Path_home_page}HP_load_game.PNG"
 Path_HP_join_game = f"{getcwd()}{Path_home_page}HP_join_game.PNG"
 Path_HP_support = f"{getcwd()}{Path_home_page}HP_support.PNG"
 Path_HP_tittle = f"{getcwd()}{Path_home_page}HP_tittle.PNG"
+Path_HP_new =  f"{getcwd()}{Path_home_page}NEW.PNG"
 
 Path_save_page = "/View/Sprites/Save_page/"
 Path_SP_back = f"{getcwd()}{Path_save_page}SP_background.PNG"
@@ -58,6 +59,7 @@ Pos_HP_load_game = (window_width / 2, 6 * winddow_height / 10)
 Pos_HP_join_game = (window_width / 2, 4 * winddow_height / 10)
 Pos_HP_support = (window_width / 5, 2 * winddow_height / 3)
 Pos_HP_tittle = (window_width / 2, winddow_height / 2)
+Pos_HP_new = (window_width/2 - 225, 4 * winddow_height /10)
 
 Pos_SP_back = (window_width / 2, winddow_height / 2)
 Pos_SP_validate = (4 * window_width / 10, 3 * winddow_height / 4)
@@ -288,6 +290,9 @@ HP_exit.resize((window_width, winddow_height))
 HP_newc = Button(Pos_HP_new_carrer, Path_HP_new_carrer, go_to_new_carrer)
 HP_newc.resize((window_width, winddow_height))
 
+HP_new = Button(Pos_HP_new, Path_HP_new, None)
+HP_new.resize((window_width, winddow_height))
+
 HP_load_game = Button(Pos_HP_load_game, Path_HP_load_game, go_to_save_repositori)
 HP_load_game.resize((window_width, winddow_height))
 
@@ -359,6 +364,7 @@ def disable_all_HP_button():
     HP_exit.set_disable()
     HP_load_game.set_disable()
     HP_newc.set_disable()
+    HP_new.set_disable()
     HP_join_game.set_disable()
     HP_support.set_disable()
 
@@ -383,6 +389,7 @@ def enable_all_HP_button():
     HP_exit.set_enable()
     HP_load_game.set_enable()
     HP_newc.set_enable()
+    HP_new.set_enable()
     HP_join_game.set_enable()
     HP_support.set_enable()
 
@@ -410,6 +417,8 @@ def set_screen_HP(screen):
     HP_load_game.overhead((0, 0), screen)
     HP_join_game.draw_image_center(screen)
     HP_join_game.overhead((0, 0), screen)
+    HP_new.draw_image_center(screen)
+    HP_new.overhead((0, 0), screen)
 
     pg.display.update()
 
