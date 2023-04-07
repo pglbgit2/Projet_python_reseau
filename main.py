@@ -20,7 +20,7 @@ def main():
     pg.init()
     pg.mixer.init()
     global screen
-    screen = pg.display.set_mode((pg.display.Info().current_w - 20, pg.display.Info().current_h - 20), pg.RESIZABLE)
+    screen = pg.display.set_mode((0, 0), pg.RESIZABLE)
     clock = pg.time.Clock()
     pg.mixer.init()
     pg.mixer.music.load("Rome4.mp3")

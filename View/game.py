@@ -77,6 +77,8 @@ class Game:
 
             if event.type == pg.VIDEORESIZE:
                 (self.camera.width, self.camera.height) = self.screen.get_size()
+                (self.width, self.height) = self.screen.get_size()
+                self.hud = Hud(self.width, self.height)
 
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
