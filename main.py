@@ -22,7 +22,7 @@ def main():
     global screen
     global connection
     global connection_utils
-    screen = pg.display.set_mode((0, 0), pg.RESIZABLE)
+    screen = pg.display.set_mode((0, 0), pg.FULLSCREEN)
     connection = False
     clock = pg.time.Clock()
     pg.mixer.init()
