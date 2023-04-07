@@ -49,7 +49,8 @@ def FillWithZero(valLim, buffer):
 
 class Network:
 
-    def __init__(self) -> None:
+    def __init__(self, IP, port, whatFor) -> None:
+        """
         if len(sys.argv) == 1:
             threadprogc = threading.Thread(target=subprocess.call, args=['./transm'])
         if len(sys.argv) == 3:
@@ -59,6 +60,12 @@ class Network:
         if len(sys.argv) == 4:
             threadprogc = threading.Thread(target=subprocess.call,
                                            args=[['./transm', sys.argv[1], sys.argv[2], sys.argv[3]]])
+        """
+        if whatFor == "New_player":
+            threadprogc = threading.Thread(target=subprocess.call, args=[['./transm', port, IP]])
+
+        if whatFor == "New_game":
+            threadprogc = threading.Thread(target=subprocess.call, args=['./transm'])
 
         threadprogc.start()
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)

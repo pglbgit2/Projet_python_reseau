@@ -12,9 +12,9 @@ from Model import logique as l
 from Model import Test_logique as Test_l
 from Interface.InputBoxName import SP_input
 from Interface.Data_controller import set_screen_HP
-# from Network import Network
-# import os
-# import subprocess
+from Network import Network
+import os
+import subprocess
 
 list_event = {l.Nume_administratif, l.Nume_eau, l.Nume_ingenieur, l.Nume_maison, l.Nume_nourriture, l.Nume_pelle,
               l.Nume_prefecure, l.Nume_route, l.Nume_sante, l.Nume_theatre}
@@ -37,8 +37,8 @@ class Game:
         # hud
         self.hud = Hud(self.width, self.height)
 
-        # network
-        # self.network = Network()
+
+        #
 
         overlay = ""
         self.selection =[[],[]]
@@ -46,9 +46,37 @@ class Game:
         self.mouse_button = [[],[],[]]
         self.playing = True
 
-    def run(self):
+    def run(self, multi=False):
         
         self.playing = True
+
+        if multi:
+            print("Enter IP address here (leave empty if new game):")
+            IP = input()
+            print("Enter port :")
+            port = input()
+
+            if IP == "":
+                print("New game created ! IP address is : ", end="")
+                print(socket.gethostbyname(socket.gethostname()))
+                print(":", end="")
+                print(port)
+                # network
+                self.network = Network(IP, port, 'New_game')
+
+            else:
+                print("Attempting connection to ", end="")
+                print(IP, end="")
+                print(":", end="")
+                print(port, end="")
+                print(" ...")
+                # network
+                self.network = Network(IP, port, 'New_player')
+
+                #Traitement de la première entrée en game à faire ici !
+
+        pg.mixer.music.load("Rome1.mp3")
+        pg.mixer.music.play()
 
         while self.playing:
             self.clock.tick(60)
@@ -169,6 +197,8 @@ class Game:
             #    init_clique_pos = self.mouse_to_tiles()
 
     def update(self):
+        if multi:
+            self.network.GestionEntreesSortie()
         Test_l.Tour_jeu()
         self.camera.update()
 

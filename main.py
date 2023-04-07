@@ -20,7 +20,11 @@ def main():
     pg.init()
     pg.mixer.init()
     global screen
+    global connection
+    global IP
+    global port
     screen = pg.display.set_mode((0, 0), pg.RESIZABLE)
+    connection = False
     clock = pg.time.Clock()
     pg.mixer.init()
     pg.mixer.music.load("Rome4.mp3")
@@ -102,19 +106,10 @@ def main():
                     elif Cur_page == "Join":
 
                         if JP_connect.overhead(mouse_track, screen):
-                            print("Enter IP address here (leave empty if new game):")
-                            IP = input()
-                            if IP == "":
-                                print("New game created ! IP address is : ", end="")
-                                print(socket.gethostbyname(socket.gethostname()))
-                            else:
-                                print("Attempting connection to ", end="")
-                                print(IP, end="")
-                                print(" ...")
-                            pg.mixer.music.load("Rome1.mp3")
-                            pg.mixer.music.play()
+
                             Launch = False
                             playing = True
+                            connection = True
                             disable_all_JP_button()
 
                     elif Cur_page == "Select":  # Si ony se trouve sur la page Select
@@ -174,7 +169,7 @@ def main():
                     pg.display.update()
 
         while playing:
-            playing = Game_terminus.run()
+            playing = Game_terminus.run(connection)
 
             if not playing:
                 Cur_page = "Home"
