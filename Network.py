@@ -386,8 +386,8 @@ class Network:
         if rlist != []:
             assert rlist[0] == self.sock
             buf = self.receiveFromServer()
-            if buf == -1:
-                print('rien recu')
+            if buf == -1 or len(buf) == 0:
+                assert False # cas deconnection
             else:
                 if buf[0] == '#':
 

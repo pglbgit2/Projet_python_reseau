@@ -117,7 +117,7 @@ int remove_cell(list_joueur** adlist, list_joueur* cell){
     return 0;
 }
 
-list_joueur * create_connect(char * port, char * ip, list_joueur * list){
+list_joueur * create_connect(char * port, char * ip, list_joueur ** list){
         int sockfd;
 	    struct sockaddr_in first;
 	    sockfd = socket(AF_INET , SOCK_STREAM , 0);
@@ -143,10 +143,31 @@ list_joueur * create_connect(char * port, char * ip, list_joueur * list){
         //printf("debug2\n");
 
         new_cell = create_cell(&sockfd,&first);
+        printf("%d\n", new_cell->sockfd);
         //printf("debug3\n");
-        put_cell(list,new_cell);
+        if (*list != NULL){
+            put_cell(*list,new_cell);
+        }
+        else{
+            *list = new_cell;
+        }
         //printf("debug4\n");
 	    return new_cell;
+}
+
+
+int sendall(char * buffer, list_joueur * player_list){
+    printf("send all called\n");
+    int test;
+    list_joueur * list_it = player_list;
+    while (list_it != NULL){
+        test = send(list_it->sockfd, buffer, BUFSIZE, 0);
+        if (test < 0){
+            return -1;
+        }
+        list_it = list_it->next;
+    }
+    return 1;
 }
 
 
@@ -272,7 +293,9 @@ int main(int argc, char ** argv)
         //printf("buffer: %s\n",buffer);
         //printf("tamp: %s\n",tamp);
 
-        new_cell = create_connect(buffer, tamp, list_bind);
+        new_cell = create_connect(buffer, tamp, &list_bind);
+        printf("avanttest\n");
+        printf("test:%i\n", new_cell->sockfd);
         send(new_cell->sockfd,"test\n",6,0);
         // faire une fonction char** getiptables()
         // faire une fonction update_iptable()
@@ -319,7 +342,7 @@ int main(int argc, char ** argv)
         }
         //printf("test2\n");
         activity = select( max_sd+1 , &readfds , NULL , NULL , NULL);
-        //printf("test3\n");
+        printf("test3\n");
 
         if ((activity < 0) && (errno != EINTR)) 
         {
@@ -344,7 +367,12 @@ int main(int argc, char ** argv)
                 list = new_cell;
             }
             else{
-                put_cell(list, new_cell);
+                if (list != NULL){
+                    put_cell(list, new_cell);
+                }
+                else{
+                    list = new_cell;
+                }
             }
         }
         
@@ -365,6 +393,7 @@ int main(int argc, char ** argv)
                     else
                     {
                         printf("%s\n",buffer);
+                       
                         // liste des cas possibles
                         // on peut se servir d'un cas ici genre si le buffer contient '?askforip?' l'autre renvoie iptables, avec sa propre ip dedans, et il faut les ports aussi
                         // cas de reception ip du coup : l'autre nous indique simplement quel est son ip
@@ -372,20 +401,23 @@ int main(int argc, char ** argv)
                         // on demande une fois la liste des addresse ip, mais on doit indiquer son ip /port à chaque joueur
                         // quand on recoit une addresse ip et un port, il faut appeller create_connect dessus
 
-
-
                         // cas commence par '?' : message destiné à C (juste du c vers c)
                         // cas commence par '#' : message destiné à python
                         // aucun des deux precedents: erreurs 
 
 
+
+
+
                     }
                 }
                 list_it = list_it->next;
+                printf("test while\n");
             }
             // API
             if(FD_ISSET( clfd , &readfds)){
-                bzero(buffer, sizeof(buffer));
+                printf("select api\n");
+                bzero(buffer, strlen(buffer));
                 if((received = recv(clfd, buffer, BUFSIZE-1, 0))==-1)
                 {
                     stop("recv");
@@ -396,6 +428,17 @@ int main(int argc, char ** argv)
                 {
                     puts("received from Python");                
                     printf("%s\n",buffer);
+                    printf("%c\n",buffer[0]);
+                    if (buffer[0] == '#' && list_bind != NULL){
+                        sendall(buffer,list_bind);
+                    }
+                    printf("jspsqyspasse\n");
+                    list_it = list_bind;
+                    printf("avant affichage list_bind\n");
+                    if (argc == 3){
+                        printf("%i\n",list_bind->sockfd);
+                    }
+
                     //envoie des données en broadcast
                     // TODO
                 }
