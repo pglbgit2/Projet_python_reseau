@@ -42,7 +42,7 @@ import threading
 # fonction c / python : recevoir envoyer
 # astuce: fichier commence par #machin et se termine par end 
 
-def FillWithZero(valLim,buffer):
+def FillWithZero(valLim, buffer):
     while len(buffer) < valLim:
         buffer += '\0'
 
@@ -51,14 +51,14 @@ class Network:
 
     def __init__(self) -> None:
         if len(sys.argv) == 1:
-            threadprogc = threading.Thread( target = subprocess.call, args = ['./transm'])
+            threadprogc = threading.Thread(target=subprocess.call, args=['./transm'])
         if len(sys.argv) == 3:
             print(sys.argv[1])
             print(sys.argv[2])
-            threadprogc = threading.Thread( target = subprocess.call, args = [['./transm', sys.argv[1], sys.argv[2]]])
+            threadprogc = threading.Thread(target=subprocess.call, args=[['./transm', sys.argv[1], sys.argv[2]]])
         if len(sys.argv) == 4:
-            threadprogc = threading.Thread( target = subprocess.call, args = [['./transm', sys.argv[1], sys.argv[2], sys.argv[3]]])
-
+            threadprogc = threading.Thread(target=subprocess.call,
+                                           args=[['./transm', sys.argv[1], sys.argv[2], sys.argv[3]]])
 
         threadprogc.start()
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -70,7 +70,7 @@ class Network:
         test = 0
         while test == 0:
             try:
-                print("ssocketfile:",self.ssocket_file)
+                print("ssocketfile:", self.ssocket_file)
                 self.sock.connect(self.ssocket_file)
                 test = 1
             except:
@@ -376,7 +376,6 @@ class Network:
                 print(e)
                 return -1
 
-
     def GestionEntreesSortie(self):
         if self.rdescriptors == []:
             self.rdescriptors.append(self.sock)
@@ -418,6 +417,6 @@ class Network:
                 # assert False
 
 
-Net = Network()
-while True:
-    Net.GestionEntreesSortie()
+# Net = Network()
+# while True:
+#    Net.GestionEntreesSortie()
