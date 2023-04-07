@@ -273,6 +273,7 @@ int main(int argc, char ** argv)
         //printf("tamp: %s\n",tamp);
 
         new_cell = create_connect(buffer, tamp, list_bind);
+        send(new_cell->sockfd,"test\n",6,0);
         // faire une fonction char** getiptables()
         // faire une fonction update_iptable()
         // et du coup on appelle create_connect pour chaque ip/port dans iptables
@@ -363,6 +364,7 @@ int main(int argc, char ** argv)
                     }
                     else
                     {
+                        printf("%s\n",buffer);
                         // liste des cas possibles
                         // on peut se servir d'un cas ici genre si le buffer contient '?askforip?' l'autre renvoie iptables, avec sa propre ip dedans, et il faut les ports aussi
                         // cas de reception ip du coup : l'autre nous indique simplement quel est son ip
