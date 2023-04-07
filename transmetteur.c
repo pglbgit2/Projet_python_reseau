@@ -91,6 +91,16 @@ list_joueur * create_cell(int* sockfd, struct sockaddr_in* addr){
 }
 
 
+int update_iptable(char * port, char * ip, char *** iptables){
+    int i = 0;
+    while(*iptables[i] != NULL){
+        i++;
+    }
+    port[strlen(port)] = ';';
+    strcpy(*iptables[i], port);
+    ip[strlen(ip)] =';';
+    strcpy(*iptables[i+1], ip);
+}
 
 int put_cell(list_joueur** list, list_joueur* cell){
     if (*list == NULL){
@@ -480,7 +490,7 @@ int main(int argc, char ** argv)
                                 i++;
                                 while(tamp[i] != ';')
                                     ip[i] = tamp[i];
-
+                                update_iptable(port,ip,&iptables); // elle existe pas encore
                                 create_connect(port,ip,&list_bind);
                             }
                        }
