@@ -50,23 +50,27 @@ def FillWithZero(valLim,buffer):
 class Network:
 
     def __init__(self) -> None:
-        # if len(sys.argv) == 1:
-        #     threadprogc = threading.Thread( target = subprocess.call, args = ['./transm'])
-        # if len(sys.argv) == 3:
-        #     print(sys.argv[1])
-        #     print(sys.argv[2])
-        #     threadprogc = threading.Thread( target = subprocess.call, args = [['./transm', sys.argv[1], sys.argv[2]]])
-        # if len(sys.argv) == 4:
-        #     threadprogc = threading.Thread( target = subprocess.call, args = [['./transm', sys.argv[1], sys.argv[2], sys.argv[3]]])
+        if len(sys.argv) == 1:
+            threadprogc = threading.Thread( target = subprocess.call, args = ['./transm'])
+        if len(sys.argv) == 3:
+            print(sys.argv[1])
+            print(sys.argv[2])
+            threadprogc = threading.Thread( target = subprocess.call, args = [['./transm', sys.argv[1], sys.argv[2]]])
+        if len(sys.argv) == 4:
+            threadprogc = threading.Thread( target = subprocess.call, args = [['./transm', sys.argv[1], sys.argv[2], sys.argv[3]]])
 
 
-        # threadprogc.start()
+        threadprogc.start()
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        self.ssocket_file = path_to_temp_file + '/ssocket'
+        if len(sys.argv) == 1:
+            self.ssocket_file = path_to_temp_file + '/ssocket'
+        if len(sys.argv) == 3:
+            self.ssocket_file = path_to_temp_file + '/ssocket2'
         print('avant')
         test = 0
         while test == 0:
             try:
+                print("ssocketfile:",self.ssocket_file)
                 self.sock.connect(self.ssocket_file)
                 test = 1
             except:
@@ -301,8 +305,8 @@ class Network:
         try:
             with open('./' + file_name, 'r') as toSend:
                 data = toSend.read()
-                size = len(data)
-                """if size > 1400:
+                """size = len(data)
+                if size > 1400:
 
                     # nb_buffers = floor(size/1400) + 1
                     # [None for buffers in range(nb_buffers - 1)]
@@ -322,9 +326,9 @@ class Network:
 
                 else:"""
                 arr = bytes(data, 'utf-8')
-                    # arr2 = struct.pack(">H", 8)
-                    # print(arr2)
-                    # time.sleep(1)
+                # arr2 = struct.pack(">H", 8)
+                # print(arr2)
+                # time.sleep(1)
                 self.sock.send(arr)
 
         finally:
@@ -362,8 +366,6 @@ class Network:
                             row = int(header[2])
                             buf_wait[row] = separ[1]
                             buf_wait_trigger += 1
-
-                    # I HATE THE ANTICHRIST
 
                     # Okay, now we somehow have the whole message inside buf_wait[] (Don't ask how)
 

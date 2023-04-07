@@ -94,15 +94,6 @@ int main(int argc, char ** argv)
             else
             {
                 puts("received from Python");
-                if((int size = strlen(buffer)) >= 1400)
-	  {
-		//big file to send, required to cut
-		float calc = size/1400;
-		int needed_buffers = round(calc) + 1;
-		char ** buffers = malloc(sizeof(char *);
-		
-	  }
-
                 printf("%s\n",buffer);
                 //envoie des données en broadcast
                 // TODO
