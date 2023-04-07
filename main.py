@@ -20,7 +20,7 @@ def main():
     pg.init()
     pg.mixer.init()
     global screen
-    screen = pg.display.set_mode((0, 0))
+    screen = pg.display.set_mode((pg.display.Info().current_w - 20, pg.display.Info().current_h - 20), pg.RESIZABLE)
     clock = pg.time.Clock()
     pg.mixer.init()
     pg.mixer.music.load("Rome4.mp3")
@@ -52,6 +52,10 @@ def main():
                     Launch = False
                     pg.quit()
                     sys.exit()
+
+                if event.type == pg.VIDEORESIZE:
+                    screen = pg.display.set_mode((event.w, event.h), pg.RESIZABLE)
+                    pg.display.update()
 
                 if event.type == pg.MOUSEMOTION:
 

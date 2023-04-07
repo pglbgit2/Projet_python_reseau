@@ -12,9 +12,9 @@ from Model import logique as l
 from Model import Test_logique as Test_l
 from Interface.InputBoxName import SP_input
 from Interface.Data_controller import set_screen_HP
-from Network import Network
-import os
-import subprocess
+# from Network import Network
+# import os
+# import subprocess
 
 list_event = {l.Nume_administratif, l.Nume_eau, l.Nume_ingenieur, l.Nume_maison, l.Nume_nourriture, l.Nume_pelle,
               l.Nume_prefecure, l.Nume_route, l.Nume_sante, l.Nume_theatre}
@@ -38,7 +38,7 @@ class Game:
         self.hud = Hud(self.width, self.height)
 
         # network
-        self.network = Network()
+        # self.network = Network()
 
         overlay = ""
         self.selection =[[],[]]
@@ -49,9 +49,8 @@ class Game:
     def run(self):
         
         self.playing = True
-        a=0
+
         while self.playing:
-            a+=1
             self.clock.tick(60)
             self.events()
             self.update()
@@ -75,6 +74,9 @@ class Game:
             if event.type == pg.QUIT:
                 pg.quit()
                 sys.exit()
+
+            if event.type == pg.VIDEORESIZE:
+                (self.camera.width, self.camera.height) = self.screen.get_size()
 
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
@@ -110,11 +112,13 @@ class Game:
                     Test_l.Construction_maison_5()
 
                 if event.key == pg.K_F6 :
-                    self.network.map_to_file(l.m.Mat_batiment, l.m.Mat_perso, 40, 40)
+                    pass
+                    # self.network.map_to_file(l.m.Mat_batiment, l.m.Mat_perso, 40, 40)
                     # Test_l.Construction_maison_6()
 
                 if event.key == pg.K_F7 :
-                    self.network.file_to_map(l.m.Mat_batiment, 40, 40)
+                    pass
+                    # self.network.file_to_map(l.m.Mat_batiment, 40, 40)
                     # Test_l.Construction_maison_7()
 
                 
