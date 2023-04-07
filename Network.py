@@ -63,16 +63,16 @@ class Network:
         """
         if whatFor == "New_player":
             threadprogc = threading.Thread(target=subprocess.call, args=[['./transm', port, IP]])
-
+            self.ssocket_file = path_to_temp_file + '/ssocket2'
         if whatFor == "New_game":
             threadprogc = threading.Thread(target=subprocess.call, args=['./transm'])
+            self.ssocket_file = path_to_temp_file + '/ssocket'
 
         threadprogc.start()
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        if len(sys.argv) == 1:
-            self.ssocket_file = path_to_temp_file + '/ssocket'
-        if len(sys.argv) == 3:
-            self.ssocket_file = path_to_temp_file + '/ssocket2'
+        # if len(sys.argv) == 1:
+        # if len(sys.argv) == 3:
+
         print('avant')
         test = 0
         while test == 0:

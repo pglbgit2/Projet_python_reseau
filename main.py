@@ -21,8 +21,7 @@ def main():
     pg.mixer.init()
     global screen
     global connection
-    global IP
-    global port
+    global connection_utils
     screen = pg.display.set_mode((0, 0), pg.RESIZABLE)
     connection = False
     clock = pg.time.Clock()
@@ -72,11 +71,15 @@ def main():
 
                     if Cur_page == "Join":
                         JP_connect.transparenci(mouse_track, screen)
+                        JP_return.transparenci(mouse_track, screen)
 
                 if event.type == pg.KEYDOWN and event.unicode:
 
                     if Cur_page == "Select":
                         SP_input.ajout_char(event, screen)
+
+                    if Cur_page == "Join":
+                        JP_input_IP.ajout_char(event, screen)
 
                 if event.type == pg.MOUSEBUTTONDOWN:
 
@@ -101,16 +104,35 @@ def main():
                         elif HP_join_game.overhead(mouse_track, screen):
                             Cur_page = "Join"
                             set_screen_join_page(screen)
+                            pg.mixer.music.load("Connect_menu.mp3")
+                            pg.mixer.music.play()
+                            JP_input_IP.draw(screen)
                             disable_all()
 
                     elif Cur_page == "Join":
 
                         if JP_connect.overhead(mouse_track, screen):
 
-                            Launch = False
-                            playing = True
-                            connection = True
-                            disable_all_JP_button()
+                            if JP_input_IP.text != "" and ':' not in JP_input_IP.text:
+                                continue
+                            else:
+                                Launch = False
+                                playing = True
+                                connection = True
+                                if JP_input_IP.text == "":
+                                    connection_utils = ['', '']
+                                elif ':' in JP_input_IP.text:
+                                    connection_utils = JP_input_IP.text.split(':')  # [0]=IP : [1]=Port
+
+                                disable_all_JP_button()
+
+                        if JP_return.overhead(mouse_track, screen):
+                            Cur_page = "Home"
+                            pg.mixer.music.load("Rome4.mp3")
+                            pg.mixer.music.play()
+                            set_screen_HP(screen)
+
+                        JP_input_IP.collide(mouse_track)
 
                     elif Cur_page == "Select":  # Si ony se trouve sur la page Select
 
@@ -169,7 +191,7 @@ def main():
                     pg.display.update()
 
         while playing:
-            playing = Game_terminus.run(connection)
+            playing = Game_terminus.run(connection, connection_utils)
 
             if not playing:
                 Cur_page = "Home"

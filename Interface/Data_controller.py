@@ -47,6 +47,7 @@ Path_join_page = "/View/Sprites/Join_page/"
 Path_JP_back = f"{getcwd()}{Path_join_page}JP_background.PNG"
 Path_JP_connect = f"{getcwd()}{Path_join_page}JP_connect.PNG"
 Path_JP_support = f"{getcwd()}{Path_join_page}JP_support.PNG"
+Path_JP_return = f"{getcwd()}{Path_join_page}JP_return.PNG"
 
 # Define buttons position :
 
@@ -66,6 +67,8 @@ Pos_SP_support = (window_width / 2, winddow_height / 2)
 Pos_JP_back = (window_width / 2, winddow_height / 2)
 Pos_JP_support = (window_width / 5, 2 * winddow_height / 3)
 Pos_JP_connect = (window_width / 2, 6 * winddow_height / 10)
+Pos_JP_return = (window_width / 2, (6 * winddow_height / 10) + 20*2)
+Pos_JP_explaination = (window_width / 2 - 650, winddow_height / 2 - 100)
 
 # Define all buttons events :
 
@@ -315,6 +318,14 @@ JP_support.resize((window_width, winddow_height))
 JP_connect = Button(Pos_JP_connect, Path_JP_connect, None)
 JP_connect.resize((window_width, winddow_height))
 
+JP_return = Button(Pos_JP_return, Path_JP_return, None)
+JP_return.resize((window_width, winddow_height))
+
+JP_explaination_txt = Textefont.render("Insert IP:PORT or leave empty if you want to create a new game", True, (0, 0, 0), (255, 255, 255))
+JP_explaination_txt_R = JP_explaination_txt.get_rect()
+JP_explaination_txt_R.topleft = (
+    Pos_JP_explaination[0] - JP_explaination_txt.get_width() / 2, Pos_JP_explaination[1] - JP_explaination_txt.get_height() / 2)
+
 # SP_validate.set_size(( window_width /10, winddow_height /10 ))
 
 SP_go_home_txt = Textefont.render("Return", True, (0, 0, 0), (255, 255, 255))
@@ -326,7 +337,7 @@ SP_support = Button(Pos_SP_support, Path_SP_support, None)
 SP_support.set_size((2 * window_width / 3, 2 * winddow_height / 3))
 
 # Restaure game page
-print("Restaurepage")
+print("CAESAR III TERMINUS STUDIOS | all rights reserved.")
 RP_page = Save_page()
 
 
@@ -360,11 +371,13 @@ def disable_all_JP_button():
     JP_connect.set_disable()
     # JP_support.set_disable()
     JP_back.set_disable()
+    JP_return.set_disable()
 
 def enable_all_JP_button():
     JP_back.set_enable()
     # JP_support.set_enable()
     JP_connect.set_enable()
+    JP_return.set_enable()
 def enable_all_HP_button():
     HP_back.set_enable()
     HP_exit.set_enable()
@@ -426,6 +439,10 @@ def set_screen_join_page(screen):
     # JP_support.draw_image_center(screen)
     JP_connect.draw_image_center(screen)
     JP_connect.overhead((0,0), screen)
+    JP_return.draw_image_center(screen)
+    JP_connect.overhead((0,0), screen)
+    screen.blit(JP_explaination_txt, (
+        Pos_JP_explaination[0], Pos_JP_explaination[1]))
 
     pg.display.update()
 def set_screen_SP(screen):
