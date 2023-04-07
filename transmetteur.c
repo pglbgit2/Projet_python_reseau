@@ -19,8 +19,8 @@
 #define FALSE 0
 #define PORT 8000
 #define PORT2 8490
-#define PORT3 8592
-
+#define PORT3 8592 
+#define MAX_IFCONFIG_OUTPUT 4096
 #define BUFSIZE 65536
 
 
@@ -49,6 +49,39 @@ char ** parse(char * msg, int * numb, char splitter){
 	return arg;
 }
 
+ char ** parse_string(char * str, int * num_words) {
+    char ** words = NULL;
+    char * word = NULL;
+    int i = 0, j = 0, n = 0;
+
+    // Compter le nombre de mots dans la chaîne
+    for (i = 0; str[i] != '\0'; i++) {
+        if (str[i] == ';') {
+            n++;
+        }
+    }
+    n++; // Compter le dernier mot après la dernière virgule
+
+    // Allouer de la mémoire pour les pointeurs de chaque mot
+    words = calloc(n, sizeof(char*));
+    if (words == NULL) {
+        printf("Erreur: échec d'allocation de mémoire.\n");
+        exit(1);
+    }
+
+    // Extraire chaque mot de la chaîne
+    word = strtok(str, ";");
+    while (word != NULL) {
+        words[j] = word;
+        j++;
+        word = strtok(NULL, ";");
+    }
+
+    // Stocker le nombre total de mots
+    *num_words = n;
+
+    return words;
+}
 
 int stop(char * err)
 {
@@ -218,6 +251,78 @@ char * getiptable(char ** iptable){
     }
 }
 
+char** get_iptable() {
+    int nombreAdressesIP = 0; // Nombre d'adresses IP récupérées
+    char** iptable = NULL; // Tableau pour stocker les adresses IP
+
+    // Allouer de la mémoire pour le tableau iptable
+    iptable = (char**)malloc(sizeof(char*));
+
+    if (iptable == NULL) {
+        perror("Erreur d'allocation de mémoire");
+        exit(EXIT_FAILURE);
+    }
+
+    char* adresseIP = NULL;
+
+    // Boucle pour récupérer les adresses IP une par une
+    while ((adresseIP = my_ip_address()) != NULL) {
+        // Réallouer la mémoire pour agrandir le tableau iptable
+        iptable = (char**)realloc(iptable, (nombreAdressesIP + 2) * sizeof(char*)); // +2 pour le nouveau pointeur NULL de fin de tableau et l'adresse IP récupérée
+
+        if (iptable == NULL) {
+            perror("Erreur d'allocation de mémoire");
+            exit(EXIT_FAILURE);
+        }
+        // Allouer de la mémoire pour stocker l'adresse IP récupérée
+        int longueurAdresseIP = strlen(adresseIP) + 1; // +1 pour le caractère de fin de chaîne
+        iptable[nombreAdressesIP] = (char*)malloc(longueurAdresseIP * sizeof(char));
+        if (iptable[nombreAdressesIP] == NULL) {
+            perror("Erreur d'allocation de mémoire");
+            exit(EXIT_FAILURE);
+        }
+
+        // Copier l'adresse IP récupérée dans le tableau iptable
+        strcpy(iptable[nombreAdressesIP], adresseIP);
+
+        nombreAdressesIP++;
+
+        free(adresseIP);
+    }
+    // Ajouter le pointeur NULL de fin de tableau
+    iptable[nombreAdressesIP] = NULL;
+
+    return iptable;
+}
+
+int my_ip_address(){ //Programme donnant l'adresse IP locale de la machine sur le réseau utilisé
+
+    char ifconfig_output[MAX_IFCONFIG_OUTPUT];
+    char *inet_address = NULL;
+    char *interface_name = ""; // replace with the name of the interface you want to query
+
+    FILE *ifconfig_pipe = popen("ifconfig", "r");
+
+    if (ifconfig_pipe == NULL) {
+        perror("popen");
+        exit(EXIT_FAILURE);
+    }
+
+    while (fgets(ifconfig_output, MAX_IFCONFIG_OUTPUT, ifconfig_pipe) != NULL) {
+        if (strstr(ifconfig_output, interface_name) != NULL) {
+            inet_address = strtok(ifconfig_output, " \t\n");
+            while (inet_address != NULL) {
+                if (inet_address[0] == 'i' && inet_address[1] == 'n' && inet_address[2] == 'e' && inet_address[3] == 't') {
+                    inet_address = strtok(NULL, " \t\n");
+                    printf("%s\n", inet_address);
+                    exit(EXIT_SUCCESS);
+                }
+                inet_address = strtok(NULL, " \t\n");
+            }
+        }
+    }
+    return inet_address;
+}
 
 
 int main(int argc, char ** argv)

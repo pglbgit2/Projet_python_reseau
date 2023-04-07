@@ -400,4 +400,4 @@ class Network:
 
 # Net = Network()
 # while True:
-#    Net.GestionEntreesSortie()
+#     Net.GestionEntreesSortie()
