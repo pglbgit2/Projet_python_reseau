@@ -105,7 +105,7 @@ def main():
                             RP_page.draw(screen)
                             disable_all()
 
-                        elif HP_join_game.overhead(mouse_track, screen):
+                        elif HP_join_game.overhead(mouse_track, screen) or HP_new.overhead(mouse_track, screen):
                             Cur_page = "Join"
                             set_screen_join_page(screen)
                             pg.mixer.music.load("Connect_menu.mp3")

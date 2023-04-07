@@ -38,6 +38,7 @@ Path_HP_load_game = f"{getcwd()}{Path_home_page}HP_load_game.PNG"
 Path_HP_join_game = f"{getcwd()}{Path_home_page}HP_join_game.PNG"
 Path_HP_support = f"{getcwd()}{Path_home_page}HP_support.PNG"
 Path_HP_tittle = f"{getcwd()}{Path_home_page}HP_tittle.PNG"
+Path_HP_tittle2 = f"{getcwd()}{Path_home_page}HP_tittle2.PNG"
 if random_useless_number == 0:
     Path_HP_new =  f"{getcwd()}{Path_home_page}NEW.PNG"
 else:
@@ -58,16 +59,17 @@ Path_JP_return = f"{getcwd()}{Path_join_page}JP_return.PNG"
 # Define buttons position :
 
 Pos_HP_back = (window_width / 2, winddow_height / 2)
-Pos_HP_exit = (window_width / 2, 7 * winddow_height / 10)
-Pos_HP_new_carrer = (window_width / 2, 5 * winddow_height / 10)
-Pos_HP_load_game = (window_width / 2, 6 * winddow_height / 10)
-Pos_HP_join_game = (window_width / 2, 4 * winddow_height / 10)
+Pos_HP_exit = (window_width / 2, 10 * winddow_height / 15)
+Pos_HP_new_carrer = (window_width / 2, 7 * winddow_height / 15)
+Pos_HP_load_game = (window_width / 2, 9 * winddow_height / 15)
+Pos_HP_join_game = (window_width / 2, 8 * winddow_height / 15)
 Pos_HP_support = (window_width / 5, 2 * winddow_height / 3)
 Pos_HP_tittle = (window_width / 2, winddow_height / 2)
+Pos_HP_tittle2 = (window_width / 2, 3 * winddow_height / 10)
 if random_useless_number == 0:
-    Pos_HP_new = (window_width/2 - 225, 4 * winddow_height /10)
+    Pos_HP_new = (window_width/2 - 225, 8 * winddow_height / 15)
 else:
-    Pos_HP_new = (window_width / 2 + 200, 4 * winddow_height / 10)
+    Pos_HP_new = (window_width / 2 + 200, 8 * winddow_height / 15)
 
 Pos_SP_back = (window_width / 2, winddow_height / 2)
 Pos_SP_validate = (4 * window_width / 10, 3 * winddow_height / 4)
@@ -310,6 +312,9 @@ HP_join_game.resize((window_width, winddow_height))
 HP_tittle = Button(Pos_HP_tittle, Path_HP_tittle, go_to_home_page)
 HP_tittle.resize((window_width, winddow_height))
 
+HP_tittle2 = Button(Pos_HP_tittle2, Path_HP_tittle2, None)
+HP_tittle2.resize((window_width, winddow_height))
+
 # Save page Ones :
 
 SP_back = Button(Pos_SP_back, Path_SP_back, None)
@@ -334,7 +339,7 @@ JP_connect.resize((window_width, winddow_height))
 JP_return = Button(Pos_JP_return, Path_JP_return, None)
 JP_return.resize((window_width, winddow_height))
 
-JP_explaination_txt = Textefont.render("Insert IP:PORT or leave empty if you want to create a new game", True, (0, 0, 0), (255, 255, 255))
+JP_explaination_txt = Textefont.render("Insert IP:PORT or leave empty if you want to create a new game", True, (255, 255, 255), (83, 91, 116))
 JP_explaination_txt_R = JP_explaination_txt.get_rect()
 JP_explaination_txt_R.topleft = (
     Pos_JP_explaination[0] - JP_explaination_txt.get_width() / 2, Pos_JP_explaination[1] - JP_explaination_txt.get_height() / 2)
@@ -374,6 +379,7 @@ def disable_all_HP_button():
     HP_newc.set_disable()
     HP_new.set_disable()
     HP_join_game.set_disable()
+    HP_tittle2.set_disable()
     HP_support.set_disable()
 
 
@@ -398,6 +404,7 @@ def enable_all_HP_button():
     HP_load_game.set_enable()
     HP_newc.set_enable()
     HP_new.set_enable()
+    HP_tittle2.set_enable()
     HP_join_game.set_enable()
     HP_support.set_enable()
 
@@ -425,6 +432,8 @@ def set_screen_HP(screen):
     HP_load_game.overhead((0, 0), screen)
     HP_join_game.draw_image_center(screen)
     HP_join_game.overhead((0, 0), screen)
+    HP_tittle2.draw_image_center(screen)
+    HP_tittle2.overhead((0, 0), screen)
     HP_new.draw_image_center(screen)
     HP_new.overhead((0, 0), screen)
 
