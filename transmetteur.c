@@ -27,6 +27,8 @@
 // take a string and divide it into words
 char ** parse(char * msg, int * numb, char splitter){
 	char ** arg = calloc(sizeof(char *), 15);
+    char * port = calloc(sizeof(char),10);
+    char * ip = calloc(sizeof(char),30);
 	int n = strlen(msg);
 	int j = 0;
 	char * debut = msg;
@@ -244,6 +246,39 @@ char** get_iptable() {
     return iptable;
 }
 
+char ** parse_string(char * str, int * num_words) {
+    char ** words = NULL;
+    char * word = NULL;
+    int i = 0, j = 0, n = 0;
+
+    // Compter le nombre de mots dans la chaîne
+    for (i = 0; str[i] != '\0'; i++) {
+        if (str[i] == ',') {
+            n++;
+        }
+    }
+    n++; // Compter le dernier mot après la dernière virgule
+
+    // Allouer de la mémoire pour les pointeurs de chaque mot
+    words = calloc(n, sizeof(char*));
+    if (words == NULL) {
+        printf("Erreur: échec d'allocation de mémoire.\n");
+        exit(1);
+    }
+
+    // Extraire chaque mot de la chaîne
+    word = strtok(str, ",");
+    while (word != NULL) {
+        words[j] = word;
+        j++;
+        word = strtok(NULL, ",");
+    }
+
+    // Stocker le nombre total de mots
+    *num_words = n;
+
+    return words;
+}
 
 
 int main(int argc, char ** argv)
