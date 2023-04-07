@@ -326,10 +326,12 @@ class Network:
 
                 else:"""
                 arr = bytes(data, 'utf-8')
-                # arr2 = struct.pack(">H", 8)
-                # print(arr2)
-                # time.sleep(1)
-                self.sock.send(arr)
+                message_size = len(arr)
+                message_size=struct.pack('i', message_size)
+                print(struct.unpack('i', message_size))
+                print(message_size)
+                # print(arr)
+                self.sock.sendall(message_size + arr)
 
         finally:
             pass
@@ -388,6 +390,8 @@ class Network:
             buf = self.receiveFromServer()
             if buf == -1:
                 assert False
+            elif not buf:
+                print("nothing received")
             else:
                 if buf[0] == '#':
 
