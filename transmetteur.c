@@ -263,7 +263,7 @@ char** get_iptable() {
         exit(EXIT_FAILURE);
     }
 
-    char* adresseIP = NULL;
+    char* adresseIP =NULL;
 
     // Boucle pour récupérer les adresses IP une par une
     while ((adresseIP = my_ip_address()) != NULL) {
@@ -629,6 +629,41 @@ int main(int argc, char ** argv)
                         // cas commence par '#' : message destiné à python
                         if (buffer[0]=='#')
                         {
+                            
+                        }
+                        if (buffer[0] == '?')
+                        {
+                            // Cas 1.1: Demande d'adresses IP
+                            if (strncmp(buffer, "?askforip?", 10) == 0)
+                            {
+                            // Renvoyer iptables (adresses IP et ports) au client demandeur                                       
+                            char iptables[] = "127.0.0.1:8000,127.0.0.1:8490,127.0.0.1:8592"; 
+                                send(sd, iptables, strlen(iptables), 0);
+                            }
+                            // Cas 1.2: Réception d'adresse IP et de port
+                            else if (strncmp(buffer, "?ip:", 4) == 0)
+                            {
+                                char ip[INET_ADDRSTRLEN];
+                                int port;
+                                sscanf(buffer, "?ip:%[^:]:%d", ip, &port); // Extraire l'adresse IP et le port du message
+                                //printf("Adresse IP reçue: %s, Port reçu: %d\n", ip, itoa(port));
+                                char port_str[6];
+                                sprintf(port_str, "%d", port);
+                                printf("Adresse IP reçue: %s, Port reçu: %s\n", ip, port_str);
+
+                                // Appeler create_connect avec l'adresse IP et le port reçus
+                                //new_cell = create_connect(itoa(port), ip, list_bind);
+                                new_cell = create_connect(port_str, ip, &list_bind);
+                            }
+                            else
+                            {
+                                printf("Message destiné à C non reconnu: %s\n", buffer);
+                            }
+                        }
+                        // Cas 2 : Message destiné à Python (commence par '#')
+                        else if (buffer[0] == '#')
+                        {
+                            // Traiter le message destiné à Python
                             //envoi taille à python
                             message_size = strlen(buffer);
                             printf("envoi à Python\n");
@@ -641,13 +676,14 @@ int main(int argc, char ** argv)
                             {
                                 stop("send to Python");
                             }
+                            printf("Message destiné à Python: %s\n", buffer);
                         }
-
+                        // Cas 3 : Erreur - message non reconnu
+                        else
+                        {
+                            printf("Erreur: message non reconnu: %s\n", buffer);
+                        }
                         // aucun des deux precedents: erreurs 
-
-
-
-
 
                     }
                 }
