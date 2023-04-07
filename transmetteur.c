@@ -344,38 +344,36 @@ int main(int argc, char ** argv)
         //printf("tamp: %s\n",tamp);
 
         new_cell = create_connect(buffer, tamp, &list_bind);
-        printf("avanttest\n");
-        printf("test:%i\n", new_cell->sockfd);
         send(new_cell->sockfd,"test\n",6,0);
-        send(new_cell->sockfd,"?askfortip",11,0);
-        bzero(buffer,BUFSIZE);
-        if(recv(new_cell->sockfd,buffer,BUFSIZE,0) < 0){
-            printf("error recv connect\n");
-        }
-        iptables = parse(buffer,0,';');
-        char * parseur = iptables[0];
-        int i = 0;
-        while (parseur != NULL){
-            bzero(buffer,strlen(buffer));
-            bzero(tamp,strlen(tamp));
+        // send(new_cell->sockfd,"?askfortip",11,0);
+        // bzero(buffer,BUFSIZE);
+        // if(recv(new_cell->sockfd,buffer,BUFSIZE,0) < 0){
+        //     printf("error recv connect\n");
+        // }
+        // iptables = parse(buffer,0,';');
+        // char * parseur = iptables[0];
+        // int i = 0;
+        // while (parseur != NULL){
+        //     bzero(buffer,strlen(buffer));
+        //     bzero(tamp,strlen(tamp));
 
-            i++;
-            parseur = iptables[i];
-            strcpy(buffer,parseur);
+        //     i++;
+        //     parseur = iptables[i];
+        //     strcpy(buffer,parseur);
 
-            i++;
-            parseur = iptables[i];
-            strcpy(tamp,parseur);
+        //     i++;
+        //     parseur = iptables[i];
+        //     strcpy(tamp,parseur);
 
-            create_connect(buffer, tamp, &list_bind);
-        }
-        list_it = list_bind;
-        bzero(buffer,strlen(buffer));
-        strcpy(buffer,"?heremyip: MY PORT ; MY IP ;");
-        while (list_it != NULL){
-            send(list_it->sockfd,buffer,strlen(buffer),0);
-            list_it = list_it->next;
-        }
+        //     create_connect(buffer, tamp, &list_bind);
+        // }
+        // list_it = list_bind;
+        // bzero(buffer,strlen(buffer));
+        // strcpy(buffer,"?heremyip: MY PORT ; MY IP ;");
+        // while (list_it != NULL){
+        //     send(list_it->sockfd,buffer,strlen(buffer),0);
+        //     list_it = list_it->next;
+        // }
 
 
         // faire une fonction char** getiptables()
@@ -495,7 +493,9 @@ int main(int argc, char ** argv)
                             }
                        }
 
+
                        if(buffer[0] == '#'){
+                        printf("onveutsassurer\n");
                         
                        }
                         // liste des cas possibles
