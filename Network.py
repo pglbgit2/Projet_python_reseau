@@ -42,23 +42,30 @@ import threading
 # fonction c / python : recevoir envoyer
 # astuce: fichier commence par #machin et se termine par end 
 
-def FillWithZero(valLim,buffer):
+def FillWithZero(valLim, buffer):
     while len(buffer) < valLim:
         buffer += '\0'
 
 
 class Network:
 
-    def __init__(self) -> None:
+    def __init__(self, IP, port, whatFor) -> None:
+        """
         if len(sys.argv) == 1:
-            threadprogc = threading.Thread( target = subprocess.call, args = ['./transm'])
+            threadprogc = threading.Thread(target=subprocess.call, args=['./transm'])
         if len(sys.argv) == 3:
             print(sys.argv[1])
             print(sys.argv[2])
-            threadprogc = threading.Thread( target = subprocess.call, args = [['./transm', sys.argv[1], sys.argv[2]]])
+            threadprogc = threading.Thread(target=subprocess.call, args=[['./transm', sys.argv[1], sys.argv[2]]])
         if len(sys.argv) == 4:
-            threadprogc = threading.Thread( target = subprocess.call, args = [['./transm', sys.argv[1], sys.argv[2], sys.argv[3]]])
+            threadprogc = threading.Thread(target=subprocess.call,
+                                           args=[['./transm', sys.argv[1], sys.argv[2], sys.argv[3]]])
+        """
+        if whatFor == "New_player":
+            threadprogc = threading.Thread(target=subprocess.call, args=[['./transm', port, IP]])
 
+        if whatFor == "New_game":
+            threadprogc = threading.Thread(target=subprocess.call, args=['./transm'])
 
         threadprogc.start()
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -70,7 +77,7 @@ class Network:
         test = 0
         while test == 0:
             try:
-                print("ssocketfile:",self.ssocket_file)
+                print("ssocketfile:", self.ssocket_file)
                 self.sock.connect(self.ssocket_file)
                 test = 1
             except:
@@ -326,10 +333,12 @@ class Network:
 
                 else:"""
                 arr = bytes(data, 'utf-8')
-                # arr2 = struct.pack(">H", 8)
-                # print(arr2)
-                # time.sleep(1)
-                self.sock.send(arr)
+                message_size = len(arr)
+                message_size=struct.pack('i', message_size)
+                print(struct.unpack('i', message_size))
+                print(message_size)
+                # print(arr)
+                self.sock.sendall(message_size + arr)
 
         finally:
             pass
@@ -337,45 +346,20 @@ class Network:
     def receiveFromServer(self):
         while True:
             try:
-                bytes = self.sock.recv(65536, 0)
+                size_struct = self.sock.recv(4, socket.MSG_WAITALL)
+                print(size_struct)
+                size = int.from_bytes(size_struct, byteorder='little')
+                print(size)
+                bytes = self.sock.recv(size, socket.MSG_WAITALL)
                 print("reçu ")
                 buf = bytes.decode('utf-8')
                 # traitement des modifications
-                """if buf[0:7] == 'MULTIPLE':
-                    #id = int(buf[9])
-                    separ = buf.split('///') # separ[0] = header /// separ[1] = data
-                    header = separ.split(';')
-
-                    size = int(header[3])
-                    row = int(header[2])
-
-                    buf_wait = []
-                    buf_wait[row] = separ[1]
-                    buf_wait_trigger = 1
-
-                    while buf_wait_trigger != buf_wait_size:
-                        bytes = self.sock.recv(1024)
-                        temp = bytes.decode('utf-8')
-                        if temp[0:7] != 'MULTIPLE':
-                            #Unrelated packet received, treatment discarded at this time.
-                            pass
-                        else:
-                            separ = temp.split('///')  # separ[0] = header /// separ[1] = data
-                            header = separ.split(';')
-
-                            row = int(header[2])
-                            buf_wait[row] = separ[1]
-                            buf_wait_trigger += 1
-
-                    # Okay, now we somehow have the whole message inside buf_wait[] (Don't ask how)
-
-                    buf = ''.join(buf_wait)"""
+                print(buf)
 
                 return buf
             except socket.error as e:
                 print(e)
                 return -1
-
 
     def GestionEntreesSortie(self):
         if self.rdescriptors == []:
@@ -386,8 +370,10 @@ class Network:
         if rlist != []:
             assert rlist[0] == self.sock
             buf = self.receiveFromServer()
-            if buf == -1 or len(buf) == 0:
-                assert False # cas deconnection
+            if buf == -1:
+                assert False
+            # elif not buf:
+                # print("nothing received")
             else:
                 if buf[0] == '#':
 
@@ -409,7 +395,8 @@ class Network:
                     if fline[0] == '#welcome':  # cas reception ensemble donne jeu
                         self.file_to_map(l.m.Mat_batiment, m.nb_cases_x, m.nb_cases_y)
                         print('receiv welcome')
-
+                    else:
+                        print("unknown : ", buf)
                 else:
                     print(buf)
                     print('ERROR: buffer seems to be corrupted')
@@ -418,6 +405,6 @@ class Network:
                 # assert False
 
 
-Net = Network()
-while True:
-    Net.GestionEntreesSortie()
+# Net = Network()
+# while True:
+#     Net.GestionEntreesSortie()

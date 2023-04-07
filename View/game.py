@@ -37,8 +37,8 @@ class Game:
         # hud
         self.hud = Hud(self.width, self.height)
 
-        # network
-        self.network = Network()
+
+        #
 
         overlay = ""
         self.selection =[[],[]]
@@ -46,12 +46,39 @@ class Game:
         self.mouse_button = [[],[],[]]
         self.playing = True
 
-    def run(self):
+    def run(self, multi=False):
         
         self.playing = True
-        a=0
+
+        if multi:
+            print("Enter IP address here (leave empty if new game):")
+            IP = input()
+            print("Enter port :")
+            port = input()
+
+            if IP == "":
+                print("New game created ! IP address is : ", end="")
+                print(socket.gethostbyname(socket.gethostname()))
+                print(":", end="")
+                print(port)
+                # network
+                self.network = Network(IP, port, 'New_game')
+
+            else:
+                print("Attempting connection to ", end="")
+                print(IP, end="")
+                print(":", end="")
+                print(port, end="")
+                print(" ...")
+                # network
+                self.network = Network(IP, port, 'New_player')
+
+                #Traitement de la première entrée en game à faire ici !
+
+        pg.mixer.music.load("Rome1.mp3")
+        pg.mixer.music.play()
+
         while self.playing:
-            a+=1
             self.clock.tick(60)
             self.events()
             self.update()
@@ -75,6 +102,11 @@ class Game:
             if event.type == pg.QUIT:
                 pg.quit()
                 sys.exit()
+
+            if event.type == pg.VIDEORESIZE:
+                (self.camera.width, self.camera.height) = self.screen.get_size()
+                (self.width, self.height) = self.screen.get_size()
+                self.hud = Hud(self.width, self.height)
 
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
@@ -110,11 +142,13 @@ class Game:
                     Test_l.Construction_maison_5()
 
                 if event.key == pg.K_F6 :
-                    self.network.map_to_file(l.m.Mat_batiment, l.m.Mat_perso, 40, 40)
+                    pass
+                    # self.network.map_to_file(l.m.Mat_batiment, l.m.Mat_perso, 40, 40)
                     # Test_l.Construction_maison_6()
 
                 if event.key == pg.K_F7 :
-                    self.network.file_to_map(l.m.Mat_batiment, 40, 40)
+                    pass
+                    # self.network.file_to_map(l.m.Mat_batiment, 40, 40)
                     # Test_l.Construction_maison_7()
 
                 
@@ -163,6 +197,8 @@ class Game:
             #    init_clique_pos = self.mouse_to_tiles()
 
     def update(self):
+        if multi:
+            self.network.GestionEntreesSortie()
         Test_l.Tour_jeu()
         self.camera.update()
 
