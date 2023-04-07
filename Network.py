@@ -399,6 +399,6 @@ class Network:
                 # assert False
 
 
-Net = Network()
-while True:
-    Net.GestionEntreesSortie()
+# Net = Network()
+# while True:
+#     Net.GestionEntreesSortie()
