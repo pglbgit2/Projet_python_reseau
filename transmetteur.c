@@ -24,6 +24,32 @@
 #define BUFSIZE 65536
 
 
+// take a string and divide it into words
+char ** parse(char * msg, int * numb, char splitter){
+	char ** arg = calloc(sizeof(char *), 15);
+	int n = strlen(msg);
+	int j = 0;
+	char * debut = msg;
+	for(int i = 0; i < n; i++){
+		if(msg[i] == ' ' || msg[i] == '\n' || msg[i] == splitter){
+            while(msg[i] == ' ' || msg[i] == '\n'){
+                i++;
+            }
+            i--;
+			arg[j] = debut;
+			j++;
+			debut = msg+i+1;
+			msg[i] = '\0';
+		}
+	}
+
+	arg[j] = debut;
+	j++;
+	*numb = j;
+	return arg;
+}
+
+
 int stop(char * err)
 {
     perror(err);
@@ -170,6 +196,18 @@ int sendall(char * buffer, list_joueur * player_list){
     return 1;
 }
 
+char * getiptable(char ** iptable){
+    char * table = calloc(sizeof(char),200);
+    char * parseur = iptable[0];
+    int i = 0;
+    while (parseur != NULL){
+        strcpy(table+strlen(table),parseur);
+        table[strlen(table)] = ';';
+        i++;
+        parseur = iptable[i];
+    }
+}
+
 
 
 int main(int argc, char ** argv)
@@ -286,6 +324,8 @@ int main(int argc, char ** argv)
     list_joueur * new_cell = NULL;
     list_joueur * list_bind = NULL;
     char ** iptables;
+    char * port = calloc(sizeof(char),10);
+    char * ip = calloc(sizeof(char),30);
 
     if(argc == 3 || argc == 4){
         strcpy(buffer, argv[1]); // ./prog port ip
@@ -297,8 +337,38 @@ int main(int argc, char ** argv)
         printf("avanttest\n");
         printf("test:%i\n", new_cell->sockfd);
         send(new_cell->sockfd,"test\n",6,0);
+        send(new_cell->sockfd,"?askfortip",11,0);
+        bzero(buffer,BUFSIZE);
+        if(recv(new_cell->sockfd,buffer,BUFSIZE,0) < 0){
+            printf("error recv connect\n");
+        }
+        iptables = parse(buffer,0,';');
+        char * parseur = iptables[0];
+        int i = 0;
+        while (parseur != NULL){
+            bzero(buffer,strlen(buffer));
+            bzero(tamp,strlen(tamp));
+
+            i++;
+            parseur = iptables[i];
+            strcpy(buffer,parseur);
+
+            i++;
+            parseur = iptables[i];
+            strcpy(tamp,parseur);
+
+            create_connect(buffer, tamp, &list_bind);
+        }
+        list_it = list_bind;
+        bzero(buffer,strlen(buffer));
+        strcpy(buffer,"?heremyip: MY PORT ; MY IP ;");
+        while (list_it != NULL){
+            send(list_it->sockfd,buffer,strlen(buffer),0);
+            list_it = list_it->next;
+        }
+
+
         // faire une fonction char** getiptables()
-        // faire une fonction update_iptable()
         // et du coup on appelle create_connect pour chaque ip/port dans iptables
         // faut envoyer son port (le port sur lequel notre socket bindée écoute), son ip (127.0.0.1 pour les test) avec la socket de new_cell avec un truc du style: '?voilamonip?ip?port'
         // du coup on aura besoin ici de la fonction de shériff pour récupérer l'ip 
@@ -393,7 +463,31 @@ int main(int argc, char ** argv)
                     else
                     {
                         printf("%s\n",buffer);
-                       
+                       if(buffer[0] == '?'){
+                            if (strncmp(buffer,"?askfortip",10) == 0){
+                                tamp = getiptable(iptables);
+                                send(sd,tamp,strlen(tamp),0);
+                            }
+
+                            if (strncmp(buffer,"?heremyip:",10) == 0){
+                                bzero(tamp,strlen(tamp));
+                                strcpy(tamp,buffer+10);
+                                
+
+                                int i = 0;
+                                while(tamp[i] != ';')
+                                    port[i] = tamp[i];
+                                i++;
+                                while(tamp[i] != ';')
+                                    ip[i] = tamp[i];
+
+                                create_connect(port,ip,&list_bind);
+                            }
+                       }
+
+                       if(buffer[0] == '#'){
+                        
+                       }
                         // liste des cas possibles
                         // on peut se servir d'un cas ici genre si le buffer contient '?askforip?' l'autre renvoie iptables, avec sa propre ip dedans, et il faut les ports aussi
                         // cas de reception ip du coup : l'autre nous indique simplement quel est son ip
