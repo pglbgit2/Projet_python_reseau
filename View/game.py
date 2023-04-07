@@ -21,13 +21,19 @@ list_event = {l.Nume_administratif, l.Nume_eau, l.Nume_ingenieur, l.Nume_maison,
               l.Nume_prefecure, l.Nume_route, l.Nume_sante, l.Nume_theatre}
 
 pos_souris_down = (0,0)
+def draw_text(screen, text, size, colour, pos):
+    font = pg.font.SysFont(None, size)
+    text_surface = font.render(text, True, colour)
+    text_rect = text_surface.get_rect(topleft=pos)
 
+    screen.blit(text_surface, text_rect)
 class Game:
 
     def __init__(self, screen, clock):
         self.screen = screen
         self.clock = clock
         self.width, self.height = self.screen.get_size()
+        self.draw_text = draw_text
 
         # map
         self.map = Map(40, 40, self.width, self.height)
@@ -293,10 +299,3 @@ class Game:
 
         return (grid_x, grid_y)
 
-    def draw_text(self, screen, text, size, colour, pos):
-
-        font = pg.font.SysFont(None, size)
-        text_surface = font.render(text, True, colour)
-        text_rect = text_surface.get_rect(topleft=pos)
-
-        screen.blit(text_surface, text_rect)

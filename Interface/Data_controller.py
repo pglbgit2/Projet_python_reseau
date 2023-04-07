@@ -10,6 +10,7 @@ import tkinter as tk
 
 sys.path.insert(0, '..')
 from Interface.Restaure_game_page import *
+import random
 
 pg.init()
 
@@ -25,6 +26,7 @@ Big = 36
 Path_font = f"{getcwd()}/Interface/C3_policy.TTF"
 Textefont = pg.font.Font(Path_font, Big)
 running = True
+random_useless_number = random.randint(0,1)
 
 # Define buttons path image :
 
@@ -36,7 +38,10 @@ Path_HP_load_game = f"{getcwd()}{Path_home_page}HP_load_game.PNG"
 Path_HP_join_game = f"{getcwd()}{Path_home_page}HP_join_game.PNG"
 Path_HP_support = f"{getcwd()}{Path_home_page}HP_support.PNG"
 Path_HP_tittle = f"{getcwd()}{Path_home_page}HP_tittle.PNG"
-Path_HP_new =  f"{getcwd()}{Path_home_page}NEW.PNG"
+if random_useless_number == 0:
+    Path_HP_new =  f"{getcwd()}{Path_home_page}NEW.PNG"
+else:
+    Path_HP_new = f"{getcwd()}{Path_home_page}NEW2.PNG"
 
 Path_save_page = "/View/Sprites/Save_page/"
 Path_SP_back = f"{getcwd()}{Path_save_page}SP_background.PNG"
@@ -59,7 +64,10 @@ Pos_HP_load_game = (window_width / 2, 6 * winddow_height / 10)
 Pos_HP_join_game = (window_width / 2, 4 * winddow_height / 10)
 Pos_HP_support = (window_width / 5, 2 * winddow_height / 3)
 Pos_HP_tittle = (window_width / 2, winddow_height / 2)
-Pos_HP_new = (window_width/2 - 225, 4 * winddow_height /10)
+if random_useless_number == 0:
+    Pos_HP_new = (window_width/2 - 225, 4 * winddow_height /10)
+else:
+    Pos_HP_new = (window_width / 2 + 200, 4 * winddow_height / 10)
 
 Pos_SP_back = (window_width / 2, winddow_height / 2)
 Pos_SP_validate = (4 * window_width / 10, 3 * winddow_height / 4)

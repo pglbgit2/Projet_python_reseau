@@ -22,6 +22,8 @@ def main():
     global screen
     global connection
     global connection_utils
+    global aberant_number
+    aberant_number = 0
     screen = pg.display.set_mode((0, 0), pg.FULLSCREEN)
     connection = False
     clock = pg.time.Clock()
@@ -49,6 +51,8 @@ def main():
             mouse_track = pg.mouse.get_pos()
 
             for event in pg.event.get():
+
+                aberant_number += 1
 
                 if event.type == pg.QUIT:
                     running = False
@@ -114,6 +118,24 @@ def main():
                         if JP_connect.overhead(mouse_track, screen):
 
                             if JP_input_IP.text != "" and ':' not in JP_input_IP.text:
+                                if 1200 <= aberant_number <= 1700:
+                                    draw_text(
+                                        screen,
+                                        "assert (isPath(x, y, Mat)) :D",
+                                        50,
+                                        (255, 0, 0),
+                                        (window_width / 2 - 190, 6 * winddow_height / 10 + 60)
+                                    )
+                                else: # Easter Egg
+                                    draw_text(
+                                        screen,
+                                        "Invalid Entry",
+                                        50,
+                                        (255, 0, 0),
+                                        (window_width / 2 - 110, 6 * winddow_height / 10 - 60)
+
+                                    )
+                                pg.display.flip()
                                 continue
                             else:
                                 Launch = False
