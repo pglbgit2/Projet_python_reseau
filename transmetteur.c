@@ -21,7 +21,7 @@
 #define PORT2 8490
 #define PORT3 8592
 
-#define BUFSIZE 8000
+#define BUFSIZE 65536
 
 
 int stop(char * err)
@@ -162,7 +162,7 @@ int main(int argc, char ** argv)
     printf("argv1: %s\n", argv[1]);
     printf("argv2: %s\n", argv[2]);
 
-    char* buffer = calloc(sizeof(char),BUFSIZE+5);
+    char* buffer = calloc(sizeof(char),BUFSIZE);
 
 
     struct sockaddr_un svaddr, claddr;
@@ -282,13 +282,22 @@ int main(int argc, char ** argv)
         // il y a deux listes: list contient la liste des sockets sur lesquelles on écoute
         // liste_bind contient la liste des socket sur les quelles on envoie (et du coup l'autre écoute dessus de l'autre coté)
     }
+    strncpy(buffer,"#newco\ntoto",12);
+    if(send(clfd, buffer, strlen(buffer), 0)<0)
+    {
+        stop("send python");
+    }
+    else
+    {
+        printf("sent %s\n", buffer);
+    }
     //printf("avant le while\n");
     while(TRUE) 
     {
         //printf("dans le while\n");
         FD_ZERO(&readfds);
         FD_SET(bindsock, &readfds);
-        // FD_SET(clfd, &readfds);
+        FD_SET(clfd, &readfds);
 
         // penser à cet la socket de l'api
         max_sd = bindsock;
@@ -374,8 +383,8 @@ int main(int argc, char ** argv)
             }
             // API
             if(FD_ISSET( clfd , &readfds)){
-                bzero(&buffer, sizeof(buffer));
-                if((received = recv(clfd, buffer, BUFSIZ, 0))==-1)
+                bzero(buffer, sizeof(buffer));
+                if((received = recv(clfd, buffer, BUFSIZE-1, 0))==-1)
                 {
                     stop("recv");
                     continue;
@@ -385,7 +394,6 @@ int main(int argc, char ** argv)
                 {
                     puts("received from Python");                
                     printf("%s\n",buffer);
-                    return 0;
                     //envoie des données en broadcast
                     // TODO
                 }

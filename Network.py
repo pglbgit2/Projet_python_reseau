@@ -387,7 +387,7 @@ class Network:
             assert rlist[0] == self.sock
             buf = self.receiveFromServer()
             if buf == -1:
-                assert False
+                print('rien recu')
             else:
                 if buf[0] == '#':
 
