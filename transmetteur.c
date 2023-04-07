@@ -66,12 +66,12 @@ list_joueur * create_cell(int* sockfd, struct sockaddr_in* addr){
 
 
 
-int put_cell(list_joueur* list, list_joueur* cell){
-    if (list == NULL){
-        list = cell;
+int put_cell(list_joueur** list, list_joueur* cell){
+    if (*list == NULL){
+        *list = cell;
     }
     else{
-	    list_joueur * list_it = list;
+	    list_joueur * list_it = *list;
 	    while(list_it->next != NULL){
 		    if(list_it == cell){
 			return 0;
@@ -146,7 +146,7 @@ list_joueur * create_connect(char * port, char * ip, list_joueur ** list){
         printf("%d\n", new_cell->sockfd);
         //printf("debug3\n");
         if (*list != NULL){
-            put_cell(*list,new_cell);
+            put_cell(list,new_cell);
         }
         else{
             *list = new_cell;
@@ -368,7 +368,7 @@ int main(int argc, char ** argv)
             }
             else{
                 if (list != NULL){
-                    put_cell(list, new_cell);
+                    put_cell(&list, new_cell);
                 }
                 else{
                     list = new_cell;
