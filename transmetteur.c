@@ -236,7 +236,7 @@ int main(int argc, char ** argv)
 
     struct sockaddr_un svaddr, claddr;
 
-    int fd, clfd, bytes;
+    int fd, clfd, bytes, message_size, total_received;
 
     socklen_t clilen=sizeof(claddr);
 
@@ -384,16 +384,28 @@ int main(int argc, char ** argv)
         // il y a deux listes: list contient la liste des sockets sur lesquelles on écoute
         // liste_bind contient la liste des socket sur les quelles on envoie (et du coup l'autre écoute dessus de l'autre coté)
     }
-    strncpy(buffer,"#newco\ntoto",12);
-    if(send(clfd, buffer, strlen(buffer), 0)<0)
-    {
-        stop("send python");
-    }
-    else
-    {
-        printf("sent %s\n", buffer);
-    }
+     strncpy(buffer,"#newco\ntoto",12);
+    // if(send(clfd, buffer, strlen(buffer), 0)<0)
+    // {
+    //     stop("send python");
+    // }
+    // else
+    // {
+    //     printf("sent %s\n", buffer);
+    // }
     //printf("avant le while\n");
+    message_size = strlen(buffer);
+    printf("envoi à Python\n");
+    if(send(clfd,&message_size, sizeof(message_size), 0)==-1)
+    {
+    stop("send size to Python");
+    }
+    
+    // envoie message à Python
+    if((send(clfd, buffer, message_size, 0))==-1)
+    {
+    stop("send to Python");
+    }
     while(TRUE) 
     {
         //printf("dans le while\n");
@@ -454,15 +466,18 @@ int main(int argc, char ** argv)
             }
         }
         
-        else{
+        else
+        {
             list_it = list;
+            printf("la bas\n");
+
             while( list_it != NULL) 
             {
                 sd = list_it->sockfd;
                 if (FD_ISSET( sd , &readfds)) 
                 {
                     bzero(buffer, BUFSIZE);
-                    if ((valread = recv( sd , buffer, 65536, 0)) == 0)
+                    if ((valread = recv( sd , buffer, 65536, 0)) == 0) // à sécuriser
                     {
                         //cas de deconnection 
                         getpeername(sd , (struct sockaddr*)&address , (socklen_t*)&len);
@@ -507,6 +522,22 @@ int main(int argc, char ** argv)
 
                         // cas commence par '?' : message destiné à C (juste du c vers c)
                         // cas commence par '#' : message destiné à python
+                        if (buffer[0]=='#')
+                        {
+                            //envoi taille à python
+                            message_size = strlen(buffer);
+                            printf("envoi à Python\n");
+                            if(send(clfd,&message_size, sizeof(message_size), 0)==-1)
+                            {
+                                stop("send size to Python");
+                            }
+                            //envoie message à Python
+                            if((send(clfd, buffer, message_size, 0))==-1)
+                            {
+                                stop("send to Python");
+                            }
+                        }
+
                         // aucun des deux precedents: erreurs 
 
 
@@ -518,16 +549,32 @@ int main(int argc, char ** argv)
                 list_it = list_it->next;
                 printf("test while\n");
             }
-            // API
-            if(FD_ISSET( clfd , &readfds)){
-                printf("select api\n");
-                bzero(buffer, strlen(buffer));
-                if((received = recv(clfd, buffer, BUFSIZE-1, 0))==-1)
+
+            printf("ici\n");
+
+            //API
+            if(FD_ISSET( clfd , &readfds))
+            {
+                bzero(buffer, sizeof(buffer));
+
+                //recevoir taille message
+                printf("attente réception...\n");
+                if((received = recv(clfd, &message_size, sizeof(int), MSG_WAITALL))!=sizeof(int))
                 {
-                    stop("recv");
+                    stop("recv size");
+                }
+                else
+                {
+                    printf("%i\n", message_size);
+                }
+
+                //reception message
+                received = recv(clfd, buffer, message_size, MSG_WAITALL);
+                if(received==-1)
+                {
+                    stop("recv msg");
                     continue;
                 }
-                else if (received == 0) continue;
                 else
                 {
                     puts("received from Python");                
@@ -547,7 +594,9 @@ int main(int argc, char ** argv)
                     // TODO
                 }
             }
+                
         }
+        
         
     }
 
