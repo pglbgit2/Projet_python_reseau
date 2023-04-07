@@ -27,6 +27,8 @@
 // take a string and divide it into words
 char ** parse(char * msg, int * numb, char splitter){
 	char ** arg = calloc(sizeof(char *), 15);
+    char * port = calloc(sizeof(char),10);
+    char * ip = calloc(sizeof(char),30);
 	int n = strlen(msg);
 	int j = 0;
 	char * debut = msg;
@@ -239,16 +241,86 @@ int sendall(char * buffer, list_joueur * player_list){
     return 1;
 }
 
-char * getiptable(char ** iptable){
-    char * table = calloc(sizeof(char),200);
-    char * parseur = iptable[0];
-    int i = 0;
-    while (parseur != NULL){
-        strcpy(table+strlen(table),parseur);
-        table[strlen(table)] = ';';
-        i++;
-        parseur = iptable[i];
+char** get_iptable() {
+    
+    int nombreAdressesIP = 0; // Nombre d'adresses IP récupérées
+    char** iptable = NULL; // Tableau pour stocker les adresses IP
+
+    // Allouer de la mémoire pour le tableau iptable
+    iptable = (char**)malloc(sizeof(char*));
+
+    if (iptable == NULL) {
+        perror("Erreur d'allocation de mémoire");
+        exit(EXIT_FAILURE);
     }
+
+    char* adresseIP = NULL;
+
+    // Boucle pour récupérer les adresses IP une par une
+    while ((adresseIP = my_ip_address()) != NULL) {
+        // Réallouer la mémoire pour agrandir le tableau iptable
+        iptable = (char**)realloc(iptable, (nombreAdressesIP + 2) * sizeof(char*)); // +2 pour le nouveau pointeur NULL de fin de tableau et l'adresse IP récupérée
+
+        if (iptable == NULL) {
+            perror("Erreur d'allocation de mémoire");
+            exit(EXIT_FAILURE);
+        }
+
+        // Allouer de la mémoire pour stocker l'adresse IP récupérée
+        int longueurAdresseIP = strlen(adresseIP) + 1; // +1 pour le caractère de fin de chaîne
+        iptable[nombreAdressesIP] = (char*)malloc(longueurAdresseIP * sizeof(char));
+        if (iptable[nombreAdressesIP] == NULL) {
+            perror("Erreur d'allocation de mémoire");
+            exit(EXIT_FAILURE);
+        }
+
+        strcpy(iptable[nombreAdressesIP], adresseIP);
+
+        nombreAdressesIP++;
+
+        // Libérer la mémoire allouée pour l'adresse IP récupérée
+        free(adresseIP);
+    }
+
+    // Ajouter le pointeur NULL de fin de tableau
+    iptable[nombreAdressesIP] = NULL;
+
+    // Retourner le tableau d'adresses IP
+    return iptable;
+}
+
+char ** parse_string(char * str, int * num_words) {
+    char ** words = NULL;
+    char * word = NULL;
+    int i = 0, j = 0, n = 0;
+
+    // Compter le nombre de mots dans la chaîne
+    for (i = 0; str[i] != '\0'; i++) {
+        if (str[i] == ',') {
+            n++;
+        }
+    }
+    n++; // Compter le dernier mot après la dernière virgule
+
+    // Allouer de la mémoire pour les pointeurs de chaque mot
+    words = calloc(n, sizeof(char*));
+    if (words == NULL) {
+        printf("Erreur: échec d'allocation de mémoire.\n");
+        exit(1);
+    }
+
+    // Extraire chaque mot de la chaîne
+    word = strtok(str, ",");
+    while (word != NULL) {
+        words[j] = word;
+        j++;
+        word = strtok(NULL, ",");
+    }
+
+    // Stocker le nombre total de mots
+    *num_words = n;
+
+    return words;
 }
 
 char** get_iptable() {
