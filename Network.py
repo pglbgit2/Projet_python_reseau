@@ -302,7 +302,7 @@ class Network:
             with open('./' + file_name, 'r') as toSend:
                 data = toSend.read()
                 size = len(data)
-                if size > 1400:
+                """if size > 1400:
 
                     # nb_buffers = floor(size/1400) + 1
                     # [None for buffers in range(nb_buffers - 1)]
@@ -320,12 +320,12 @@ class Network:
                         arr = bytes(buffers[i], 'utf-8')
                         self.sock.send(arr)
 
-                else:
-                    arr = bytes(data, 'utf-8')
+                else:"""
+                arr = bytes(data, 'utf-8')
                     # arr2 = struct.pack(">H", 8)
                     # print(arr2)
                     # time.sleep(1)
-                    self.sock.send(arr)
+                self.sock.send(arr)
 
         finally:
             pass
@@ -337,7 +337,7 @@ class Network:
                 print("reçu ")
                 buf = bytes.decode('utf-8')
                 # traitement des modifications
-                if buf[0:7] == 'MULTIPLE':
+                """if buf[0:7] == 'MULTIPLE':
                     #id = int(buf[9])
                     separ = buf.split('///') # separ[0] = header /// separ[1] = data
                     header = separ.split(';')
@@ -367,7 +367,7 @@ class Network:
 
                     # Okay, now we somehow have the whole message inside buf_wait[] (Don't ask how)
 
-                    buf = ''.join(buf_wait)
+                    buf = ''.join(buf_wait)"""
 
                 return buf
             except socket.error as e:
