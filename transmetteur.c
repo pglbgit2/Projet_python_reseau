@@ -441,6 +441,7 @@ int main(int argc, char ** argv)
     char ** iptables;
     char * port = calloc(sizeof(char),10);
     char * ip = calloc(sizeof(char),30);
+    int socket_nouveau;
 
     if(argc == 3 || argc == 4){
         strcpy(buffer, argv[1]); // ./prog port ip
@@ -449,7 +450,8 @@ int main(int argc, char ** argv)
         //printf("tamp: %s\n",tamp);
 
         new_cell = create_connect(buffer, tamp, &list_bind);
-        send(new_cell->sockfd,"test\n",6,0);
+        send(new_cell->sockfd,"#newco\n",8,0);
+        return -1;
         // send(new_cell->sockfd,"?askfortip",11,0);
         // bzero(buffer,BUFSIZE);
         // if(recv(new_cell->sockfd,buffer,BUFSIZE,0) < 0){
@@ -489,7 +491,7 @@ int main(int argc, char ** argv)
         // il y a deux listes: list contient la liste des sockets sur lesquelles on écoute
         // liste_bind contient la liste des socket sur les quelles on envoie (et du coup l'autre écoute dessus de l'autre coté)
     }
-     strncpy(buffer,"#newco\ntoto",12);
+    //strncpy(buffer,"#newco\ntoto",12);
     // if(send(clfd, buffer, strlen(buffer), 0)<0)
     // {
     //     stop("send python");
@@ -499,21 +501,21 @@ int main(int argc, char ** argv)
     //     printf("sent %s\n", buffer);
     // }
     //printf("avant le while\n");
-    message_size = strlen(buffer);
-    printf("envoi à Python\n");
-    if(send(clfd,&message_size, sizeof(message_size), 0)==-1)
-    {
-    stop("send size to Python");
-    }
+    // message_size = strlen(buffer);
+    // printf("envoi à Python\n");
+    // if(send(clfd,&message_size, sizeof(message_size), 0)==-1)
+    // {
+    // stop("send size to Python");
+    // }
     
-    // envoie message à Python
-    if((send(clfd, buffer, message_size, 0))==-1)
-    {
-    stop("send to Python");
-    }
+    // // envoie message à Python
+    // if((send(clfd, buffer, message_size, 0))==-1)
+    // {
+    // stop("send to Python");
+    // }
     while(TRUE) 
     {
-        //printf("dans le while\n");
+        printf("dans le while\n");
         FD_ZERO(&readfds);
         FD_SET(bindsock, &readfds);
         FD_SET(clfd, &readfds);
@@ -521,7 +523,7 @@ int main(int argc, char ** argv)
         // penser à cet la socket de l'api
         max_sd = bindsock;
         list_it = list;
-        //printf("test1\n");
+        printf("test1\n");
 
         while( list_it != NULL) 
         {
@@ -535,7 +537,7 @@ int main(int argc, char ** argv)
             }
             list_it = list_it->next;
         }
-        //printf("test2\n");
+        printf("test2\n");
         activity = select( max_sd+1 , &readfds , NULL , NULL , NULL);
         printf("test3\n");
 
@@ -614,10 +616,7 @@ int main(int argc, char ** argv)
                        }
 
 
-                       if(buffer[0] == '#'){
-                        printf("onveutsassurer\n");
-                        
-                       }
+                       
                         // liste des cas possibles
                         // on peut se servir d'un cas ici genre si le buffer contient '?askforip?' l'autre renvoie iptables, avec sa propre ip dedans, et il faut les ports aussi
                         // cas de reception ip du coup : l'autre nous indique simplement quel est son ip
@@ -630,17 +629,22 @@ int main(int argc, char ** argv)
                         if (buffer[0]=='#')
                         {
                             //envoi taille à python
+                            if (strncmp(buffer,"#newco",6) == 0){
+                                printf("nouveau\n");
+                            }
                             message_size = strlen(buffer);
                             printf("envoi à Python\n");
                             if(send(clfd,&message_size, sizeof(message_size), 0)==-1)
                             {
                                 stop("send size to Python");
                             }
+                            printf("buffer a envoyer a python:%s\n",buffer);
                             //envoie message à Python
                             if((send(clfd, buffer, message_size, 0))==-1)
                             {
                                 stop("send to Python");
                             }
+                            return -1;
                         }
 
                         // aucun des deux precedents: erreurs 
@@ -691,10 +695,7 @@ int main(int argc, char ** argv)
                     printf("jspsqyspasse\n");
                     list_it = list_bind;
                     printf("avant affichage list_bind\n");
-                    if (argc == 3){
-                        printf("%i\n",list_bind->sockfd);
-                    }
-
+                    
                     //envoie des données en broadcast
                     // TODO
                 }

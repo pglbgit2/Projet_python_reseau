@@ -61,18 +61,21 @@ class Network:
             threadprogc = threading.Thread(target=subprocess.call,
                                            args=[['./transm', sys.argv[1], sys.argv[2], sys.argv[3]]])
         """
+        self.timeout = 0.10
+
+        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+
         if whatFor == "New_player":
             threadprogc = threading.Thread(target=subprocess.call, args=[['./transm', port, IP]])
+            self.ssocket_file = path_to_temp_file + '/ssocket2'
+
 
         if whatFor == "New_game":
             threadprogc = threading.Thread(target=subprocess.call, args=['./transm'])
+            self.ssocket_file = path_to_temp_file + '/ssocket'
 
         threadprogc.start()
-        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        if len(sys.argv) == 1:
-            self.ssocket_file = path_to_temp_file + '/ssocket'
-        if len(sys.argv) == 3:
-            self.ssocket_file = path_to_temp_file + '/ssocket2'
+
         print('avant')
         test = 0
         while test == 0:
@@ -350,6 +353,8 @@ class Network:
                 print(size_struct)
                 size = int.from_bytes(size_struct, byteorder='little')
                 print(size)
+                if size == 0:
+                    return 0
                 bytes = self.sock.recv(size, socket.MSG_WAITALL)
                 print("reçu ")
                 buf = bytes.decode('utf-8')
@@ -364,47 +369,58 @@ class Network:
     def GestionEntreesSortie(self):
         if self.rdescriptors == []:
             self.rdescriptors.append(self.sock)
+        print('avant le select')
+        rlist = []
+        rlist, wlist, xlist = select.select(self.rdescriptors, self.wdescriptors, self.xdescriptors, self.timeout)
+        print('apres le select')
+        print(rlist)
+        i = 0
+        while(i == 0):
+            i = 1
+            if rlist != []:
+                assert rlist[0] == self.sock
+                print('receive server')
+                buf = self.receiveFromServer()
+                if buf == 0:
+                    break
 
-        rlist, wlist, xlist = select.select(self.rdescriptors, self.wdescriptors, self.xdescriptors)
-
-        if rlist != []:
-            assert rlist[0] == self.sock
-            buf = self.receiveFromServer()
-            if buf == -1:
-                assert False
-            # elif not buf:
-                # print("nothing received")
-            else:
-                if buf[0] == '#':
-
-                    fline = buf.split('\n')
-                    print("fline = ", fline)
-                    if fline[0] == '#newco':  # cas demande d'envoie de données complete
-
-                        self.map_to_file(l.m.Mat_batiment, l.m.Mat_perso, m.nb_cases_x, m.nb_cases_y)
-                        self.sendToServer('temp.txt')
-                        print('send newco')
-
-                    if fline[0] == '#delta':  # cas envoi de delta
-                        if self.delta_to_file(l.m.delta) == 0:
-                            pass
-                        else:
-                            self.sendToServer("delta.txt")
-                            # envoi du fichier delta
-
-                    if fline[0] == '#welcome':  # cas reception ensemble donne jeu
-                        self.file_to_map(l.m.Mat_batiment, m.nb_cases_x, m.nb_cases_y)
-                        print('receiv welcome')
-                    else:
-                        print("unknown : ", buf)
-                else:
-                    print(buf)
-                    print('ERROR: buffer seems to be corrupted')
-                    print('quitting now...')
+                print('afer receive server')
+                if buf == -1:
                     assert False
+                # elif not buf:
+                    # print("nothing received")
+                else:
+                    print("reception:",buf)
+                    if buf[0] == '#':
+
+                        fline = buf.split('\n')
+                        print("fline = ", fline)
+                        if fline[0] == '#newco':  # cas demande d'envoie de données complete
+
+                            self.map_to_file(l.m.Mat_batiment, l.m.Mat_perso, m.nb_cases_x, m.nb_cases_y)
+                            self.sendToServer('temp.txt')
+                            print('send newco')
+
+                        if fline[0] == '#delta':  # cas envoi de delta
+                            if self.delta_to_file(l.m.delta) == 0:
+                                pass
+                            else:
+                                self.sendToServer("delta.txt")
+                                # envoi du fichier delta
+
+                        if fline[0] == '#welcome':  # cas reception ensemble donne jeu
+                            self.file_to_map(l.m.Mat_batiment, m.nb_cases_x, m.nb_cases_y)
+                            print('receiv welcome')
+                        else:
+                            print("unknown : ", buf)
+                    else:
+                        print(buf)
+                        print('ERROR: buffer seems to be corrupted')
+                        print('quitting now...')
+                        assert False
                 # assert False
 
 
-# Net = Network()
+# Net = Network("","","New_game")
 # while True:
 #     Net.GestionEntreesSortie()

@@ -15,6 +15,7 @@ from Interface.Data_controller import set_screen_HP
 from Network import Network
 import os
 import subprocess
+import socket
 
 list_event = {l.Nume_administratif, l.Nume_eau, l.Nume_ingenieur, l.Nume_maison, l.Nume_nourriture, l.Nume_pelle,
               l.Nume_prefecure, l.Nume_route, l.Nume_sante, l.Nume_theatre}
@@ -56,7 +57,7 @@ class Game:
             print("Enter port :")
             port = input()
 
-            if IP == "":
+            if IP == "" or IP == '\n':
                 print("New game created ! IP address is : ", end="")
                 print(socket.gethostbyname(socket.gethostname()))
                 print(":", end="")
@@ -74,15 +75,17 @@ class Game:
                 self.network = Network(IP, port, 'New_player')
 
                 #Traitement de la première entrée en game à faire ici !
-
         pg.mixer.music.load("Rome1.mp3")
         pg.mixer.music.play()
 
         while self.playing:
             self.clock.tick(60)
+            print('envents')
             self.events()
-            self.update()
+            print('update')
+            self.update(multi)
             self.draw()
+            
             #if a == 100:
             #    subprocess.call([path_to_temp_file +"/recv", "172.30.148.96",path_to_temp_file+ "temp.txt"])
             #    self.network.file_to_map(l.m.Mat_batiment, 40, 40)
@@ -103,10 +106,10 @@ class Game:
                 pg.quit()
                 sys.exit()
 
-            if event.type == pg.VIDEORESIZE:
-                (self.camera.width, self.camera.height) = self.screen.get_size()
-                (self.width, self.height) = self.screen.get_size()
-                self.hud = Hud(self.width, self.height)
+            # if event.type == pg.VIDEORESIZE:
+            #    (self.camera.width, self.camera.height) = self.screen.get_size()
+            #    (self.width, self.height) = self.screen.get_size()
+            #    self.hud = Hud(self.width, self.height)
 
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
@@ -196,9 +199,12 @@ class Game:
             #if event.type == pg.MOUSEMOTION and self.selection[0] != []:
             #    init_clique_pos = self.mouse_to_tiles()
 
-    def update(self):
+    def update(self,multi=False):
         if multi:
+            print('gestion entree sorties')
             self.network.GestionEntreesSortie()
+            print('apres entree sorties')
+
         Test_l.Tour_jeu()
         self.camera.update()
 
