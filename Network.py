@@ -339,7 +339,7 @@ class Network:
     def receiveFromServer(self):
         while True:
             try:
-                size_struct = self.sock.recv(4)
+                size_struct = self.sock.recv(4, socket.MSG_WAITALL)
                 print(size_struct)
                 size = int.from_bytes(size_struct, byteorder='little')
                 print(size)

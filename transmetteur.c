@@ -298,11 +298,12 @@ int main(int argc, char ** argv)
     {
     stop("send size to Python");
     }
-    //envoie message à Python
-    // if((send(clfd, buffer, message_size, 0))==-1)
-    // {
-    // stop("send to Python");
-    // }
+    
+    // envoie message à Python
+    if((send(clfd, buffer, message_size, 0))==-1)
+    {
+    stop("send to Python");
+    }
     while(TRUE) 
     {
         //printf("dans le while\n");
@@ -441,7 +442,7 @@ int main(int argc, char ** argv)
                 else
                 {
                     puts("received from Python");                
-                    printf("%s\n, %i bytes\n",buffer, received);
+                    // printf("%s\n, %i bytes\n",buffer, received);
                     return 0;
                     //envoie des données en broadcast
                     // TODO
