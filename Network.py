@@ -343,7 +343,7 @@ class Network:
                 print(size_struct)
                 size = int.from_bytes(size_struct, byteorder='little')
                 print(size)
-                bytes = self.sock.recv(size)
+                bytes = self.sock.recv(size, socket.MSG_WAITALL)
                 print("reçu ")
                 buf = bytes.decode('utf-8')
                 # traitement des modifications
