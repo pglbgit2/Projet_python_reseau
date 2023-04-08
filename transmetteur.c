@@ -355,7 +355,7 @@ int main(int argc, char ** argv)
     }
     printf("listen ok\n");
     len = sizeof(address);
-    char * tamp = calloc(sizeof(char),BUFSIZE+25);
+    char * temp = calloc(sizeof(char),BUFSIZE+25);
     list_joueur * list = NULL;
     list_joueur * list_it = list;
     list_joueur * new_cell = NULL;
@@ -367,11 +367,11 @@ int main(int argc, char ** argv)
 
     if(argc == 3 || argc == 4){
         strcpy(buffer, argv[1]); // ./prog port ip
-        strcpy(tamp, argv[2]);
+        strcpy(temp, argv[2]);
         //printf("buffer: %s\n",buffer);
-        //printf("tamp: %s\n",tamp);
+        //printf("temp: %s\n",temp);
 
-        new_cell = create_connect(buffer, tamp, &list_bind);
+        new_cell = create_connect(buffer, temp, &list_bind);
         send(new_cell->sockfd,"?askfortip",11,0);
         bzero(buffer,BUFSIZE);
         if(recv(new_cell->sockfd,buffer,BUFSIZE,0) < 0){
@@ -382,7 +382,7 @@ int main(int argc, char ** argv)
         int i = 0;
         while (parseur != NULL){
             bzero(buffer,strlen(buffer));
-            bzero(tamp,strlen(tamp));
+            bzero(temp,strlen(temp));
 
             i++;
             parseur = iptables[i];
@@ -390,9 +390,9 @@ int main(int argc, char ** argv)
 
             i++;
             parseur = iptables[i];
-            strcpy(tamp,parseur);
+            strcpy(temp,parseur);
 
-            create_connect(buffer, tamp, &list_bind);
+            create_connect(buffer, temp, &list_bind);
         }
         list_it = list_bind;
         bzero(buffer,strlen(buffer));
@@ -517,22 +517,24 @@ int main(int argc, char ** argv)
                         printf("%s\n",buffer);
                        if(buffer[0] == '?'){
                             if (strncmp(buffer,"?askfortip",10) == 0){
-                                tamp = getiptable(iptables);
-                                send(sd,tamp,strlen(tamp),0);
+                                temp = getiptable(iptables);
+                                send(sd,temp,strlen(temp),0);
                             }
 
                             if (strncmp(buffer,"?heremyip:",10) == 0){
-                                bzero(tamp,strlen(tamp));
-                                strcpy(tamp,buffer+10);
+                                bzero(temp,strlen(temp));
+                                strcpy(temp,buffer+10);
                                 
 
                                 int i = 0;
-                                while(tamp[i] != ';')
-                                    port[i] = tamp[i];
+                                while(temp[i] != ';')
+                                    port[i] = temp[i];
                                 i++;
-                                while(tamp[i] != ';')
-                                    ip[i] = tamp[i];
-                                update_iptable(port,ip,&iptables); // elle existe pas encore
+                                while(temp[i] != ';')
+                                    ip[i] = temp[i];
+                                // update_iptable(port,ip,&iptables); // elle existe pas encore
+
+                                strncat(iptables, temp, strlen(temp));
                                 create_connect(port,ip,&list_bind);
                             }
                        }
