@@ -205,6 +205,7 @@ int sendall(void * buffer, list_joueur * player_list, int bufsize){
             return -1;
         }
         list_it = list_it->next;
+
     }
     return test;
 }
@@ -639,7 +640,7 @@ int main(int argc, char ** argv)
                 }
                 else
                 {
-                    //printf("%i\n", message_size);
+                    printf("%i\n", message_size);
                 }
 
                 //reception message
@@ -655,16 +656,19 @@ int main(int argc, char ** argv)
                     printf("%s\n",buffer);
                     //printf("%c\n",buffer[0]);
                     if (buffer[0] == '#' && list_bind != NULL){ //envoie à C
-                    message_size = strlen(buffer);
-                        if(sendall(&message_size, list_bind, sizeof(int))==-1)
+                        message_size = strlen(buffer);
+                        int test;
+                        printf("before sendall\n");
+                        if((test=sendall(&message_size, list_bind, sizeof(int)))==-1)
                         {
                             stop("send size to C");
                         }
-                        if (sendall(buffer,list_bind, message_size)==-1)
+                        printf("%i\n",test);
+                        if ((test=sendall(buffer,list_bind, message_size))==-1)
                         {
                             stop("send message to C");
                         }
-                        
+                        printf("%i\n",test);
                     }
                     //printf("jspsqyspasse\n");
                     list_it = list_bind;
