@@ -491,7 +491,7 @@ int main(int argc, char ** argv)
                 stop("accept");
                 return -1;
             }
-            //printf("new joueur\n");
+            printf("new joueur\n");
             new_cell = create_cell(&new_socket, &jaddr);
             if(new_cell == NULL){
                 stop("ERROR create cell");

@@ -382,25 +382,28 @@ class Network:
                 else:
                     #print("reception:",buf)
                     if buf[0] == '#':
-
+                        print(buf)
                         fline = buf.split('\n')
                         #print("fline = ", fline)
                         if fline[0] == '#newco':  # cas demande d'envoie de données complete
 
-                            self.map_to_file(l.m.Mat_batiment, l.m.Mat_perso, m.nb_cases_x, m.nb_cases_y,buf[6:])
+                            self.map_to_file(l.m.Mat_batiment, l.m.Mat_perso, m.nb_cases_x, m.nb_cases_y)
                             self.sendToServer('temp.txt')
                             #print('send newco')
 
                         if fline[0] == '#delta':  # cas envoi de delta
                             if self.file_to_modif(buf[6:]) == 0:
                                 pass
+                            print('delta')
                             
                                 
                                 # envoi du fichier delta
 
                         if fline[0] == '#welcome':  # cas reception ensemble donne jeu
+                            print('receiv welcome')
+
                             self.file_to_map(l.m.Mat_batiment, m.nb_cases_x, m.nb_cases_y,buf[7:])
-                            #print('receiv welcome')
+                            print('after file to map')
                         else:
                             pass
                             #print("unknown : ", buf)
