@@ -85,7 +85,7 @@ list_joueur * create_cell(int* sockfd, struct sockaddr_in* addr){
 	so_linger.l_linger = 30;
 	z = setsockopt(l->sockfd, SOL_SOCKET, SO_LINGER, &so_linger, sizeof(so_linger));
 	if(z){
-	    printf("ERROR: setsockopt(2) (quick close case)");
+	    //printf("ERROR: setsockopt(2) (quick close case)");
         return NULL;
 	}
     }
@@ -164,7 +164,8 @@ list_joueur * create_connect(char * port, char * ip, list_joueur ** list){
 		    stop("ERROR socket creation");
             return NULL;
 	    }
-	    //printf("Socket created\n");
+        //printf("port:%s,ip:%s\n",port,ip);
+	    ////printf("Socket created\n");
 	    first.sin_addr.s_addr = inet_addr(ip);
 	    first.sin_family = AF_INET;
 	    first.sin_port = htons(atoi(port));
@@ -178,24 +179,24 @@ list_joueur * create_connect(char * port, char * ip, list_joueur ** list){
 
         //printf("Connected\n");
         list_joueur * new_cell;
-        //printf("debug2\n");
+        ////printf("debug2\n");
 
         new_cell = create_cell(&sockfd,&first);
-        printf("%d\n", new_cell->sockfd);
-        //printf("debug3\n");
+        //printf("%d\n", new_cell->sockfd);
+        ////printf("debug3\n");
         if (*list != NULL){
             put_cell(list,new_cell);
         }
         else{
             *list = new_cell;
         }
-        //printf("debug4\n");
+        ////printf("debug4\n");
 	    return new_cell;
 }
 
 
 int sendall(char * buffer, list_joueur * player_list){
-    printf("send all called\n");
+    //printf("send all called\n");
     int test;
     list_joueur * list_it = player_list;
     while (list_it != NULL){
@@ -230,7 +231,7 @@ char * my_ip_address(){ //Programme donnant l'adresse IP locale de la machine su
             while (inet_address != NULL) {
                 if (inet_address[0] == 'i' && inet_address[1] == 'n' && inet_address[2] == 'e' && inet_address[3] == 't') {
                     inet_address = strtok(NULL, " \t\n");
-                    printf("%s\n", inet_address);
+                    //printf("%s\n", inet_address);
                     exit(EXIT_SUCCESS);
                 }
                 inet_address = strtok(NULL, " \t\n");
@@ -243,7 +244,7 @@ char * my_ip_address(){ //Programme donnant l'adresse IP locale de la machine su
 
 // char * getiptable(){
 //     char * table;
-
+    
 //     return table;
 // }
 
@@ -252,12 +253,12 @@ int main(int argc, char ** argv)
 {
 
     if (argc != 1 && argc != 3 && argc != 4){ //pour test le 4
-        printf("Error: you're supposed to either give IP and Port number as arguments, or nothing\n");
+        //printf("Error: you're supposed to either give IP and Port number as arguments, or nothing\n");
         return -1;
     }
 
-    printf("argv1: %s\n", argv[1]);
-    printf("argv2: %s\n", argv[2]);
+    //printf("argv1: %s\n", argv[1]);
+    //printf("argv2: %s\n", argv[2]);
 
     char* buffer = calloc(sizeof(char),BUFSIZE);
 
@@ -303,11 +304,11 @@ int main(int argc, char ** argv)
         stop("listen");
     }
     else{
-        printf("listening\n");
+        //printf("listening\n");
     }
     clfd = accept(fd, (struct sockaddr *)&claddr, &clilen);
-    printf("accepted\n");
-    printf("%i\n", claddr.sun_family);
+    //printf("accepted\n");
+    ////printf("%i\n", claddr.sun_family);
     int received = 0;
 
     int bindsock, len, activity, max_sd, sd, new_socket,valread;
@@ -320,14 +321,14 @@ int main(int argc, char ** argv)
         stop("ERROR: socket creation");
         return -1;
     }
-    printf("socket ok\n");
+    //printf("socket ok\n");
 
     if( setsockopt(bindsock, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0 )
     {
         stop("ERROR: setsockopt");
         return -1;
     }
-    printf("setsockopt ok\n");
+    //printf("setsockopt ok\n");
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = inet_addr( "127.0.0.1" );
     
@@ -347,14 +348,14 @@ int main(int argc, char ** argv)
         stop("ERROR binding socket");
          return -1;
     }
-	printf("binding ok\n");
+	//printf("binding ok\n");
 
     if (listen(bindsock, 3) < 0)
     {
         stop("ERROR set listening");
         return -1;
     }
-    printf("listen ok\n");
+    //printf("listen ok\n");
     len = sizeof(address);
     char * temp = calloc(sizeof(char),BUFSIZE+25);
     list_joueur * list = NULL;
@@ -368,40 +369,54 @@ int main(int argc, char ** argv)
     if(argc == 3 || argc == 4){
         strcpy(buffer, argv[1]); // ./prog port ip
         strcpy(temp, argv[2]);
-        //printf("buffer: %s\n",buffer);
-        //printf("temp: %s\n",temp);
+        ////printf("buffer: %s\n",buffer);
+        ////printf("temp: %s\n",temp);
 
         new_cell = create_connect(buffer, temp, &list_bind);
         send(new_cell->sockfd,"?askfortip",11,0);
         bzero(buffer,BUFSIZE);
+        ////printf("avant le recev\n");
         if(recv(new_cell->sockfd,buffer,BUFSIZE,0) < 0){
-            printf("error recv connect\n");
+            //printf("error recv connect\n");
         }
-        strncpy(iptables, buffer, strlen(buffer));
-        char** parseur = parse(buffer,0,';');
-        char * mot = parseur[0];
-        int i = 0;
-        while (mot != NULL){
-            bzero(buffer,strlen(buffer));
-            bzero(temp,strlen(temp));
-            mot = parseur[i];
-            strcpy(buffer,mot);
-            i++;
+        if (strncmp("???",buffer,3) != 0){
+            strncpy(iptables, buffer, strlen(buffer));
+            char** parseur = parse(buffer,0,';');
+            char * mot = parseur[0];
+            int i = 0;
+            while (mot != NULL){
+                bzero(buffer,strlen(buffer));
+                bzero(temp,strlen(temp));
+                mot = parseur[i];
+                strcpy(buffer,mot);
+                i++;
 
-            mot = parseur[i];
-            strcpy(temp,mot);
-            i++;
+                mot = parseur[i];
+                strcpy(temp,mot);
+                i++;
 
-            create_connect(buffer, temp, &list_bind);
-            mot=parseur[i];
+                create_connect(buffer, temp, &list_bind);
+                mot=parseur[i];
+            }
+            
         }
+        bzero(temp,strlen(temp));
+        strcpy(temp,argv[1]);
+        temp[strlen(temp)] = ';';
+        strcpy(temp+strlen(temp),argv[2]);
+        temp[strlen(temp)] = ';';
+        strncpy(iptables+strlen(iptables), temp, strlen(buffer));
+
         list_it = list_bind;
         bzero(buffer,strlen(buffer));
-        strcpy(buffer,"?heremyip: MY PORT ; MY IP ;");
+        if (argc == 3){
+            strcpy(buffer,"?heremyip:8490;127.0.0.1;");
+        }
         while (list_it != NULL){
             send(list_it->sockfd,buffer,strlen(buffer),0);
             list_it = list_it->next;
         }
+
         send(new_cell->sockfd,"#newco\n",8,0);
 
 
@@ -421,11 +436,11 @@ int main(int argc, char ** argv)
     // }
     // else
     // {
-    //     printf("sent %s\n", buffer);
+    //     //printf("sent %s\n", buffer);
     // }
-    //printf("avant le while\n");
+    ////printf("avant le while\n");
     // message_size = strlen(buffer);
-    // printf("envoi à Python\n");
+    // //printf("envoi à Python\n");
     // if(send(clfd,&message_size, sizeof(message_size), 0)==-1)
     // {
     // stop("send size to Python");
@@ -438,19 +453,19 @@ int main(int argc, char ** argv)
     // }
     while(TRUE) 
     {
-        printf("dans le while\n");
+        ////printf("dans le while\n");
         FD_ZERO(&readfds);
         FD_SET(bindsock, &readfds);
-        FD_SET(clfd, &readfds);
+        //FD_SET(clfd, &readfds);
 
         // penser à cet la socket de l'api
         max_sd = bindsock;
         list_it = list;
-        printf("test1\n");
+        ////printf("test1\n");
 
         while( list_it != NULL) 
         {
-            //printf("toto\n");
+            ////printf("toto\n");
 		    sd = list_it->sockfd;
 			if(sd > 0){
 				FD_SET( sd , &readfds);
@@ -460,9 +475,9 @@ int main(int argc, char ** argv)
             }
             list_it = list_it->next;
         }
-        printf("test2\n");
+        //printf("test2\n");
         activity = select( max_sd+1 , &readfds , NULL , NULL , NULL);
-        printf("test3\n");
+        //printf("test3\n");
 
         if ((activity < 0) && (errno != EINTR)) 
         {
@@ -476,7 +491,7 @@ int main(int argc, char ** argv)
                 stop("accept");
                 return -1;
             }
-            printf("new joueur\n");
+            //printf("new joueur\n");
             new_cell = create_cell(&new_socket, &jaddr);
             if(new_cell == NULL){
                 stop("ERROR create cell");
@@ -499,7 +514,7 @@ int main(int argc, char ** argv)
         else
         {
             list_it = list;
-            printf("la bas\n");
+            //printf("la bas\n");
 
             while( list_it != NULL) 
             {
@@ -515,27 +530,48 @@ int main(int argc, char ** argv)
                     }
                     else
                     {
-                        printf("%s\n",buffer);
+                        //printf("%s\n",buffer);
                        if(buffer[0] == '?'){
                             if (strncmp(buffer,"?askfortip",10) == 0){
-                                send(sd,iptables,strlen(iptables),0);
+                                ////printf("reception demande ip\n");
+                                ////printf("%s\n",iptables);
+                                if (strlen(iptables) == 0){
+                                    send(sd,"???",4,0);
+                                }
+                                else{
+                                    send(sd,iptables,strlen(iptables),0);
+                                }
+                                ////printf("after send\n");
                             }
 
                             if (strncmp(buffer,"?heremyip:",10) == 0){
+                                ////printf("reception ip\n");
                                 bzero(temp,strlen(temp));
                                 strcpy(temp,buffer+10);
                                 
+                                ////printf("avant while\n");
 
                                 int i = 0;
                                 while(temp[i] != ';')
+                                {    
                                     port[i] = temp[i];
+                                    i++;
+                                }
                                 i++;
+                                int j = 0;
                                 while(temp[i] != ';')
-                                    ip[i] = temp[i];
-                                // update_iptable(port,ip,&iptables); // elle existe pas encore
+                                {
+                                    ////printf("dansle while\n");
+                                    ip[j] = temp[i];
+                                    i++;
+                                    j++;
+                                }
+                                ////printf("after while\n");
 
+                                ////printf("ip avant create connect:%s\n",ip);
                                 strncat(iptables, temp, strlen(temp));
                                 create_connect(port,ip,&list_bind);
+                                ////printf("after connect\n");
                             }
                        }
 
@@ -554,21 +590,20 @@ int main(int argc, char ** argv)
                         {
                             //envoi taille à python
                             if (strncmp(buffer,"#newco",6) == 0){
-                                printf("nouveau\n");
+                                //printf("nouveau\n");
                             }
                             message_size = strlen(buffer);
-                            printf("envoi à Python\n");
+                            ////printf("envoi à Python\n");
                             if(send(clfd,&message_size, sizeof(message_size), 0)==-1)
                             {
                                 stop("send size to Python");
                             }
-                            printf("buffer a envoyer a python:%s\n",buffer);
+                            ////printf("buffer a envoyer a python:%s\n",buffer);
                             //envoie message à Python
                             if((send(clfd, buffer, message_size, 0))==-1)
                             {
                                 stop("send to Python");
                             }
-                            return -1;
                         }
             
                         // aucun des deux precedents: erreurs 
@@ -580,10 +615,10 @@ int main(int argc, char ** argv)
                     }
                 }
                 list_it = list_it->next;
-                printf("test while\n");
+                //printf("test while\n");
             }
 
-            printf("ici\n");
+            //printf("ici\n");
 
             //API
             if(FD_ISSET( clfd , &readfds))
@@ -591,14 +626,14 @@ int main(int argc, char ** argv)
                 bzero(buffer, strlen(buffer));
 
                 //recevoir taille message
-                printf("attente réception...\n");
+                //printf("attente réception...\n");
                 if((received = recv(clfd, &message_size, sizeof(int), MSG_WAITALL))!=sizeof(int))
                 {
                     stop("recv size");
                 }
                 else
                 {
-                    printf("%i\n", message_size);
+                    //printf("%i\n", message_size);
                 }
 
                 //reception message
@@ -611,14 +646,14 @@ int main(int argc, char ** argv)
                 else
                 {
                     puts("received from Python");                
-                    printf("%s\n",buffer);
-                    printf("%c\n",buffer[0]);
+                    //printf("%s\n",buffer);
+                    //printf("%c\n",buffer[0]);
                     if (buffer[0] == '#' && list_bind != NULL){
                         sendall(buffer,list_bind);
                     }
-                    printf("jspsqyspasse\n");
+                    //printf("jspsqyspasse\n");
                     list_it = list_bind;
-                    printf("avant affichage list_bind\n");
+                    //printf("avant affichage list_bind\n");
                     
                     //envoie des données en broadcast
                     // TODO
