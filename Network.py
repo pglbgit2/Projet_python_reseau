@@ -91,6 +91,7 @@ class Network:
         self.xdescriptors = []
 
     def map_to_file(self, matrice_bat, matrice_walk, SIZE_X, SIZE_Y):
+        print("map to file called")
         if os.path.exists(path_to_temp_file + "/temp.txt"):
             os.remove(path_to_temp_file + "/temp.txt")
         if os.path.exists(path_to_temp_file + "\\temp.txt"):
@@ -332,7 +333,9 @@ class Network:
                 #print(message_size)
                 # #print(arr)
                 self.sock.sendall(message_size + arr)
-
+        except Exception as e:
+            print(e)
+            print("rien envoyé")
         finally:
             pass
 
@@ -389,7 +392,7 @@ class Network:
 
                             self.map_to_file(l.m.Mat_batiment, l.m.Mat_perso, m.nb_cases_x, m.nb_cases_y)
                             self.sendToServer('temp.txt')
-                            #print('send newco')
+                            print('send newco')
 
                         if fline[0] == '#delta':  # cas envoi de delta
                             if self.file_to_modif(buf[6:]) == 0:
@@ -397,7 +400,7 @@ class Network:
                             print('delta')
                             
                                 
-                                # envoi du fichier delta
+                            # envoi du fichier delta
 
                         if fline[0] == '#welcome':  # cas reception ensemble donne jeu
                             print('receiv welcome')

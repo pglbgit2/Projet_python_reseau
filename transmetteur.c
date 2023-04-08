@@ -456,7 +456,7 @@ int main(int argc, char ** argv)
         ////printf("dans le while\n");
         FD_ZERO(&readfds);
         FD_SET(bindsock, &readfds);
-        //FD_SET(clfd, &readfds);
+        FD_SET(clfd, &readfds);
 
         // penser à cet la socket de l'api
         max_sd = bindsock;
@@ -626,7 +626,7 @@ int main(int argc, char ** argv)
                 bzero(buffer, strlen(buffer));
 
                 //recevoir taille message
-                //printf("attente réception...\n");
+                printf("attente réception...\n");
                 if((received = recv(clfd, &message_size, sizeof(int), MSG_WAITALL))!=sizeof(int))
                 {
                     stop("recv size");
@@ -646,7 +646,7 @@ int main(int argc, char ** argv)
                 else
                 {
                     puts("received from Python");                
-                    //printf("%s\n",buffer);
+                    printf("%s\n",buffer);
                     //printf("%c\n",buffer[0]);
                     if (buffer[0] == '#' && list_bind != NULL){
                         sendall(buffer,list_bind);
