@@ -54,8 +54,8 @@ class Network:
         if len(sys.argv) == 1:
             threadprogc = threading.Thread(target=subprocess.call, args=['./transm'])
         if len(sys.argv) == 3:
-            print(sys.argv[1])
-            print(sys.argv[2])
+            #print(sys.argv[1])
+            #print(sys.argv[2])
             threadprogc = threading.Thread(target=subprocess.call, args=[['./transm', sys.argv[1], sys.argv[2]]])
         if len(sys.argv) == 4:
             threadprogc = threading.Thread(target=subprocess.call,
@@ -76,16 +76,16 @@ class Network:
 
         threadprogc.start()
 
-        print('avant')
+        #print('avant')
         test = 0
         while test == 0:
             try:
-                print("ssocketfile:", self.ssocket_file)
+                #print("ssocketfile:", self.ssocket_file)
                 self.sock.connect(self.ssocket_file)
                 test = 1
             except:
                 continue
-        print('apres')
+        #print('apres')
         self.rdescriptors = []
         self.wdescriptors = []
         self.xdescriptors = []
@@ -165,18 +165,18 @@ class Network:
 
     def get_string_tab_path(self, tab_path):
 
-        print("called")
+        #print("called")
         txt = ''
         if len(tab_path) == 0:
             return ''
-        print(tab_path)
+        #print(tab_path)
         for x in tab_path:
-            print(x)
+            #print(x)
             (a, b) = x
             txt += '(' + str(a) + ',' + str(b) + ')' + '|'
         if len(txt) != 0:
             txt = txt[:-1]
-        print('txt:', txt)
+        #print('txt:', txt)
         return txt
 
     def get_tab_path_string(self, string):
@@ -196,7 +196,7 @@ class Network:
 
     def file_to_map(self, matrice, SIZE_X, SIZE_Y):
         if not os.path.exists(path_to_temp_file + "\\temp.txt") and not os.path.exists(path_to_temp_file + "/temp.txt"):
-            print("No file 'temp.txt' found.")
+            #print("No file 'temp.txt' found.")
             return 0
         f = open("temp.txt", "r")
         text = f.read()
@@ -242,7 +242,7 @@ class Network:
                 (bdx, bdy) = self.get_coord_tuple(t)
                 (dx, dy) = self.get_coord_tuple(arg_parse[5])
                 (px, py) = self.get_coord_tuple(arg_parse[6])
-                print(walker_name)
+                #print(walker_name)
                 perso = m.add_perso(x, y, walker_name, m.Mat_perso, matrice[by][bx], matrice[bdy][bdx])
                 perso.dest_x = dx
                 perso.dest_y = dy
@@ -338,9 +338,9 @@ class Network:
                 arr = bytes(data, 'utf-8')
                 message_size = len(arr)
                 message_size=struct.pack('i', message_size)
-                print(struct.unpack('i', message_size))
-                print(message_size)
-                # print(arr)
+                ##print(struct.unpack('i', message_size))
+                #print(message_size)
+                # #print(arr)
                 self.sock.sendall(message_size + arr)
 
         finally:
@@ -350,56 +350,56 @@ class Network:
         while True:
             try:
                 size_struct = self.sock.recv(4, socket.MSG_WAITALL)
-                print(size_struct)
+                #print(size_struct)
                 size = int.from_bytes(size_struct, byteorder='little')
-                print(size)
+                #print(size)
                 if size == 0:
                     return 0
                 bytes = self.sock.recv(size, socket.MSG_WAITALL)
-                print("reçu ")
+                #print("reçu ")
                 buf = bytes.decode('utf-8')
                 # traitement des modifications
-                print(buf)
+                #print(buf)
 
                 return buf
             except socket.error as e:
-                print(e)
+                #print(e)
                 return -1
 
     def GestionEntreesSortie(self):
         if self.rdescriptors == []:
             self.rdescriptors.append(self.sock)
-        print('avant le select')
+        #print('avant le select')
         rlist = []
         rlist, wlist, xlist = select.select(self.rdescriptors, self.wdescriptors, self.xdescriptors, self.timeout)
-        print('apres le select')
-        print(rlist)
+        #print('apres le select')
+        #print(rlist)
         i = 0
         while(i == 0):
             i = 1
             if rlist != []:
                 assert rlist[0] == self.sock
-                print('receive server')
+                #print('receive server')
                 buf = self.receiveFromServer()
                 if buf == 0:
                     break
 
-                print('afer receive server')
+                #print('afer receive server')
                 if buf == -1:
                     assert False
                 # elif not buf:
-                    # print("nothing received")
+                    # #print("nothing received")
                 else:
-                    print("reception:",buf)
+                    #print("reception:",buf)
                     if buf[0] == '#':
 
                         fline = buf.split('\n')
-                        print("fline = ", fline)
+                        #print("fline = ", fline)
                         if fline[0] == '#newco':  # cas demande d'envoie de données complete
 
                             self.map_to_file(l.m.Mat_batiment, l.m.Mat_perso, m.nb_cases_x, m.nb_cases_y)
                             self.sendToServer('temp.txt')
-                            print('send newco')
+                            #print('send newco')
 
                         if fline[0] == '#delta':  # cas envoi de delta
                             if self.delta_to_file(l.m.delta) == 0:
@@ -410,13 +410,14 @@ class Network:
 
                         if fline[0] == '#welcome':  # cas reception ensemble donne jeu
                             self.file_to_map(l.m.Mat_batiment, m.nb_cases_x, m.nb_cases_y)
-                            print('receiv welcome')
+                            #print('receiv welcome')
                         else:
-                            print("unknown : ", buf)
+                            pass
+                            #print("unknown : ", buf)
                     else:
-                        print(buf)
-                        print('ERROR: buffer seems to be corrupted')
-                        print('quitting now...')
+                        #print(buf)
+                        #print('ERROR: buffer seems to be corrupted')
+                        #print('quitting now...')
                         assert False
                 # assert False
 
