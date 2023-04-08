@@ -22,6 +22,7 @@ def main():
     global screen
     global connection
     global connection_utils
+    connection_utils = ["", ""]
     global aberant_number
     aberant_number = 0
     screen = pg.display.set_mode((0, 0), pg.FULLSCREEN)
@@ -126,7 +127,7 @@ def main():
                                         (255, 0, 0),
                                         (window_width / 2 - 190, 6 * winddow_height / 10 + 60)
                                     )
-                                else: # Easter Egg
+                                else:  # Easter Egg
                                     draw_text(
                                         screen,
                                         "Invalid Entry",
