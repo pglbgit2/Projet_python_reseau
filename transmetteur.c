@@ -697,6 +697,36 @@ int main(int argc, char ** argv)
                         // quand on recoit une addresse ip et un port, il faut appeller create_connect dessus
 
                         // cas commence par '?' : message destiné à C (juste du c vers c)
+
+                        if (buffer[0] == '?')
+                        {
+                            // Cas 1.1: Demande d'adresses IP
+                            if (strncmp(buffer, "?askforip?", 10) == 0)
+                            {
+                            // Renvoyer iptables (adresses IP et ports) au client demandeur                                       
+                            char iptables[] = "127.0.0.1:8000,127.0.0.1:8490,127.0.0.1:8592"; 
+                                send(sd, iptables, strlen(iptables), 0);
+                            }
+                            // Cas 1.2: Réception d'adresse IP et de port
+                            else if (strncmp(buffer, "?ip:", 4) == 0)
+                            {
+                                char ip[INET_ADDRSTRLEN];
+                                int port;
+                                sscanf(buffer, "?ip:%[^:]:%d", ip, &port); // Extraire l'adresse IP et le port du message
+                                //printf("Adresse IP reçue: %s, Port reçu: %d\n", ip, itoa(port));
+                                char port_str[6];
+                                sprintf(port_str, "%d", port);
+                                printf("Adresse IP reçue: %s, Port reçu: %s\n", ip, port_str);
+
+                                // Appeler create_connect avec l'adresse IP et le port reçus
+                                //new_cell = create_connect(itoa(port), ip, list_bind);
+                                new_cell = create_connect(port_str, ip, &list_bind);
+                            }
+                            else
+                            {
+                                printf("Message destiné à C non reconnu: %s\n", buffer);
+                            }
+                        }
                         // cas commence par '#' : message destiné à python
                         if (buffer[0]=='#')
                         {
