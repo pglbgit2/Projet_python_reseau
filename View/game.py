@@ -83,9 +83,7 @@ class Game:
 
         while self.playing:
             self.clock.tick(60)
-            print('envents')
             self.events()
-            print('update')
             self.update(multi)
             self.draw()
 
@@ -204,9 +202,9 @@ class Game:
 
     def update(self,multi=False):
         if multi:
-            print('gestion entree sorties')
+            #print('gestion entree sorties')
             self.network.GestionEntreesSortie()
-            print('apres entree sorties')
+            #print('apres entree sorties')
 
         Test_l.Tour_jeu()
         self.camera.update()
