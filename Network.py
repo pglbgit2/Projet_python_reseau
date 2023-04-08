@@ -194,13 +194,8 @@ class Network:
         t = temp.split(',')
         return int(t[0]), int(t[1])
 
-    def file_to_map(self, matrice, SIZE_X, SIZE_Y):
-        if not os.path.exists(path_to_temp_file + "\\temp.txt") and not os.path.exists(path_to_temp_file + "/temp.txt"):
-            #print("No file 'temp.txt' found.")
-            return 0
-        f = open("temp.txt", "r")
-        text = f.read()
-        f.close()
+    def file_to_map(self, matrice, SIZE_X, SIZE_Y,buffer):
+        text = buffer
         list = text.split('\n')
         k = 1
         while True:
@@ -293,22 +288,17 @@ class Network:
         f.write(delta)
         delta = ''
         f.close()
+        return 1
 
     # to test: create file otherDelta.txt with text: l.destroy_grid_delta(19,21,3,5);
-    def file_to_modif(self):
-        if not os.path.exists(path_to_temp_file + "\\otherDelta.txt") and not os.path.exists(
-                path_to_temp_file + "/otherDelta.txt"):
-            return 0
-        f = open("otherDelta.txt", "r")
-        text = f.read()
-        f.close()
+    def file_to_modif(self,buffer):
+        
+        text = buffer
+
         instruction_list = text.split(';')
         for k in range(1, len(instruction_list)):
             exec(instruction_list[k])
-        try:
-            os.remove(path_to_temp_file + "\\otherDelta.txt")
-        except:
-            os.remove(path_to_temp_file + "/otherDelta.txt")
+        
 
     def sendToServer(self, file_name):  # not actually a server
 
@@ -397,19 +387,19 @@ class Network:
                         #print("fline = ", fline)
                         if fline[0] == '#newco':  # cas demande d'envoie de données complete
 
-                            self.map_to_file(l.m.Mat_batiment, l.m.Mat_perso, m.nb_cases_x, m.nb_cases_y)
+                            self.map_to_file(l.m.Mat_batiment, l.m.Mat_perso, m.nb_cases_x, m.nb_cases_y,buf[6:])
                             self.sendToServer('temp.txt')
                             #print('send newco')
 
                         if fline[0] == '#delta':  # cas envoi de delta
-                            if self.delta_to_file(l.m.delta) == 0:
+                            if self.file_to_modif(buf[6:]) == 0:
                                 pass
-                            else:
-                                self.sendToServer("delta.txt")
+                            
+                                
                                 # envoi du fichier delta
 
                         if fline[0] == '#welcome':  # cas reception ensemble donne jeu
-                            self.file_to_map(l.m.Mat_batiment, m.nb_cases_x, m.nb_cases_y)
+                            self.file_to_map(l.m.Mat_batiment, m.nb_cases_x, m.nb_cases_y,buf[7:])
                             #print('receiv welcome')
                         else:
                             pass
@@ -420,6 +410,10 @@ class Network:
                         #print('quitting now...')
                         assert False
                 # assert False
+        if self.delta_to_file() == 1:
+            self.sendToServer('mydelta.txt')
+
+
 
 
 # Net = Network("","","New_game")

@@ -204,9 +204,9 @@ class Game:
 
     def update(self,multi=False):
         if multi:
-            print('gestion entree sorties')
+            #print('gestion entree sorties')
             self.network.GestionEntreesSortie()
-            print('apres entree sorties')
+            #print('apres entree sorties')
 
         Test_l.Tour_jeu()
         self.camera.update()
