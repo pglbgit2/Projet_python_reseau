@@ -395,7 +395,7 @@ class Network:
                             self.sendToServer('temp.txt')
                             print('send newco')
 
-                        if fline[0] == '#delta':  # cas envoi de delta
+                        if fline[0][0:6] == '#delta':  # cas envoi de delta
                             print('cas delta')
                             if self.file_to_modif(buf[7:]) == 0:
                                 pass
