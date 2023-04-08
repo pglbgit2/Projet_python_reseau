@@ -418,6 +418,7 @@ class Network:
                 # assert False
         if self.delta_to_file(l.m.delta) == 1:
             self.sendToServer('mydelta.txt')
+            os.remove(path_to_temp_file + "/mydelta.txt")
 
 
 
