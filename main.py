@@ -22,6 +22,7 @@ def main():
     global screen
     global connection
     global connection_utils
+    connection_utils = ['','']
     global aberant_number
     aberant_number = 0
     screen = pg.display.set_mode((0, 0), pg.FULLSCREEN)
