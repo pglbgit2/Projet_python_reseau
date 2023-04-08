@@ -194,13 +194,46 @@ list_joueur * create_connect(char * port, char * ip, list_joueur ** list){
 	    return new_cell;
 }
 
+int secureSend(int fd, void * buffer)
+{
+    int nb;
+    int message_size=strlen(buffer);
+    if(send(fd, &message_size, sizeof(message_size), 0)!=sizeof(int))
+    {
+        stop("send : longueur message");
+    }
+    if((nb = send(fd, buffer, message_size, 0))<0)
+    {
+        stop("send : message");
+    }
+    return nb;
+}
 
-int sendall(void * buffer, list_joueur * player_list, int bufsize){
+int secureRecv(int fd, char * buffer)
+{
+    int nb;
+    int message_size=0;
+    if(recv(fd, &message_size, sizeof(int), MSG_WAITALL)!=sizeof(int))
+    {
+        stop("recv : longueur message");
+    }
+    if((nb=recv(fd, buffer, message_size, MSG_WAITALL))<0)
+    {
+        stop("recv : message");
+    }
+    printf("%s\n",buffer);
+    return nb;
+}
+
+
+
+int sendall(void * buffer, list_joueur * player_list){
     printf("send all called\n");
     int test;
     list_joueur * list_it = player_list;
     while (list_it != NULL){
-        test = send(list_it->sockfd, buffer, bufsize, 0);
+        // test = send(list_it->sockfd, buffer, bufsize, 0);
+        test=secureSend(list_it->sockfd, buffer);
         if (test < 0){
             return -1;
         }
@@ -310,7 +343,6 @@ int main(int argc, char ** argv)
     clfd = accept(fd, (struct sockaddr *)&claddr, &clilen);
     //printf("accepted\n");
     ////printf("%i\n", claddr.sun_family);
-    int received = 0;
 
     int bindsock, len, activity, max_sd, sd, new_socket,valread;
     struct sockaddr_in address;
@@ -374,12 +406,24 @@ int main(int argc, char ** argv)
         ////printf("temp: %s\n",temp);
 
         new_cell = create_connect(buffer, temp, &list_bind);
-        send(new_cell->sockfd,"?askfortip",11,0);
+        bzero(buffer,BUFSIZE);
+        strcpy(buffer, "?askfortip");
+        // message_size = strlen(buffer);
+        // if(send(new_cell->sockfd, &message_size, sizeof(message_size), MSG_WAITALL)!=sizeof(int))
+        // {
+        //     stop("send nbytes askfortip");
+        // }
+        // if ((send(new_cell->sockfd,buffer,message_size, MSG_WAITALL))<0)
+        // {
+        //     stop("send askfortip");
+        // }
+        secureSend(new_cell->sockfd, buffer);
         bzero(buffer,BUFSIZE);
         ////printf("avant le recev\n");
-        if(recv(new_cell->sockfd,buffer,BUFSIZE,0) < 0){
-            //printf("error recv connect\n");
-        }
+        // if(recv(new_cell->sockfd,buffer,BUFSIZE,0) < 0){
+        //     //printf("error recv connect\n");
+        // }
+        secureRecv(new_cell->sockfd, buffer);
         if (strncmp("???",buffer,3) != 0){
             strncpy(iptables, buffer, strlen(buffer));
             char** parseur = parse(buffer,0,';');
@@ -414,12 +458,15 @@ int main(int argc, char ** argv)
             strcpy(buffer,"?heremyip:8490;127.0.0.1;");
         }
         while (list_it != NULL){
-            send(list_it->sockfd,buffer,strlen(buffer),0);
+            // send(list_it->sockfd,buffer,strlen(buffer),0);
+            secureSend(list_it->sockfd,buffer);
             list_it = list_it->next;
         }
-
-        send(new_cell->sockfd,"#newco\n",8,0);
-
+        bzero(buffer,strlen(buffer));
+        strcpy(buffer, "#newco\n");
+        // send(new_cell->sockfd,"#newco\n",8,0);
+        secureSend(new_cell->sockfd, buffer);
+        bzero(buffer,strlen(buffer));
 
 
         // faire une fonction char** getiptables()
@@ -543,10 +590,12 @@ int main(int argc, char ** argv)
                                 ////printf("reception demande ip\n");
                                 ////printf("%s\n",iptables);
                                 if (strlen(iptables) == 0){
-                                    send(sd,"???",4,0);
+                                    // send(sd,"???",4,0);
+                                    secureSend(sd, "???");
                                 }
                                 else{
-                                    send(sd,iptables,strlen(iptables),0);
+                                    // send(sd,iptables,strlen(iptables),0);
+                                    secureSend(sd, iptables);
                                 }
                                 ////printf("after send\n");
                             }
@@ -599,18 +648,20 @@ int main(int argc, char ** argv)
                             if (strncmp(buffer,"#newco",6) == 0){
                                 //printf("nouveau\n");
                             }
-                            message_size = strlen(buffer);
+                            // message_size = strlen(buffer);
                             ////printf("envoi à Python\n");
-                            if(send(clfd,&message_size, sizeof(message_size), 0)==-1)
-                            {
-                                stop("send size to Python");
-                            }
-                            ////printf("buffer a envoyer a python:%s\n",buffer);
-                            //envoie message à Python
-                            if((send(clfd, buffer, message_size, 0))==-1)
-                            {
-                                stop("send to Python");
-                            }
+                            // if(send(clfd,&message_size, sizeof(message_size), 0)==-1)
+                            // {
+                            //     stop("send size to Python");
+                            // }
+                            // ////printf("buffer a envoyer a python:%s\n",buffer);
+                            // //envoie message à Python
+                            // if((send(clfd, buffer, message_size, 0))==-1)
+                            // {
+                            //     stop("send to Python");
+                            // }
+                            secureSend(clfd, buffer);
+
                         }
             
                         // aucun des deux precedents: erreurs 
@@ -630,53 +681,50 @@ int main(int argc, char ** argv)
             //API
             if(FD_ISSET( clfd , &readfds))
             {
-                bzero(buffer, strlen(buffer));
+                bzero(buffer, BUFSIZE);
 
                 //recevoir taille message
                 printf("attente réception...\n");
-                if((received = recv(clfd, &message_size, sizeof(int), MSG_WAITALL))!=sizeof(int))
-                {
-                    stop("recv size");
-                }
-                else
-                {
-                    printf("%i\n", message_size);
-                }
+                // if((received = recv(clfd, &message_size, sizeof(int), MSG_WAITALL))!=sizeof(int))
+                // {
+                //     stop("recv size");
+                // }
+                // else
+                // {
+                //     printf("%i\n", message_size);
+                // }
 
-                //reception message
-                received = recv(clfd, buffer, message_size, MSG_WAITALL);
-                if(received==-1)
-                {
-                    stop("recv msg");
-                    continue;
-                }
-                else
-                {
-                    puts("received from Python");                
-                    printf("%s\n",buffer);
-                    //printf("%c\n",buffer[0]);
-                    if (buffer[0] == '#' && list_bind != NULL){ //envoie à C
-                        message_size = strlen(buffer);
-                        int test;
-                        printf("before sendall\n");
-                        if((test=sendall(&message_size, list_bind, sizeof(int)))==-1)
-                        {
-                            stop("send size to C");
-                        }
-                        printf("%i\n",test);
-                        if ((test=sendall(buffer,list_bind, message_size))==-1)
-                        {
-                            stop("send message to C");
-                        }
-                        printf("%i\n",test);
-                    }
-                    //printf("jspsqyspasse\n");
-                    list_it = list_bind;
-                    //printf("avant affichage list_bind\n");
+                // //reception message
+                // received = recv(clfd, buffer, message_size, MSG_WAITALL);
+                // if(received==-1)
+                // {
+                //     stop("recv msg");
+                // }
+                secureRecv(clfd, buffer);
+                
+                puts("received from Python");                
+                printf("%s\n",buffer);
+                //printf("%c\n",buffer[0]);
+                // if (buffer[0] == '#' && list_bind != NULL){ //envoie à C
+                //     message_size = strlen(buffer);
+                //     int test;
+                //     printf("before sendall\n");
+                //     if((test=sendall(&message_size, list_bind, sizeof(int)))==-1)
+                //     {
+                //         stop("send size to C");
+                //     }
+                //     printf("%i\n",test);
+                //     if ((test=sendall(buffer,list_bind, message_size))==-1)
+                //     {
+                //         stop("send message to C");
+                //     }
+                //     printf("%i\n",test);
+                sendall(buffer, list_bind);
+                //printf("jspsqyspasse\n");
+                list_it = list_bind;
+                //printf("avant affichage list_bind\n");
                     
-                    //envoie des données en broadcast
-                    // TODO
-                }
+                    
             }
                 
         }
