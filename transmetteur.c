@@ -25,31 +25,32 @@
 
 
 // take a string and divide it into words
-char ** parse(char * msg, int * numb, char splitter){
-	char ** arg = calloc(sizeof(char *), 15);
-    char * port = calloc(sizeof(char),10);
-    char * ip = calloc(sizeof(char),30);
-	int n = strlen(msg);
-	int j = 0;
-	char * debut = msg;
-	for(int i = 0; i < n; i++){
-		if(msg[i] == ' ' || msg[i] == '\n' || msg[i] == splitter){
+char ** parse(char * message, int * numb, char splitter){
+    char ** arg = calloc(sizeof(char), 100);
+    char *msg = calloc(sizeof(char),100);
+    strcpy(msg,message);
+    int n = strlen(msg);
+    int j = 0;
+    char * debut = msg;
+    for(int i = 0; i < n; i++){
+        if(msg[i] == splitter){
             while(msg[i] == ' ' || msg[i] == '\n'){
                 i++;
             }
             i--;
-			arg[j] = debut;
-			j++;
-			debut = msg+i+1;
-			msg[i] = '\0';
-		}
-	}
+            arg[j] = debut;
+            j++;
+            debut = msg+i+1;
+            msg[i] = '\0';
+        }
+    }
 
-	arg[j] = debut;
-	j++;
-	*numb = j;
-	return arg;
+    arg[j] = debut;
+    j++;
+    *numb = j;
+    return arg;
 }
+
 
 int stop(char * err)
 {
@@ -92,16 +93,16 @@ list_joueur * create_cell(int* sockfd, struct sockaddr_in* addr){
 }
 
 
-int update_iptable(char * port, char * ip, char *** iptables){
-    int i = 0;
-    while(*iptables[i] != NULL){
-        i++;
-    }
-    port[strlen(port)] = ';';
-    strcpy(*iptables[i], port);
-    ip[strlen(ip)] =';';
-    strcpy(*iptables[i+1], ip);
-}
+// int update_iptable(char * port, char * ip, char *** iptables){
+//     int i = 0;
+//     while(*iptables[i] != NULL){
+//         i++;
+//     }
+//     port[strlen(port)] = ';';
+//     strcpy(*iptables[i], port);
+//     ip[strlen(ip)] =';';
+//     strcpy(*iptables[i+1], ip);
+// }
 
 int put_cell(list_joueur** list, list_joueur* cell){
     if (*list == NULL){
@@ -240,11 +241,11 @@ char * my_ip_address(){ //Programme donnant l'adresse IP locale de la machine su
 }
 
 
-char * getiptable(){
-    char * table;
+// char * getiptable(){
+//     char * table;
 
-    return table;
-}
+//     return table;
+// }
 
 
 int main(int argc, char ** argv)
@@ -263,7 +264,7 @@ int main(int argc, char ** argv)
 
     struct sockaddr_un svaddr, claddr;
 
-    int fd, clfd, bytes, message_size, total_received;
+    int fd, clfd, message_size;
 
     socklen_t clilen=sizeof(claddr);
 
@@ -355,44 +356,44 @@ int main(int argc, char ** argv)
     }
     printf("listen ok\n");
     len = sizeof(address);
-    char * tamp = calloc(sizeof(char),BUFSIZE+25);
+    char * temp = calloc(sizeof(char),BUFSIZE+25);
     list_joueur * list = NULL;
     list_joueur * list_it = list;
     list_joueur * new_cell = NULL;
     list_joueur * list_bind = NULL;
-    char ** iptables;
+    char * iptables = calloc(100, sizeof(char));
     char * port = calloc(sizeof(char),10);
     char * ip = calloc(sizeof(char),30);
-    int socket_nouveau;
 
     if(argc == 3 || argc == 4){
         strcpy(buffer, argv[1]); // ./prog port ip
-        strcpy(tamp, argv[2]);
+        strcpy(temp, argv[2]);
         //printf("buffer: %s\n",buffer);
-        //printf("tamp: %s\n",tamp);
+        //printf("temp: %s\n",temp);
 
-        new_cell = create_connect(buffer, tamp, &list_bind);
+        new_cell = create_connect(buffer, temp, &list_bind);
         send(new_cell->sockfd,"?askfortip",11,0);
         bzero(buffer,BUFSIZE);
         if(recv(new_cell->sockfd,buffer,BUFSIZE,0) < 0){
             printf("error recv connect\n");
         }
-        iptables = parse(buffer,0,';');
-        char * parseur = iptables[0];
+        strncpy(iptables, buffer, strlen(buffer));
+        char** parseur = parse(buffer,0,';');
+        char * mot = parseur[0];
         int i = 0;
-        while (parseur != NULL){
+        while (mot != NULL){
             bzero(buffer,strlen(buffer));
-            bzero(tamp,strlen(tamp));
-
+            bzero(temp,strlen(temp));
+            mot = parseur[i];
+            strcpy(buffer,mot);
             i++;
-            parseur = iptables[i];
-            strcpy(buffer,parseur);
 
+            mot = parseur[i];
+            strcpy(temp,mot);
             i++;
-            parseur = iptables[i];
-            strcpy(tamp,parseur);
 
-            create_connect(buffer, tamp, &list_bind);
+            create_connect(buffer, temp, &list_bind);
+            mot=parseur[i];
         }
         list_it = list_bind;
         bzero(buffer,strlen(buffer));
@@ -521,17 +522,19 @@ int main(int argc, char ** argv)
                             }
 
                             if (strncmp(buffer,"?heremyip:",10) == 0){
-                                bzero(tamp,strlen(tamp));
-                                strcpy(tamp,buffer+10);
-
+                                bzero(temp,strlen(temp));
+                                strcpy(temp,buffer+10);
+                                
 
                                 int i = 0;
-                                while(tamp[i] != ';')
-                                    port[i] = tamp[i];
+                                while(temp[i] != ';')
+                                    port[i] = temp[i];
                                 i++;
-                                while(tamp[i] != ';')
-                                    ip[i] = tamp[i];
-                                update_iptable(port,ip,&iptables); // elle existe pas encore
+                                while(temp[i] != ';')
+                                    ip[i] = temp[i];
+                                // update_iptable(port,ip,&iptables); // elle existe pas encore
+
+                                strncat(iptables, temp, strlen(temp));
                                 create_connect(port,ip,&list_bind);
                             }
                        }
@@ -585,7 +588,7 @@ int main(int argc, char ** argv)
             //API
             if(FD_ISSET( clfd , &readfds))
             {
-                bzero(buffer, sizeof(buffer));
+                bzero(buffer, strlen(buffer));
 
                 //recevoir taille message
                 printf("attente réception...\n");
