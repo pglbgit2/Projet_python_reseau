@@ -410,7 +410,7 @@ class Network:
                         #print('quitting now...')
                         assert False
                 # assert False
-        if self.delta_to_file() == 1:
+        if self.delta_to_file(l.m.delta) == 1:
             self.sendToServer('mydelta.txt')
 
 

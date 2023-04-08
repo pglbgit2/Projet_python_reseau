@@ -83,9 +83,7 @@ class Game:
 
         while self.playing:
             self.clock.tick(60)
-            print('envents')
             self.events()
-            print('update')
             self.update(multi)
             self.draw()
 
