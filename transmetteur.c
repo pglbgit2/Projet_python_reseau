@@ -194,12 +194,12 @@ list_joueur * create_connect(char * port, char * ip, list_joueur ** list){
 }
 
 
-int sendall(char * buffer, list_joueur * player_list){
+int sendall(void * buffer, list_joueur * player_list, int bufsize){
     printf("send all called\n");
     int test;
     list_joueur * list_it = player_list;
     while (list_it != NULL){
-        test = send(list_it->sockfd, buffer, BUFSIZE, 0);
+        test = send(list_it->sockfd, buffer, bufsize, 0);
         if (test < 0){
             return -1;
         }
@@ -613,6 +613,8 @@ int main(int argc, char ** argv)
                     puts("received from Python");                
                     printf("%s\n",buffer);
                     printf("%c\n",buffer[0]);
+
+                    //envoie des données 
                     if (buffer[0] == '#' && list_bind != NULL){
                         sendall(buffer,list_bind);
                     }
