@@ -1,1 +1,0 @@
-#delta;l.destroy_grid_delta(6,7,17,28);
