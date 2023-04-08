@@ -242,7 +242,7 @@ char * my_ip_address(){ //Programme donnant l'adresse IP locale de la machine su
 
 char * getiptable(){
     char * table;
-    
+
     return table;
 }
 
@@ -517,14 +517,13 @@ int main(int argc, char ** argv)
                         printf("%s\n",buffer);
                        if(buffer[0] == '?'){
                             if (strncmp(buffer,"?askfortip",10) == 0){
-                                tamp = getiptable(iptables);
-                                send(sd,tamp,strlen(tamp),0);
+                                send(sd,iptables,strlen(iptables),0);
                             }
 
                             if (strncmp(buffer,"?heremyip:",10) == 0){
                                 bzero(tamp,strlen(tamp));
                                 strcpy(tamp,buffer+10);
-                                
+
 
                                 int i = 0;
                                 while(tamp[i] != ';')

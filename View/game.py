@@ -84,7 +84,7 @@ class Game:
         while self.playing:
             self.clock.tick(60)
             print('envents')
-            self.events()
+            self.events(multi)
             print('update')
             self.update(multi)
             self.draw()
@@ -102,7 +102,7 @@ class Game:
 
         
 
-    def events(self):
+    def events(self, multi):
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -169,9 +169,10 @@ class Game:
                     l.event_to_logic(l.Nume_save,None,None,SP_input.text)
 
                 elif self.hud.modif_speed() :
-                    self.action = self.hud.overhead_all()
-                    l.event_to_logic(self.action ,None ,None)
-                    self.action = None
+                    if not multi:
+                        self.action = self.hud.overhead_all()
+                        l.event_to_logic(self.action ,None ,None)
+                        self.action = None
 
                 elif self.hud.overlay.collide(self.mouse_pos) :
                     l.event_to_logic(l.Nume_overlay ,None,None)
