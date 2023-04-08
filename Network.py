@@ -293,6 +293,7 @@ class Network:
 
     # to test: create file otherDelta.txt with text: l.destroy_grid_delta(19,21,3,5);
     def file_to_modif(self,buffer):
+        print(buffer)
         
         text = buffer
 
@@ -395,7 +396,8 @@ class Network:
                             print('send newco')
 
                         if fline[0] == '#delta':  # cas envoi de delta
-                            if self.file_to_modif(buf[6:]) == 0:
+                            print('cas delta')
+                            if self.file_to_modif(buf[7:]) == 0:
                                 pass
                             print('delta')
                             
