@@ -385,7 +385,7 @@ class Network:
                 else:
                     #print("reception:",buf)
                     if buf[0] == '#':
-                        print(buf)
+                        print("P:",buf)
                         fline = buf.split('\n')
                         #print("fline = ", fline)
                         if fline[0] == '#newco':  # cas demande d'envoie de données complete

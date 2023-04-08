@@ -530,7 +530,7 @@ int main(int argc, char ** argv)
                     }
                     else
                     {
-                        //printf("%s\n",buffer);
+                        printf("C:%s\n",buffer);
                        if(buffer[0] == '?'){
                             if (strncmp(buffer,"?askfortip",10) == 0){
                                 ////printf("reception demande ip\n");
