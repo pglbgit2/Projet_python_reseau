@@ -656,7 +656,7 @@ int main(int argc, char ** argv)
                     //printf("%c\n",buffer[0]);
                     if (buffer[0] == '#' && list_bind != NULL){ //envoie à C
                     message_size = strlen(buffer);
-                        if(sendall(clfd, &message_size, sizeof(int))==-1)
+                        if(sendall(&message_size, list_bind, sizeof(int))==-1)
                         {
                             stop("send size to C");
                         }
