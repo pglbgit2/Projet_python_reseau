@@ -83,6 +83,7 @@ class InputBoxName :
 
 SP_input = InputBoxName(None , ( window_width/2 , winddow_height/2) , ( ( 2*window_width/7 , winddow_height/16)), 'Terminus')
 JP_input_IP = InputBoxName(None , (window_width/2, winddow_height/2) , (2*window_width/7 , winddow_height/16), '127.0.0.1:8000')
+JP_input_Name = InputBoxName(None, (window_width/2, winddow_height/2) , (2*window_width/7 , winddow_height/16), 'Auguste')
 
 # running = True
 # timer = pg.time.Clock()
