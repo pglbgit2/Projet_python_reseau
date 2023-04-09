@@ -207,6 +207,7 @@ class Game:
             #print('apres entree sorties')
 
         Test_l.Tour_jeu()
+        l.update_textures()
         self.camera.update()
 
     def draw(self):
@@ -257,6 +258,15 @@ class Game:
             (255, 255, 255),
             (10, 30)
          )
+
+        if batiment.id == 71:
+            self.draw_text(
+                self.screen,
+                str('Quantité de blé : ' + str(batiment.nourriture[0][1])),
+                15,
+                (255, 255, 255),
+                (10, 90)
+            )
 
         if self.map.overlay == "fire":
             self.draw_text(self.screen, 'Overlay Feu', 25, (255, 255, 255), (10, 75))

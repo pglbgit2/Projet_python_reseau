@@ -609,7 +609,16 @@ def event_to_logic(nume, pos_init, pos_final, Name_game = "tmp.pkl"):
 
     elif nume == Nume_load : 
         loadfile(Name_game)
-        
+
+def update_textures():
+    for i in range(0, m.nb_cases_x):
+        for j in range(0, m.nb_cases_y):
+            if m.Mat_batiment[i][j].name == "Granary" and m.Mat_batiment[i][j].nourriture[0][1] <= 100:
+                m.Mat_batiment[i][j].texture = "granary"
+            elif m.Mat_batiment[i][j].name == "Granary" and 200 >= m.Mat_batiment[i][j].nourriture[0][1] > 100:
+                m.Mat_batiment[i][j].texture = "granary_0"
+            elif m.Mat_batiment[i][j].name == "Granary" and m.Mat_batiment[i][j].nourriture[0][1] > 200:
+                m.Mat_batiment[i][j].texture = "granary_1"
 
 # a garder
 init_game()

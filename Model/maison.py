@@ -74,7 +74,14 @@ class Maison_1(Maison):
         self.prospCap = 5
         self.popLim = 5
         self.taxMultiplier = 1
-        self.texture = "houselvl0"
+        if x%2 == 0 and y%2 == 0:
+            self.texture = "houselvl0"
+        elif x%2 != 0 and y%2 == 0:
+            self.texture = "houselvl0_0"
+        elif x%2 == 0 and y%2 != 0:
+            self.texture = "houselvl0_1"
+        elif x%2 != 0 and y%2 != 0:
+            self.texture = "houselvl0_2"
 
 
 class Maison_2(Maison):
@@ -102,7 +109,14 @@ class Maison_2(Maison):
         self.prospCap = 10
         self.popLim = 7
         self.taxMultiplier = 1
-        self.texture = "houselvl1"
+        if x % 2 == 0 and y % 2 == 0:
+            self.texture = "houselvl1"
+        elif x % 2 != 0 and y % 2 == 0:
+            self.texture = "houselvl1_0"
+        elif x % 2 == 0 and y % 2 != 0:
+            self.texture = "houselvl1_1"
+        elif x % 2 != 0 and y % 2 != 0:
+            self.texture = "houselvl1_2"
 
 
 class Maison_3(Maison):
@@ -131,7 +145,14 @@ class Maison_3(Maison):
         self.prospCap = 15
         self.popLim = 9
         self.taxMultiplier = 1
-        self.texture = "houselvl2"
+        if x % 2 == 0 and y % 2 == 0:
+            self.texture = "houselvl2"
+        elif x % 2 != 0 and y % 2 == 0:
+            self.texture = "houselvl2_0"
+        elif x % 2 == 0 and y % 2 != 0:
+            self.texture = "houselvl2_1"
+        elif x % 2 != 0 and y % 2 != 0:
+            self.texture = "houselvl2_2"
 
 
 class Maison_4(Maison):
