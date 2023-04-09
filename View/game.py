@@ -53,13 +53,14 @@ class Game:
         self.mouse_button = [[],[],[]]
         self.playing = True
 
-    def run(self, multi=False, connection_utils=["", ""]):
+    def run(self, multi=False, connection_utils=["", "", "Auguste"]):
         
         self.playing = True
 
         if multi:
             IP = connection_utils[0]
             port = connection_utils[1]
+            name = connection_utils[2]
             if IP == "":
                 print("New game created ! IP address is : ", end="")
                 print(socket.gethostbyname(socket.gethostname()))

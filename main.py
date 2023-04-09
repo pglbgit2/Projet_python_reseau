@@ -22,7 +22,7 @@ def main():
     global screen
     global connection
     global connection_utils
-    connection_utils = ["", ""]
+    connection_utils = ["", "", "Auguste"]
     global aberant_number
     aberant_number = 0
     screen = pg.display.set_mode((0, 0), pg.FULLSCREEN)
@@ -126,8 +126,8 @@ def main():
 
                         if JP_connect.overhead(mouse_track, screen):
 
-                            if JP_input_IP.text != "" and ':' not in JP_input_IP.text :
-                                if 1200 <= aberant_number <= 1700:
+                            if JP_input_Name.text == "" or (JP_input_IP.text != "" and ':' not in JP_input_IP.text):
+                                if 1200 <= aberant_number <= 1700: # Easter Egg
                                     draw_text(
                                         screen,
                                         "assert (isPath(x, y, Mat)) :D",
@@ -135,14 +135,13 @@ def main():
                                         (255, 0, 0),
                                         (window_width / 2 - 190, 6 * winddow_height / 10 + 60)
                                     )
-                                else:  # Easter Egg
+                                else:
                                     draw_text(
                                         screen,
                                         "Invalid Entry",
                                         50,
                                         (255, 0, 0),
                                         (window_width / 2 - 110, 6 * winddow_height / 10 - 60)
-
                                     )
                                 pg.display.flip()
                                 continue
@@ -151,9 +150,12 @@ def main():
                                 playing = True
                                 connection = True
                                 if JP_input_IP.text == "":
-                                    connection_utils = ['', '']
+                                    connection_utils = ['', '', JP_input_Name]
                                 elif ':' in JP_input_IP.text:
-                                    connection_utils = JP_input_IP.text.split(':')  # [0]=IP : [1]=Port
+                                    cs = JP_input_IP.text.split(':')  # [0]=IP : [1]=Port
+                                    connection_utils[0] = cs[0]
+                                    connection_utils[1] = cs[1]
+                                    connection_utils[2] = JP_input_Name.text
 
                                 disable_all_JP_button()
 
