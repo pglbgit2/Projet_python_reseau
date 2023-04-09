@@ -67,8 +67,11 @@ class Network:
 
         if whatFor == "New_player":
             threadprogc = threading.Thread(target=subprocess.call, args=[['./transm', port, IP]])
-            self.ssocket_file = path_to_temp_file + '/ssocket2'
-
+            print('port python=',port)
+            if port == '8000':
+                self.ssocket_file = path_to_temp_file + '/ssocket2'
+            else:
+                self.ssocket_file = path_to_temp_file + '/ssocket3'
 
         if whatFor == "New_game":
             threadprogc = threading.Thread(target=subprocess.call, args=['./transm'])
@@ -89,6 +92,7 @@ class Network:
         self.rdescriptors = []
         self.wdescriptors = []
         self.xdescriptors = []
+        print('end init python')
 
     def map_to_file(self, matrice_bat, matrice_walk, SIZE_X, SIZE_Y):
         print("map to file called")
