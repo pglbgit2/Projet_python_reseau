@@ -85,12 +85,8 @@ def main():
 
                     if Cur_page == "Join":
                         if JP_input_IP.overhead(mouse_track, screen):
-                            print("Input_IP.writing = ", end='')
-                            print(JP_input_IP.writing)
                             JP_input_IP.ajout_char(event, screen)
                         if JP_input_Name.overhead(mouse_track, screen):
-                            print("Input_Name.writing = ",end='')
-                            print(JP_input_Name.writing)
                             JP_input_Name.ajout_char(event, screen)
 
                 if event.type == pg.MOUSEBUTTONDOWN:
@@ -126,7 +122,7 @@ def main():
 
                         if JP_connect.overhead(mouse_track, screen):
 
-                            if JP_input_Name.text == "" or (JP_input_IP.text != "" and ':' not in JP_input_IP.text):
+                            if JP_input_Name.text == "" or JP_input_Name.text == "Mère_Nature" or (JP_input_IP.text != "" and ':' not in JP_input_IP.text):
                                 if 1200 <= aberant_number <= 1700: # Easter Egg
                                     draw_text(
                                         screen,

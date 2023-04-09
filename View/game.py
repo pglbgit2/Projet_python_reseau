@@ -238,20 +238,28 @@ class Game:
 
         batiment = l.m.Mat_batiment[self.mouse_to_tiles()[1]][self.mouse_to_tiles()[0]]
 
+        self.draw_text(
+            self.screen,
+            batiment.username,
+            15,
+            (255, 255, 255),
+            (10, 90)
+        )
+
         if batiment.id in (10, 11, 12) and batiment.name != "Herb": #MAISONS
             self.draw_text(
                 self.screen,
                 str('Quantité de blé : ' + str(batiment.nourriture[0][1])),
                 15,
                 (255, 255, 255),
-                (10, 90)
+                (10, 105)
             )
             self.draw_text(
                 self.screen,
                 str('Population : ' + str(batiment.curpop)),
                 15,
                 (255, 255, 255),
-                (10, 105)
+                (10, 120)
             )
 
         self.draw_text(
@@ -268,7 +276,7 @@ class Game:
                 str('Quantité de blé : ' + str(batiment.nourriture[0][1])),
                 15,
                 (255, 255, 255),
-                (10, 90)
+                (10, 105)
             )
 
         if self.map.overlay == "fire":
