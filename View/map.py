@@ -158,30 +158,33 @@ class Map:
                 # tile = self.map[x][y]["tile"]
                 tile1 = m.Mat_batiment[y][x].id
                 # minimap
-                minimap_offset = [45, 50]
+                minimap_offset = [83, 90]
                 render_pos_mini = self.map[x][y]["render_pos_mini"]
 
                 # WATER
                 if tile1 == 1:
-                    pg.draw.circle(screen, BLUE, (
+                    """pg.draw.circle(screen, BLUE, (
                         render_pos_mini[0] + pg.display.Info().current_w - 130 + minimap_offset[0],
                         render_pos_mini[1] + pg.display.Info().current_h - 1040 + minimap_offset[1]), 2)
-
+                    """
+                    pg.draw.circle(screen, BLUE, (
+                        render_pos_mini[0] + pg.display.Info().current_w - minimap_offset[0],
+                        render_pos_mini[1] + minimap_offset[1]), 2)
 
                 # ROCK
                 elif tile1 == 2:
                     pg.draw.circle(screen, GREY, (
-                        render_pos_mini[0] + pg.display.Info().current_w - 130 + minimap_offset[0],
-                        render_pos_mini[1] + pg.display.Info().current_h - 1040 + minimap_offset[1]), 2)
+                        render_pos_mini[0] + pg.display.Info().current_w - minimap_offset[0],
+                        render_pos_mini[1] + minimap_offset[1]), 2)
 
                 # TREE
                 elif tile1 == 3:
                     pg.draw.circle(screen, GREEN, (
-                        render_pos_mini[0] + pg.display.Info().current_w - 130 + minimap_offset[0],
-                        render_pos_mini[1] + pg.display.Info().current_h - 1040 + minimap_offset[1]), 2)
+                        render_pos_mini[0] + pg.display.Info().current_w - minimap_offset[0],
+                        render_pos_mini[1] + minimap_offset[1]), 2)
 
                 mini = self.map[x][y]["iso_poly_mini"]
-                mini = [(x + pg.display.Info().current_w - 130 + minimap_offset[0], y + 40 + minimap_offset[1]) for x, y
+                mini = [(x + pg.display.Info().current_w - minimap_offset[0], y + minimap_offset[1]) for x, y
                         in mini]
                 pg.draw.polygon(screen, YELLOW, mini, 2)
                 pg.draw.rect(screen, RED, (

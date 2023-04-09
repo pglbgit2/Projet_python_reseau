@@ -83,10 +83,9 @@ class Game:
 
         while self.playing:
             self.clock.tick(60)
-            self.events()
+            self.events(multi)
             self.update(multi)
             self.draw()
-
             #if a == 100:
             #    subprocess.call([path_to_temp_file +"/recv", "172.30.148.96",path_to_temp_file+ "temp.txt"])
             #    self.network.file_to_map(l.m.Mat_batiment, 40, 40)
@@ -100,7 +99,7 @@ class Game:
 
         
 
-    def events(self):
+    def events(self, multi):
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -167,9 +166,10 @@ class Game:
                     l.event_to_logic(l.Nume_save,None,None,SP_input.text)
 
                 elif self.hud.modif_speed() :
-                    self.action = self.hud.overhead_all()
-                    l.event_to_logic(self.action ,None ,None)
-                    self.action = None
+                    if not multi:
+                        self.action = self.hud.overhead_all()
+                        l.event_to_logic(self.action ,None ,None)
+                        self.action = None
 
                 elif self.hud.overlay.collide(self.mouse_pos) :
                     l.event_to_logic(l.Nume_overlay ,None,None)
