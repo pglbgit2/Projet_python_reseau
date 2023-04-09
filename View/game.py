@@ -86,7 +86,6 @@ class Game:
             self.events(multi)
             self.update(multi)
             self.draw()
-
             #if a == 100:
             #    subprocess.call([path_to_temp_file +"/recv", "172.30.148.96",path_to_temp_file+ "temp.txt"])
             #    self.network.file_to_map(l.m.Mat_batiment, 40, 40)
