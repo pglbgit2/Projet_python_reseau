@@ -736,7 +736,7 @@ def Deplacement_basique(x, y, Mat=Mat_perso, no_walker=0):
         Mat_perso[y][x][no_walker].ttl -= 1
         return tab_possibles_chemins[random.randrange(0, len(tab_possibles_chemins))]  # Aléatoire
     else:
-        Mat_perso[y][x][no_walker].ttl -= -1
+        Mat_perso[y][x][no_walker].ttl -= 1
         # print("demis tours : ", x,y ,Mat_perso[y][x][no_walker].prev_x, Mat_perso[y][x][no_walker].prev_y)
         return (Mat_perso[y][x][no_walker].prev_x, Mat_perso[y][x][no_walker].prev_y)
 
@@ -765,7 +765,7 @@ def Deplacement_basique_2(x, y, Mat=Mat_perso, no_walker=0):
         Mat_perso[y][x][no_walker].ttl -= 1
         return tab_possibles_chemins[0]  # Deterministe
     else:
-        Mat_perso[y][x][no_walker].ttl -= -1
+        Mat_perso[y][x][no_walker].ttl -= 1
         # print("demis tours : ", x,y ,Mat_perso[y][x][no_walker].prev_x, Mat_perso[y][x][no_walker].prev_y)
         return (Mat_perso[y][x][no_walker].prev_x, Mat_perso[y][x][no_walker].prev_y)    
     
