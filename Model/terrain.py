@@ -1,4 +1,4 @@
-myName = "Auguste"
+myName = "Mère Nature"
 
 class Terrain:
     def __init__(self, x, y, id_t):
@@ -9,6 +9,7 @@ class Terrain:
         self.id = id_t  # id du terrain:wq
         self.texture = ""
         self.id_bat = self.id
+        self.username=myName
 
     def ret_coord(self):
         return (self.pos_x, self.pos_y)

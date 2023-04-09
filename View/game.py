@@ -238,13 +238,14 @@ class Game:
 
         batiment = l.m.Mat_batiment[self.mouse_to_tiles()[1]][self.mouse_to_tiles()[0]]
 
-        self.draw_text(
-            self.screen,
-            batiment.username,
-            15,
-            (255, 255, 255),
-            (10, 90)
-        )
+        if(batiment.id not in (0,666,1,2,3,4,115,116)):
+            self.draw_text(
+                self.screen,
+                batiment.username,
+                15,
+                (255, 255, 255),
+                (10, 90)
+            )
 
         if batiment.id in (10, 11, 12) and batiment.name != "Herb": #MAISONS
             self.draw_text(

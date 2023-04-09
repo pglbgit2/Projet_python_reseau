@@ -97,8 +97,8 @@ def Add_bat_game(x, y, id_bat):
         for j in range(m.id_size[id_bat]):
             if i+x > 39 or y+j > 39 or m.Mat_batiment[y + j][x + i].name != "Herb":
                 return -1
-    m.add_bat(x, y, id_bat, m.Mat_batiment)
-    m.delta += 'l.Add_bat_game_delta('+str(x)+','+str(y)+','+str(id_bat)+','+m.t.myName + ');'
+    m.add_bat(x, y, id_bat, m.Mat_batiment, m.t.myName)
+    m.delta += 'l.Add_bat_game_delta('+str(x)+','+str(y)+','+str(id_bat)+',' + "'" + str(m.t.myName) + "'" + ');'
     return 0
 
 def Add_bat_game_delta(x, y, id_bat, username):
@@ -204,10 +204,11 @@ def evolve(bat):
     x = bat.pos_x
     y = bat.pos_y
     if bat.name == 'Maison 1':
-        m.add_bat(x, y, 11, m.Mat_batiment)
+        m.add_bat(x, y, 11, m.Mat_batiment, bat.username)
     elif bat.name == 'Maison 2':
-        m.add_bat(x, y, 12, m.Mat_batiment)
+        m.add_bat(x, y, 12, m.Mat_batiment, bat.username)
     batiment = m.Mat_batiment[y][x]
+    batiment.username = bat.username
     batiment.nourriture = bat.nourriture
     batiment.produits = bat.produits
     batiment.curpop = bat.curpop
@@ -223,10 +224,11 @@ def devolve(bat):
     x = bat.pos_x
     y = bat.pos_y
     if bat.name == 'Maison 3':
-        m.add_bat(x, y, 11, m.Mat_batiment)
+        m.add_bat(x, y, 11, m.Mat_batiment, bat.username)
     elif bat.name == 'Maison 2':
-        m.add_bat(x, y, 10, m.Mat_batiment)
+        m.add_bat(x, y, 10, m.Mat_batiment, bat.username)
     batiment = m.Mat_batiment[y][x]
+    batiment.username = bat.username
     batiment.nourriture = bat.nourriture
     batiment.produits = bat.produits
     batiment.curpop = bat.curpop

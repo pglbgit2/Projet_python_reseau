@@ -146,7 +146,7 @@ def main():
                                 playing = True
                                 connection = True
                                 if JP_input_IP.text == "":
-                                    connection_utils = ['', '', JP_input_Name]
+                                    connection_utils = ['', '', JP_input_Name.text]
                                 elif ':' in JP_input_IP.text:
                                     cs = JP_input_IP.text.split(':')  # [0]=IP : [1]=Port
                                     connection_utils[0] = cs[0]
