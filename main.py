@@ -84,7 +84,14 @@ def main():
                         SP_input.ajout_char(event, screen)
 
                     if Cur_page == "Join":
-                        JP_input_IP.ajout_char(event, screen)
+                        if JP_input_IP.overhead(mouse_track, screen):
+                            print("Input_IP.writing = ", end='')
+                            print(JP_input_IP.writing)
+                            JP_input_IP.ajout_char(event, screen)
+                        if JP_input_Name.overhead(mouse_track, screen):
+                            print("Input_Name.writing = ",end='')
+                            print(JP_input_Name.writing)
+                            JP_input_Name.ajout_char(event, screen)
 
                 if event.type == pg.MOUSEBUTTONDOWN:
 
@@ -112,13 +119,14 @@ def main():
                             pg.mixer.music.load("Connect_menu.mp3")
                             pg.mixer.music.play()
                             JP_input_IP.draw(screen)
+                            JP_input_Name.draw(screen)
                             disable_all()
 
                     elif Cur_page == "Join":
 
                         if JP_connect.overhead(mouse_track, screen):
 
-                            if JP_input_IP.text != "" and ':' not in JP_input_IP.text:
+                            if JP_input_IP.text != "" and ':' not in JP_input_IP.text :
                                 if 1200 <= aberant_number <= 1700:
                                     draw_text(
                                         screen,
@@ -155,7 +163,8 @@ def main():
                             pg.mixer.music.play()
                             set_screen_HP(screen)
 
-                        JP_input_IP.collide(mouse_track)
+                        JP_input_IP.collide(mouse_track, (window_width / 2, winddow_height / 2))
+                        JP_input_Name.collide(mouse_track, (window_width / 2, winddow_height / 2 - JP_input_IP.height - 10))
 
                     elif Cur_page == "Select":  # Si ony se trouve sur la page Select
 
@@ -171,7 +180,7 @@ def main():
                             Launch = False
                             playing = True
 
-                        SP_input.collide(mouse_track)
+                        SP_input.collide(mouse_track, (window_width/2, winddow_height/2))
 
                     elif Cur_page == "Restaure":
 
