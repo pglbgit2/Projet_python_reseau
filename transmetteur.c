@@ -22,7 +22,7 @@
 #define PORT2 8490
 #define PORT3 8592 
 #define MAX_IFCONFIG_OUTPUT 4096
-#define BUFSIZE 65536
+#define BUFSIZE 131072
 
 
 // take a string and divide it into words
