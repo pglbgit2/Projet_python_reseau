@@ -1,3 +1,5 @@
+myName = "Auguste"
+
 class Terrain:
     def __init__(self, x, y, id_t):
         self.nbr_cases = 1

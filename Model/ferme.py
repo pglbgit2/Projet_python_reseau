@@ -3,8 +3,8 @@ sys.path.insert(0, '..')
 from Model import batiment as b
 
 class Ferme (b.Batiment):
-    def __init__(self, posx, posy):
-        b.Batiment.__init__(self, 3, 100, posx, posy, 40, -2, 1, 1, 2, 10)
+    def __init__(self, posx, posy, username=b.t.myName):
+        b.Batiment.__init__(self, 3, 100, posx, posy, 40, -2, 1, 1, 2, 10, username)
         self.ind_Harv = 0
         self.name = "Farm"
         self.texture = "farm"

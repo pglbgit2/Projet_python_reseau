@@ -61,6 +61,8 @@ class Game:
             IP = connection_utils[0]
             port = connection_utils[1]
             name = connection_utils[2]
+            l.m.t.myName = name
+
             if IP == "":
                 print("New game created ! IP address is : ", end="")
                 print(socket.gethostbyname(socket.gethostname()))

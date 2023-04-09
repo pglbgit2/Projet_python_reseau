@@ -98,15 +98,15 @@ def Add_bat_game(x, y, id_bat):
             if i+x > 39 or y+j > 39 or m.Mat_batiment[y + j][x + i].name != "Herb":
                 return -1
     m.add_bat(x, y, id_bat, m.Mat_batiment)
-    m.delta += ('l.Add_bat_game_delta('+str(x)+','+str(y)+','+str(id_bat)+');')
+    m.delta += 'l.Add_bat_game_delta('+str(x)+','+str(y)+','+str(id_bat)+','+m.t.myName + ');'
     return 0
 
-def Add_bat_game_delta(x, y, id_bat):
+def Add_bat_game_delta(x, y, id_bat, username):
     for i in range(m.id_size[id_bat]):
         for j in range(m.id_size[id_bat]):
             if i + x > 39 or y + j > 39 or m.Mat_batiment[y + j][x + i].name != "Herb":
                 return -1
-    m.add_bat(x, y, id_bat, m.Mat_batiment)
+    m.add_bat(x, y, id_bat, m.Mat_batiment, username)
     return 0
 
 
