@@ -683,6 +683,7 @@ def suppr_Batiment(x, y, Mat):
             for e in range(len(Mat_perso[y][x])):
                 kill_walker(Mat_perso[y][x][0])
                 isPath_check = True
+                Mat_route[y][x] = 0
         # for i in range(0, Mat[y][x].nbr_cases):
         #     for j in range(0, Mat[y][x].nbr_cases):
         for i in range(Mat[y][x].nbr_cases - 1, -1, -1):
