@@ -91,6 +91,7 @@ class Network:
         self.xdescriptors = []
 
     def map_to_file(self, matrice_bat, matrice_walk, SIZE_X, SIZE_Y):
+        print("map to file called")
         if os.path.exists(path_to_temp_file + "/temp.txt"):
             os.remove(path_to_temp_file + "/temp.txt")
         if os.path.exists(path_to_temp_file + "\\temp.txt"):
@@ -194,13 +195,8 @@ class Network:
         t = temp.split(',')
         return int(t[0]), int(t[1])
 
-    def file_to_map(self, matrice, SIZE_X, SIZE_Y):
-        if not os.path.exists(path_to_temp_file + "\\temp.txt") and not os.path.exists(path_to_temp_file + "/temp.txt"):
-            #print("No file 'temp.txt' found.")
-            return 0
-        f = open("temp.txt", "r")
-        text = f.read()
-        f.close()
+    def file_to_map(self, matrice, SIZE_X, SIZE_Y,buffer):
+        text = buffer
         list = text.split('\n')
         k = 1
         while True:
@@ -293,22 +289,18 @@ class Network:
         f.write(delta)
         delta = ''
         f.close()
+        return 1
 
     # to test: create file otherDelta.txt with text: l.destroy_grid_delta(19,21,3,5);
-    def file_to_modif(self):
-        if not os.path.exists(path_to_temp_file + "\\otherDelta.txt") and not os.path.exists(
-                path_to_temp_file + "/otherDelta.txt"):
-            return 0
-        f = open("otherDelta.txt", "r")
-        text = f.read()
-        f.close()
+    def file_to_modif(self,buffer):
+        print(buffer)
+        
+        text = buffer
+
         instruction_list = text.split(';')
         for k in range(1, len(instruction_list)):
             exec(instruction_list[k])
-        try:
-            os.remove(path_to_temp_file + "\\otherDelta.txt")
-        except:
-            os.remove(path_to_temp_file + "/otherDelta.txt")
+        
 
     def sendToServer(self, file_name):  # not actually a server
 
@@ -342,7 +334,9 @@ class Network:
                 #print(message_size)
                 # #print(arr)
                 self.sock.sendall(message_size + arr)
-
+        except Exception as e:
+            print(e)
+            print("rien envoyé")
         finally:
             pass
 
@@ -392,34 +386,44 @@ class Network:
                 else:
                     #print("reception:",buf)
                     if buf[0] == '#':
-
+                        print("P:",buf)
                         fline = buf.split('\n')
                         #print("fline = ", fline)
                         if fline[0] == '#newco':  # cas demande d'envoie de données complete
 
                             self.map_to_file(l.m.Mat_batiment, l.m.Mat_perso, m.nb_cases_x, m.nb_cases_y)
                             self.sendToServer('temp.txt')
-                            #print('send newco')
+                            print('send newco')
 
-                        if fline[0] == '#delta':  # cas envoi de delta
-                            if self.delta_to_file(l.m.delta) == 0:
+                        if fline[0][0:6] == '#delta':  # cas envoi de delta
+                            print('cas delta')
+                            if self.file_to_modif(buf[7:]) == 0:
                                 pass
-                            else:
-                                self.sendToServer("delta.txt")
-                                # envoi du fichier delta
+                            print('delta')
+                            
+                                
+                            # envoi du fichier delta
 
                         if fline[0] == '#welcome':  # cas reception ensemble donne jeu
-                            self.file_to_map(l.m.Mat_batiment, m.nb_cases_x, m.nb_cases_y)
-                            #print('receiv welcome')
+                            print('receiv welcome')
+
+                            self.file_to_map(l.m.Mat_batiment, m.nb_cases_x, m.nb_cases_y,buf[7:])
+                            print('after file to map')
                         else:
                             pass
                             #print("unknown : ", buf)
                     else:
-                        #print(buf)
+                        print(buf)
                         #print('ERROR: buffer seems to be corrupted')
                         #print('quitting now...')
-                        assert False
+                        # assert False
                 # assert False
+        if self.delta_to_file(l.m.delta) == 1:
+            self.sendToServer('mydelta.txt')
+            l.m.delta = ''
+            os.remove(path_to_temp_file + "/mydelta.txt")
+
+
 
 
 # Net = Network("","","New_game")
