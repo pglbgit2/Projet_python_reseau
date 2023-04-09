@@ -61,7 +61,7 @@ class Network:
             threadprogc = threading.Thread(target=subprocess.call,
                                            args=[['./transm', sys.argv[1], sys.argv[2], sys.argv[3]]])
         """
-        self.timeout = 0.10
+        self.timeout = 0.01
 
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
@@ -293,12 +293,13 @@ class Network:
 
     # to test: create file otherDelta.txt with text: l.destroy_grid_delta(19,21,3,5);
     def file_to_modif(self,buffer):
-        print(buffer)
+        print('buffer', buffer)
         
         text = buffer
-
+        print('text',text)
         instruction_list = text.split(';')
-        for k in range(1, len(instruction_list)):
+        for k in range(0, len(instruction_list)):
+            print('instruction:',instruction_list[k])
             exec(instruction_list[k])
         
 
