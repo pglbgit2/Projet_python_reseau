@@ -819,8 +819,8 @@ def livraison(fg: F_G.Food_Guy):
 # un walker arrive a destination doit soit mourir soit revenir a son batiment d'origine
 # il faut implémenter des "missions" pour les walkers: definir le type de marchandise a acheminer, parce que echange marche juste avec ble pour l'instant
 def deplacement_perso(Mat, tx=nb_cases, ty=nb_cases):
-    for i in range(tx):
-        for j in range(ty):
+    for j in range(ty):
+        for i in range(tx):
             if Mat[j][i][0].name != "no Walker":  # Pour toute cases, si on a un walker
                 count = 0  # count correspond au nombre de walker sur la case
                 for k in range(len(Mat[j][i])):
