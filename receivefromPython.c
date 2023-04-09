@@ -7,8 +7,13 @@
 #include <sys/un.h>
 #include <unistd.h>
 #include <errno.h>
+#include <strings.h>
+#include <string.h>
+#include <sys/select.h>
+#include <math.h>
 
-#define SSOCKET_FILE "./sscocket"
+#define BUFSIZE 65536
+#define SSOCKET_FILE "./ssocket"
 #define CSOCKET_FILE "./csocket"
 
 void stop(char * err)
@@ -20,8 +25,11 @@ void stop(char * err)
 int main(int argc, char ** argv)
 {
     struct sockaddr_un svaddr, claddr;
-    char buffer[BUFSIZ];
-    int fd, bytes;
+
+    char buffer[BUFSIZE];
+    int fd, clfd, bytes;
+
+    int clilen=sizeof(claddr);
 
     if((fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
         stop("socket");
@@ -41,8 +49,7 @@ int main(int argc, char ** argv)
     }
 
     bzero(&claddr, sizeof(claddr));
-    claddr.sun_family = AF_UNIX;
-    strncpy(claddr.sun_path, CSOCKET_FILE, sizeof(claddr.sun_path) - 1);
+
 
     if (listen(fd, 1) != 0){
         stop("listen");
@@ -51,27 +58,54 @@ int main(int argc, char ** argv)
         printf("listening\n");
     }
 
-    while(1)
-    {
-        if(recv(fd, buffer, BUFSIZ, 0)==-1)
+    clfd = accept(fd, (struct sockaddr *)&claddr, &clilen);
+    printf("accepted\n");
+    printf("%i\n", claddr.sun_family);
+    int received = 0;
+    strncpy(buffer,"#newco\ntoto",12);
+        if(send(clfd, buffer, strlen(buffer), 0)<0)
         {
-            stop("recv\n");
+            stop("send python");
         }
         else
         {
-            puts("received from Python ");
-            printf(bytes);
-
-            //envoie des données en broadcast
+            printf("sent %s\n", buffer);
+        }
+    fd_set readfds;
+    int max_sd, activity;
+    while(1)
+    {   
+        FD_ZERO(&readfds);
+        FD_SET(clfd, &readfds);
+        max_sd = clfd;
+        activity = select(max_sd+1,&readfds,NULL,NULL,NULL);
+        if ((activity < 0) && (errno != EINTR)) 
+        {
+            stop("select error");
+        }
+        if (FD_ISSET(clfd, &readfds))
+        {
+            bzero(&buffer, sizeof(buffer));
+            if((received = recv(clfd, buffer, BUFSIZE-1, 0)==-1))
+            {
+                stop("recv");
+                continue;
+            }
+            else
+            {
+                puts("received from Python");
+                printf("%s\n",buffer);
+                //envoie des données en broadcast
+                // TODO
+            }
         }
 
-
-        //réception des données des autres
-
+        bzero(&buffer, sizeof(buffer));
+        //réception des données des autres 
+                
     }
 
     close(fd);
-
     return 0;
 }
 

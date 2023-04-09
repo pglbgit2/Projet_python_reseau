@@ -13,18 +13,27 @@ from Model import Test_logique as Test_l
 from Interface.InputBoxName import SP_input
 from Interface.Data_controller import set_screen_HP
 from Network import Network
+import os
+import subprocess
+import socket
 
 list_event = {l.Nume_administratif, l.Nume_eau, l.Nume_ingenieur, l.Nume_maison, l.Nume_nourriture, l.Nume_pelle,
               l.Nume_prefecure, l.Nume_route, l.Nume_sante, l.Nume_theatre}
 
 pos_souris_down = (0,0)
+def draw_text(screen, text, size, colour, pos):
+    font = pg.font.SysFont(None, size)
+    text_surface = font.render(text, True, colour)
+    text_rect = text_surface.get_rect(topleft=pos)
 
+    screen.blit(text_surface, text_rect)
 class Game:
 
     def __init__(self, screen, clock):
         self.screen = screen
         self.clock = clock
         self.width, self.height = self.screen.get_size()
+        self.draw_text = draw_text
 
         # map
         self.map = Map(40, 40, self.width, self.height)
@@ -35,8 +44,8 @@ class Game:
         # hud
         self.hud = Hud(self.width, self.height)
 
-        # network
-        self.network = Network()
+
+        #
 
         overlay = ""
         self.selection =[[],[]]
@@ -44,31 +53,63 @@ class Game:
         self.mouse_button = [[],[],[]]
         self.playing = True
 
-    def run(self):
+    def run(self, multi=False, connection_utils=["", ""]):
         
         self.playing = True
 
+        if multi:
+            IP = connection_utils[0]
+            port = connection_utils[1]
+            if IP == "":
+                print("New game created ! IP address is : ", end="")
+                print(socket.gethostbyname(socket.gethostname()))
+                print(":", end="")
+                print(port)
+                # network
+                self.network = Network(IP, port, 'New_game')
+
+            else:
+                print("Attempting connection to ", end="")
+                print(IP, end="")
+                print(":", end="")
+                print(port, end="")
+                print(" ...")
+                # network
+                self.network = Network(IP, port, 'New_player')
+
+                #Traitement de la première entrée en game à faire ici !
+        pg.mixer.music.load("Rome1.mp3")
+        pg.mixer.music.play()
+
         while self.playing:
             self.clock.tick(60)
-            self.events()
-            self.update()
+            self.events(multi)
+            self.update(multi)
             self.draw()
-            # self.network.map_to_file(l.m.Mat_batiment, 40, 40)
-            # self.network.file_to_map(l.m.Mat_batiment, 40, 40)
-            self.network.delta_to_file(l.m.delta)
-            self.network.file_to_modif()
+            #if a == 100:
+            #    subprocess.call([path_to_temp_file +"/recv", "172.30.148.96",path_to_temp_file+ "temp.txt"])
+            #    self.network.file_to_map(l.m.Mat_batiment, 40, 40)
+            #if a == 300:
+            #    self.network.file_to_map(l.m.Mat_batiment, 40, 40)
 
+            #self.network.delta_to_file(l.m.delta)
+            #self.network.file_to_modif()
 
         return self.playing
 
         
 
-    def events(self):
+    def events(self, multi):
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()
                 sys.exit()
+
+            # if event.type == pg.VIDEORESIZE:
+            #    (self.camera.width, self.camera.height) = self.screen.get_size()
+            #    (self.width, self.height) = self.screen.get_size()
+            #    self.hud = Hud(self.width, self.height)
 
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
@@ -103,11 +144,15 @@ class Game:
                 if event.key == pg.K_F5 : 
                     Test_l.Construction_maison_5()
 
-                if event.key == pg.K_F6 : 
-                    Test_l.Construction_maison_6()
+                if event.key == pg.K_F6 :
+                    pass
+                    # self.network.map_to_file(l.m.Mat_batiment, l.m.Mat_perso, 40, 40)
+                    # Test_l.Construction_maison_6()
 
-                if event.key == pg.K_F7 : 
-                    Test_l.Construction_maison_7()
+                if event.key == pg.K_F7 :
+                    pass
+                    # self.network.file_to_map(l.m.Mat_batiment, 40, 40)
+                    # Test_l.Construction_maison_7()
 
                 
             self.mouse_button = pg.mouse.get_pressed()
@@ -121,9 +166,10 @@ class Game:
                     l.event_to_logic(l.Nume_save,None,None,SP_input.text)
 
                 elif self.hud.modif_speed() :
-                    self.action = self.hud.overhead_all()
-                    l.event_to_logic(self.action ,None ,None)
-                    self.action = None
+                    if not multi:
+                        self.action = self.hud.overhead_all()
+                        l.event_to_logic(self.action ,None ,None)
+                        self.action = None
 
                 elif self.hud.overlay.collide(self.mouse_pos) :
                     l.event_to_logic(l.Nume_overlay ,None,None)
@@ -154,7 +200,12 @@ class Game:
             #if event.type == pg.MOUSEMOTION and self.selection[0] != []:
             #    init_clique_pos = self.mouse_to_tiles()
 
-    def update(self):
+    def update(self,multi=False):
+        if multi:
+            #print('gestion entree sorties')
+            self.network.GestionEntreesSortie()
+            #print('apres entree sorties')
+
         Test_l.Tour_jeu()
         self.camera.update()
 
@@ -246,10 +297,3 @@ class Game:
 
         return (grid_x, grid_y)
 
-    def draw_text(self, screen, text, size, colour, pos):
-
-        font = pg.font.SysFont(None, size)
-        text_surface = font.render(text, True, colour)
-        text_rect = text_surface.get_rect(topleft=pos)
-
-        screen.blit(text_surface, text_rect)

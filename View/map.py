@@ -158,30 +158,33 @@ class Map:
                 # tile = self.map[x][y]["tile"]
                 tile1 = m.Mat_batiment[y][x].id
                 # minimap
-                minimap_offset = [45, 50]
+                minimap_offset = [83, 90]
                 render_pos_mini = self.map[x][y]["render_pos_mini"]
 
                 # WATER
                 if tile1 == 1:
-                    pg.draw.circle(screen, BLUE, (
+                    """pg.draw.circle(screen, BLUE, (
                         render_pos_mini[0] + pg.display.Info().current_w - 130 + minimap_offset[0],
                         render_pos_mini[1] + pg.display.Info().current_h - 1040 + minimap_offset[1]), 2)
-
+                    """
+                    pg.draw.circle(screen, BLUE, (
+                        render_pos_mini[0] + pg.display.Info().current_w - minimap_offset[0],
+                        render_pos_mini[1] + minimap_offset[1]), 2)
 
                 # ROCK
                 elif tile1 == 2:
                     pg.draw.circle(screen, GREY, (
-                        render_pos_mini[0] + pg.display.Info().current_w - 130 + minimap_offset[0],
-                        render_pos_mini[1] + pg.display.Info().current_h - 1040 + minimap_offset[1]), 2)
+                        render_pos_mini[0] + pg.display.Info().current_w - minimap_offset[0],
+                        render_pos_mini[1] + minimap_offset[1]), 2)
 
                 # TREE
                 elif tile1 == 3:
                     pg.draw.circle(screen, GREEN, (
-                        render_pos_mini[0] + pg.display.Info().current_w - 130 + minimap_offset[0],
-                        render_pos_mini[1] + pg.display.Info().current_h - 1040 + minimap_offset[1]), 2)
+                        render_pos_mini[0] + pg.display.Info().current_w - minimap_offset[0],
+                        render_pos_mini[1] + minimap_offset[1]), 2)
 
                 mini = self.map[x][y]["iso_poly_mini"]
-                mini = [(x + pg.display.Info().current_w - 130 + minimap_offset[0], y + 40 + minimap_offset[1]) for x, y
+                mini = [(x + pg.display.Info().current_w - minimap_offset[0], y + minimap_offset[1]) for x, y
                         in mini]
                 pg.draw.polygon(screen, YELLOW, mini, 2)
                 pg.draw.rect(screen, RED, (
@@ -196,7 +199,7 @@ class Map:
         for x in range(self.grid_length_x):
             for y in range(self.grid_length_y):
                 render_pos = self.map[y][x]["render_pos"]
-                if overlay == "":
+                if self.overlay == "":
 
                     if m.Mat_batiment[x][y].id_bat == 55 and m.Mat_batiment[x][y].curEmployees == l.m.Mat_batiment[x][y].neededEmployees:
                         m.Mat_batiment[x][y].texture = "security_occupied"
@@ -227,9 +230,9 @@ class Map:
                             screen.blit(self.tiles[tile],
                                         (render_pos[0] + self.grass_tiles.get_width() / 2 + camera.scroll.x,
                                          render_pos[1] - (self.tiles[tile].get_height() - TILE_SIZE) + camera.scroll.y))
-                elif overlay == "fire":
+                elif self.overlay == "fire":
 
-                    risk = l.get_fire_level(x, y)
+                    risk = l.get_fire_level(y, x)
 
                     if risk >= 24:  # WORST : need Pin-Pon asap
                         tile = "red"
@@ -259,6 +262,9 @@ class Map:
                     elif m.Mat_batiment[x][y].id_bat in (1, 2, 3, 5, 666, 116, 115):
                         tile = m.Mat_batiment[x][y].texture
 
+                    else:
+                        tile = ""
+
                     if tile != "":
                         if tile in sizedbuildings_2:
                             screen.blit(self.tiles[tile],
@@ -273,31 +279,91 @@ class Map:
                             screen.blit(self.tiles[tile],
                                         (render_pos[0] + self.grass_tiles.get_width() / 2 + camera.scroll.x,
                                          render_pos[1] - (self.tiles[tile].get_height() - TILE_SIZE) + camera.scroll.y))
-                elif overlay == "eff":
-                    if m.Mat_batiment[x][y].id_bat == 81 and l.m.Mat_batiment[x][y].curEmployees == l.m.Mat_batiment[x][
-                        y].neededEmployees:
-                        m.Mat_batiment[x][y].texture = "engineer_occupied"
-                        if tile != "":
-                            if tile in sizedbuildings_2:
-                                screen.blit(self.tiles[tile],
-                                            (render_pos[
+                elif self.overlay == "bat":
+
+                    risk = l.get_eff_level(y, x)
+
+                    if risk >= 24:  # WORST : need a dispenser here
+                        tile = "red"
+                    elif 24 > risk >= 18:
+                        tile = "orange"
+                    elif 18 > risk >= 12:
+                        tile = "yellow"
+                    elif 12 > risk >= 6:
+                        tile = "green"
+                    elif 6 > risk >= 0:  # BEST : No spy around
+                        tile = "blue"
+
+                    elif m.Mat_batiment[x][y].id_bat == 81:
+                        if l.m.Mat_batiment[x][y].curEmployees == l.m.Mat_batiment[x][y].neededEmployees:
+                            tile = "engineer_occupied"
+                        else:
+                            tile = "engineer"
+
+                    elif m.Mat_batiment[x][y].id_bat == 555:
+                        tile = "ruine"
+
+                    elif m.Mat_batiment[x][y].id_bat in (1, 2, 3, 5, 666, 116, 115):
+                        tile = m.Mat_batiment[x][y].texture
+
+                    else:
+                        tile = ""
+
+                    if tile != "":
+                        if tile in sizedbuildings_2:
+                             screen.blit(self.tiles[tile],
+                                             (render_pos[
                                                  0] + self.grass_tiles.get_width() / 2 - TILE_SIZE + camera.scroll.x,
                                              render_pos[1] - (
                                                          self.tiles[tile].get_height() - TILE_SIZE) + camera.scroll.y))
 
-                            elif tile in sizedbuildings_3:
-                                screen.blit(self.tiles[tile],
+                        elif tile in sizedbuildings_3:
+                            screen.blit(self.tiles[tile],
                                             (render_pos[
                                                  0] + self.grass_tiles.get_width() / 2 - TILE_SIZE * 2 + camera.scroll.x,
                                              render_pos[1] - (
                                                          self.tiles[tile].get_height() - TILE_SIZE) + camera.scroll.y))
-                            else:
-                                screen.blit(self.tiles[tile],
+                        else:
+                            screen.blit(self.tiles[tile],
                                             (render_pos[0] + self.grass_tiles.get_width() / 2 + camera.scroll.x,
                                              render_pos[1] - (
                                                          self.tiles[tile].get_height() - TILE_SIZE) + camera.scroll.y))
-                elif overlay == "water":
-                    pass
+                elif self.overlay == "water":
+                    if l.get_water(y, x):
+
+                        if m.Mat_batiment[x][y].id_bat in (10, 11, 12):
+                            tile = "house_watered"
+                        else:
+                            tile = "watered"
+
+                    elif not l.get_water(y, x):
+                        tile = "unwatered"
+
+                    else:
+                        tile = ""
+
+                        # Water services
+
+                    if m.Mat_batiment[x][y].id_bat == 92:
+                        tile = "well"
+
+                    elif m.Mat_batiment[x][y].id_bat == 91:
+                        tile = "fountain_full"
+
+                    elif m.Mat_batiment[x][y].id_bat == 9100:
+                        tile = "fountain_full"
+
+                    elif m.Mat_batiment[x][y].id_bat == 90:
+                        tile = "reservoir_empty"
+
+                    elif m.Mat_batiment[x][y].id_bat == 9000:
+                        tile = "reservoir_full"
+
+                    if tile != "":
+                        screen.blit(self.tiles[tile],
+                                    (render_pos[0] + self.grass_tiles.get_width() / 2 + camera.scroll.x,
+                                     render_pos[1] - (
+                                             self.tiles[tile].get_height() - TILE_SIZE) + camera.scroll.y))
                     
                 if l.getWalker(y, x).name != 'no Walker':  # Vérifier si un/des walkeur/s est/sont sur la case actuelle
                     tile = self.grid_to_walkeur(y, x, l.getWalker(y, x))
@@ -901,22 +967,24 @@ class Map:
 
         # ROADS
 
-        roadXL = pg.image.load(path_to_Nature + "/Land2a_00093.png").convert_alpha()  # X line /
-        roadYL_capright = pg.image.load(path_to_Nature + "/Land2a_00105.png").convert_alpha()  # X line cap on the right
-        roadYL_capleft = pg.image.load(path_to_Nature + "/Land2a_00101.png").convert_alpha()  # X line cap on the left
-        roadYL = pg.image.load(path_to_Nature + "/Land2a_00094.png").convert_alpha()  # Y line \
-        roadXL_capbottom = pg.image.load(
-            path_to_Nature + "/Land2a_00104.png").convert_alpha()  # Y line cap on the bottom
-        roadXL_captop = pg.image.load(path_to_Nature + "/Land2a_00102.png").convert_alpha()  # Y line cap on the top
-        road_quad = pg.image.load(path_to_Nature + "/Land2a_00110.png").convert_alpha()  # Quad-Intersection
-        roadXL_teebottom = pg.image.load(path_to_Nature + "/Land2a_00106.png").convert_alpha()
-        roadXL_teetop = pg.image.load(path_to_Nature + "/Land2a_00108.png").convert_alpha()
-        roadYL_teeright = pg.image.load(path_to_Nature + "/Land2a_00109.png").convert_alpha()
-        roadYL_teeleft = pg.image.load(path_to_Nature + "/Land2a_00107.png").convert_alpha()
-        roadcurv_lefttobottom = pg.image.load(path_to_Nature + "/Land2a_00098.png").convert_alpha()
-        roadcurv_righttobottom = pg.image.load(path_to_Nature + "/Land2a_00097.png").convert_alpha()
-        roadcurv_lefttotop = pg.image.load(path_to_Nature + "/Land2a_00099.png").convert_alpha()
-        roadcurv_righttotop = pg.image.load(path_to_Nature + "/Land2a_00100.png").convert_alpha()
+        road0 = pg.image.load(path_to_Nature + "/Land2a_00093.png").convert_alpha()  # Road YL
+        road1 = pg.image.load(path_to_Nature + "/Land2a_00094.png").convert_alpha()  # Road XL
+        road2 = pg.image.load(path_to_Nature + "/Land2a_00095.png").convert_alpha()  # Road YL
+        road3 = pg.image.load(path_to_Nature + "/Land2a_00096.png").convert_alpha()  # Road XL
+        road4 = pg.image.load(path_to_Nature + "/Land2a_00097.png").convert_alpha()
+        road5 = pg.image.load(path_to_Nature + "/Land2a_00098.png").convert_alpha()
+        road6 = pg.image.load(path_to_Nature + "/Land2a_00099.png").convert_alpha()
+        road7 = pg.image.load(path_to_Nature + "/Land2a_00100.png").convert_alpha()
+        road8 = pg.image.load(path_to_Nature + "/Land2a_00101.png").convert_alpha()
+        road9 = pg.image.load(path_to_Nature + "/Land2a_00102.png").convert_alpha()
+        road10 = pg.image.load(path_to_Nature + "/Land2a_00103.png").convert_alpha()
+        road11 = pg.image.load(path_to_Nature + "/Land2a_00104.png").convert_alpha()
+        road12 = pg.image.load(path_to_Nature + "/Land2a_00105.png").convert_alpha()
+        road13 = pg.image.load(path_to_Nature + "/Land2a_00106.png").convert_alpha()
+        road14 = pg.image.load(path_to_Nature + "/Land2a_00107.png").convert_alpha()
+        road15 = pg.image.load(path_to_Nature + "/Land2a_00108.png").convert_alpha()
+        road16 = pg.image.load(path_to_Nature + "/Land2a_00109.png").convert_alpha()
+        road17 = pg.image.load(path_to_Nature + "/Land2a_00110.png").convert_alpha()
 
         # HOUSING
 
@@ -1022,12 +1090,11 @@ class Map:
                 "water15": water15, "water16": water16, "water17": water17, "water18": water18, "water19": water19,
                 "water20": water20, "water21": water21, "water22": water22, "water23": water23, "water24": water24,
                 "water25": water25, "water26": water26,
-                "roadYL": roadYL, "roadYL_capright": roadYL_capright, "roadYL_capleft": roadYL_capleft,
-                "roadXL": roadXL, "roadXL_capbottom": roadXL_capbottom, "roadXL_captop": roadXL_captop,
-                "road_quad": road_quad, "roadYL_teebottom": roadXL_teebottom, "roadYL_teetop": roadXL_teetop,
-                "roadXL_teeright": roadYL_teeright, "roadXL_teeleft": roadYL_teeleft,
-                "roadcurv_lefttobottom": roadcurv_lefttobottom, "roadcurv_righttobottom": roadcurv_righttobottom,
-                "roadcurv_lefttotop": roadcurv_lefttotop, "roadcurv_righttotop": roadcurv_righttotop,
+                "road0": road0,
+                "road1": road1, "road2": road2, "road3": road3, "road4": road4, "road5": road5,
+                "road6": road6, "road7": road7, "road8": road8, "road9": road9, "road10": road10,
+                "road11": road11, "road12": road12, "road13": road13, "road14": road14, "road15": road15,
+                "road16": road16, "road17": road17,
                 "direction1": direction1, "direction2": direction2,
                 "post_sign": post_sign, "houselvl0": houselvl0, "houselvl1": houselvl1, "houselvl2": houselvl2,
                 "houselvl3": houselvl3,

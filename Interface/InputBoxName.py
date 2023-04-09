@@ -7,7 +7,7 @@ import tkinter as tk
 pg.init()
 Test_screen = pg.display.set_mode( ( 0 , 0 ) , pg.FULLSCREEN)
 ( window_width , winddow_height) = Test_screen.get_size()
-Path_font = f"{getcwd()}/Interface/C3_policy.TTF"
+Path_font = f"{getcwd()}/Interface/COMIC.TTF"
 Textefont = pg.font.Font( Path_font , 36 )
 # from Data_controller import *
 
@@ -23,7 +23,7 @@ Textefont = pg.font.Font( Path_font , 36 )
 
 class InputBoxName :
 
-    def __init__( self , screen , pos , size) :
+    def __init__( self , screen , pos , size, init_text) :
         
         self.left = pos[0] - size[0]/2
         self.up = pos[1] - size[1]/2
@@ -31,7 +31,7 @@ class InputBoxName :
         self.size = size
         self.width = size[0]
         self.height = size[1]
-        self.text = 'Terminus'
+        self.text = init_text
         self.text_surface = Textefont.render(self.text , True , (0,0,0) , (255,255,255))
         self.rect = self.text_surface.get_rect()
         self.screen = screen
@@ -50,8 +50,8 @@ class InputBoxName :
     def ajout_char(self, event ,screen ) :
         
 
-        if len(self.text) < 18 and self.writing :
-            if ord(event.unicode) in range(ord('a'), ord('z')+1) or ord(event.unicode) in range(ord('0'), ord('9')+1) or ord(event.unicode) in range( ord('A') , ord('Z') +1 ):
+        if len(self.text) < 22 and self.writing :
+            if ord(event.unicode) in range(ord('a'), ord('z')+1) or ord(event.unicode) in range(ord('0'), ord('9')+1) or ord(event.unicode) in range( ord('A') , ord('Z') +1 ) or ord(event.unicode) == ord(':') or ord(event.unicode) == ord('.'):
 
                 self.text += event.unicode
 
@@ -81,7 +81,9 @@ class InputBoxName :
 
 
 
-SP_input = InputBoxName(None , ( window_width/2 , winddow_height/2) , ( ( 2*window_width/7 , winddow_height/16)))
+SP_input = InputBoxName(None , ( window_width/2 , winddow_height/2) , ( ( 2*window_width/7 , winddow_height/16)), 'Terminus')
+JP_input_IP = InputBoxName(None , (window_width/2, winddow_height/2) , (2*window_width/7 , winddow_height/16), '127.0.0.1:8000')
+
 # running = True
 # timer = pg.time.Clock()
 # Test_screen.fill((122,122,122))
