@@ -203,12 +203,12 @@ def evolve(bat):
     # print("is Evolving")
     x = bat.pos_x
     y = bat.pos_y
+    username = bat.username
     if bat.name == 'Maison 1':
-        m.add_bat(x, y, 11, m.Mat_batiment, bat.username)
+        m.add_bat(x, y, 11, m.Mat_batiment, username)
     elif bat.name == 'Maison 2':
-        m.add_bat(x, y, 12, m.Mat_batiment, bat.username)
+        m.add_bat(x, y, 12, m.Mat_batiment, username)
     batiment = m.Mat_batiment[y][x]
-    batiment.username = bat.username
     batiment.nourriture = bat.nourriture
     batiment.produits = bat.produits
     batiment.curpop = bat.curpop
@@ -223,12 +223,13 @@ def devolve(bat):
     # print("is Devolving")
     x = bat.pos_x
     y = bat.pos_y
+    username = bat.username
+
     if bat.name == 'Maison 3':
-        m.add_bat(x, y, 11, m.Mat_batiment, bat.username)
+        m.add_bat(x, y, 11, m.Mat_batiment, username)
     elif bat.name == 'Maison 2':
-        m.add_bat(x, y, 10, m.Mat_batiment, bat.username)
+        m.add_bat(x, y, 10, m.Mat_batiment, username)
     batiment = m.Mat_batiment[y][x]
-    batiment.username = bat.username
     batiment.nourriture = bat.nourriture
     batiment.produits = bat.produits
     batiment.curpop = bat.curpop
@@ -367,7 +368,7 @@ def test_walker_logique():
                                 #print("debug")
                                 x = perso.batiment.pos_x
                                 y = perso.batiment.pos_y
-                                m.add_bat(x,y,10, m.Mat_batiment)
+                                m.add_bat(x,y,10, m.Mat_batiment, perso.batiment.username)
                                 perso.batiment.Walk.remove(perso)
                                 perso.batiment = m.Mat_batiment[y][x]
                                 perso.batiment.Walk.append(perso)
