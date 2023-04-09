@@ -1,6 +1,7 @@
 import sys
 import random
 
+
 try:
     sys.path.insert(0, '..')
     from Model import Priest as pr
@@ -351,32 +352,32 @@ def put_bat_mat(x, y, bat, Mat):
 # ajoute un batiment a une position specifiee en fonction de l'id
 # on utilise Mat_batiment
 # si le batiment est de type stockage, l'ajoute a la liste des batiments de stockage
-def add_bat(x, y, id_bat, Mat=Mat_batiment):
+def add_bat(x, y, id_bat, Mat=Mat_batiment, username=t.myName):
     if id_bat == 7:
-        Mat[y][x] = mais.Panneau(x, y)
+        Mat[y][x] = mais.Panneau(x, y, username)
     if id_bat == 92:
         well = wa.Well(x, y)
         Mat[y][x] = well
         update_water_map(x, y, 3)
     elif id_bat == 90:
-        Reservoir = wa.Reservoir(x, y)
+        Reservoir = wa.Reservoir(x, y, username)
         update_water_map(x, y, 10)
         put_bat_mat(x, y, Reservoir, Mat)
     elif id_bat == 91:
-        Fountain = wa.Fountain(x, y)
+        Fountain = wa.Fountain(x, y, username)
         Mat[y][x] = Fountain
         update_water_map(x, y, 6)
     elif id_bat == 8:
         Aquaduct = wa.Aquaduct(x, y)
         Mat[y][x] = Aquaduct
     elif id_bat == 81:
-        EngineersPost = eng.EngineersPost(x, y)
+        EngineersPost = eng.EngineersPost(x, y, username)
         Mat[y][x] = EngineersPost
     elif id_bat == 55:
-        Prefecture = sec.Prefecture(x, y)
+        Prefecture = sec.Prefecture(x, y, username)
         Mat[y][x] = Prefecture
     elif id_bat == 5:
-        Route = pa.Path(x, y)
+        Route = pa.Path(x, y, username)
         Mat[y][x] = Route
         Mat_route[y][x] = 1
         update_road_texture(y, x)
@@ -396,7 +397,7 @@ def add_bat(x, y, id_bat, Mat=Mat_batiment):
             update_road_texture(y + 1, x)
         # print(" --- ")
     elif id_bat == 84:
-        Forum = admin.Forum1(x, y)
+        Forum = admin.Forum1(x, y, username)
         put_bat_mat(x, y, Forum, Mat)
     elif id_bat == 1:
         Mat[y][x] = t.Water(x, y)
@@ -405,29 +406,29 @@ def add_bat(x, y, id_bat, Mat=Mat_batiment):
     elif id_bat == 3:
         Mat[y][x] = tr.tree(x, y)
     elif id_bat == 4:
-        Senate = admin.Senate1(x, y)
+        Senate = admin.Senate1(x, y, username)
         put_bat_mat(x, y, Senate, Mat)
     elif id_bat == 10:
-        Maison_1 = mais.Maison_1(x, y)
+        Maison_1 = mais.Maison_1(x, y, username)
         put_bat_mat(x, y, Maison_1, Mat)
     elif id_bat == 11:
-        Maison_2 = mais.Maison_2(x, y)
+        Maison_2 = mais.Maison_2(x, y, username)
         put_bat_mat(x, y, Maison_2, Mat)
     elif id_bat == 12:
-        Maison_3 = mais.Maison_3(x, y)
+        Maison_3 = mais.Maison_3(x, y, username)
         put_bat_mat(x, y, Maison_3, Mat)
     elif id_bat == 13:
-        Maison_4 = mais.Maison_4(x, y)
+        Maison_4 = mais.Maison_4(x, y, username)
         put_bat_mat(x, y, Maison_4, Mat)
     elif id_bat == 100:
-        Ferme = f.Ferme(x, y)
+        Ferme = f.Ferme(x, y, username)
         put_bat_mat(x, y, Ferme, Mat)
     elif id_bat == 71:
-        Granary = g.Granary(x, y)
+        Granary = g.Granary(x, y, username)
         put_bat_mat(x, y, Granary, Mat)
         Liste_stock.append(Granary)
     elif id_bat == 72:
-        Warehouse = war.Warehouse(x, y)
+        Warehouse = war.Warehouse(x, y, username)
         put_bat_mat(x, y, Warehouse, Mat)
         Liste_stock.append(Warehouse)
     elif id_bat == 115:
@@ -440,7 +441,7 @@ def add_bat(x, y, id_bat, Mat=Mat_batiment):
         Herb = h.Herb(x, y)
         Mat[y][x] = Herb
     elif id_bat == 70:
-        Market = mar.Market(x, y)
+        Market = mar.Market(x, y, username)
         put_bat_mat(x, y, Market, Mat)
 
 

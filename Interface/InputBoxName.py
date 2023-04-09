@@ -1,14 +1,17 @@
 from os import getcwd
 import pygame as pg
-from pygame.locals import * 
+from pygame.locals import *
 import sys
 from tkinter import simpledialog
-import tkinter as tk 
+import tkinter as tk
+
 pg.init()
-Test_screen = pg.display.set_mode( ( 0 , 0 ) , pg.FULLSCREEN)
-( window_width , winddow_height) = Test_screen.get_size()
+Test_screen = pg.display.set_mode((0, 0), pg.FULLSCREEN)
+(window_width, winddow_height) = Test_screen.get_size()
 Path_font = f"{getcwd()}/Interface/COMIC.TTF"
-Textefont = pg.font.Font( Path_font , 36 )
+Textefont = pg.font.Font(Path_font, 36)
+
+
 # from Data_controller import *
 
 # SP_text_S  = pg.Surface((window_width/4 , winddow_height/8 ))
@@ -18,71 +21,68 @@ Textefont = pg.font.Font( Path_font , 36 )
 # SP_new_game_name = ""
 
 
+class InputBoxName:
 
+    def __init__(self, screen, pos, size, init_text):
 
-
-class InputBoxName :
-
-    def __init__( self , screen , pos , size, init_text) :
-        
-        self.left = pos[0] - size[0]/2
-        self.up = pos[1] - size[1]/2
-        self.pos = ( self.left , self.up )
+        self.left = pos[0] - size[0] / 2
+        self.up = pos[1] - size[1] / 2
+        self.pos = (self.left, self.up)
         self.size = size
         self.width = size[0]
         self.height = size[1]
         self.text = init_text
-        self.text_surface = Textefont.render(self.text , True , (0,0,0) , (255,255,255))
+        self.text_surface = Textefont.render(self.text, True, (0, 0, 0), (255, 255, 255))
         self.rect = self.text_surface.get_rect()
         self.screen = screen
-        self.back = pg.Surface( ( self.width , self.text_surface.get_size()[1] + 10 ))
-        self.back.fill( (255,255,255))
+        self.back = pg.Surface((self.width, self.text_surface.get_size()[1] + 10))
+        self.back.fill((255, 255, 255))
         self.writing = False
 
-
-    def draw( self , screen ) : 
-        #Faire une surface de fond 
+    def draw(self, screen):
+        # Faire une surface de fond
 
         screen.blit(self.back, self.pos)
-        screen.blit(self.text_surface , ( self.left + 5 , self.up + 5 ))
+        screen.blit(self.text_surface, (self.left + 5, self.up + 5))
 
+    def ajout_char(self, event, screen):
 
-    def ajout_char(self, event ,screen ) :
-        
-
-        if len(self.text) < 22 and self.writing :
-            if ord(event.unicode) in range(ord('a'), ord('z')+1) or ord(event.unicode) in range(ord('0'), ord('9')+1) or ord(event.unicode) in range( ord('A') , ord('Z') +1 ) or ord(event.unicode) == ord(':') or ord(event.unicode) == ord('.'):
+        if len(self.text) < 22 and self.writing:
+            if ord(event.unicode) in range(ord('a'), ord('z') + 1) or ord(event.unicode) in range(ord('0'),
+                                                                                                  ord('9') + 1) or ord(
+                    event.unicode) in range(ord('A'), ord('Z') + 1) or ord(event.unicode) == ord(':') or ord(
+                    event.unicode) == ord('.'):
 
                 self.text += event.unicode
 
-            elif event.unicode == " " :
+            elif event.unicode == " ":
                 self.text += " "
-            elif event.unicode == "\b" :
+            elif event.unicode == "\b":
                 self.text = self.text[:-1]
 
-        else :
-            if event.unicode == "\b" :
-                self.text = self.text[:-1] 
-        
+        else:
+            if event.unicode == "\b":
+                self.text = self.text[:-1]
 
-        self.text_surface = Textefont.render( self.text , True , (0,0,0))
+        self.text_surface = Textefont.render(self.text, True, (0, 0, 0))
         self.draw(screen)
 
-        
-
-    def collide( self ,pos ) :
+    def collide(self, pos, pos_rect):
         tmp = self.back.get_rect()
-        tmp.center = ( window_width / 2 , winddow_height / 2 )
+        tmp.center = pos_rect
         self.writing = tmp.collidepoint(pos)
         return self.writing
 
+    def overhead(self, pos, screen):
+        return self.left <= pos[0] <= self.left + self.width and self.up <= pos[1] <= self.up + self.height
 
 
-
-
-
-SP_input = InputBoxName(None , ( window_width/2 , winddow_height/2) , ( ( 2*window_width/7 , winddow_height/16)), 'Terminus')
-JP_input_IP = InputBoxName(None , (window_width/2, winddow_height/2) , (2*window_width/7 , winddow_height/16), '127.0.0.1:8000')
+SP_input = InputBoxName(None, (window_width / 2, winddow_height / 2), ((2 * window_width / 7, winddow_height / 16)),
+                        'Terminus')
+JP_input_IP = InputBoxName(None, (window_width / 2, winddow_height / 2), (2 * window_width / 7, winddow_height / 16),
+                           '127.0.0.1:8000')
+JP_input_Name = InputBoxName(None, (window_width / 2, winddow_height / 2 - JP_input_IP.height - 10), (2 * window_width / 7, winddow_height / 16),
+                             'Auguste')
 
 # running = True
 # timer = pg.time.Clock()
@@ -91,8 +91,8 @@ JP_input_IP = InputBoxName(None , (window_width/2, winddow_height/2) , (2*window
 
 #     timer.tick(60)
 #     mouse_pos = pg.mouse.get_pos()
-    
-            
+
+
 #     pg.display.update() 
 #     pg.display.flip()
 
@@ -111,4 +111,3 @@ JP_input_IP = InputBoxName(None , (window_width/2, winddow_height/2) , (2*window
 
 #         if event.type == pg.KEYDOWN : 
 #             SP_input.ajout_char( event , Test_screen )
-            
