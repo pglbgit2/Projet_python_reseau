@@ -1,3 +1,0 @@
-/mnt/c/Users/agran/Documents/_travail/3A/ProjetReseau/Projet_python_reseau/cmake-build-debug/CMakeFiles/Projet_python_reseau.dir
-/mnt/c/Users/agran/Documents/_travail/3A/ProjetReseau/Projet_python_reseau/cmake-build-debug/CMakeFiles/edit_cache.dir
-/mnt/c/Users/agran/Documents/_travail/3A/ProjetReseau/Projet_python_reseau/cmake-build-debug/CMakeFiles/rebuild_cache.dir
