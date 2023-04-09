@@ -18,6 +18,7 @@ TILE_SIZE_MINI_MAP = 1.6
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
+ORANGE = (255, 150, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 GREY = (128, 128, 128)
@@ -25,4 +26,4 @@ YELLOW = (255, 255, 0)
 MINI_MAP_COLOR = (102, 0, 51)
 
 sizedbuildings_2 = {"market"}
-sizedbuildings_3 = {"reservoir_empty", "reservoir_full", "warehouse", "granary", "farm"}
+sizedbuildings_3 = {"reservoir_empty", "reservoir_full", "warehouse", "granary", "granary_0", "granary_1", "farm"}
