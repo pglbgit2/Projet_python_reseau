@@ -12,6 +12,7 @@ class Granary(b.Batiment):
         self.nourriture = [['ble', 0], ['fruits', 0], ['viande', 0]]
         self.produits = [['argile', 0], ['potterie', 0], ['huile', 0]]
         self.texture = "granary"
+        self.tag = "Unchanged"
 
     def get_delivery(self, chargement):
         #print("chargement", chargement)
