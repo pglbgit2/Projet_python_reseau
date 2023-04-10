@@ -97,16 +97,16 @@ def Add_bat_game(x, y, id_bat):
         for j in range(m.id_size[id_bat]):
             if i+x > 39 or y+j > 39 or m.Mat_batiment[y + j][x + i].name != "Herb":
                 return -1
-    m.add_bat(x, y, id_bat, m.Mat_batiment)
-    m.delta += ('l.Add_bat_game_delta('+str(x)+','+str(y)+','+str(id_bat)+');')
+    m.add_bat(x, y, id_bat, m.Mat_batiment, m.t.myName)
+    m.delta += 'l.Add_bat_game_delta('+str(x)+','+str(y)+','+str(id_bat)+',' + "'" + str(m.t.myName) + "'" + ');'
     return 0
 
-def Add_bat_game_delta(x, y, id_bat):
+def Add_bat_game_delta(x, y, id_bat, username):
     for i in range(m.id_size[id_bat]):
         for j in range(m.id_size[id_bat]):
             if i + x > 39 or y + j > 39 or m.Mat_batiment[y + j][x + i].name != "Herb":
                 return -1
-    m.add_bat(x, y, id_bat, m.Mat_batiment)
+    m.add_bat(x, y, id_bat, m.Mat_batiment, username)
     return 0
 
 
@@ -203,10 +203,11 @@ def evolve(bat):
     # print("is Evolving")
     x = bat.pos_x
     y = bat.pos_y
+    username = bat.username
     if bat.name == 'Maison 1':
-        m.add_bat(x, y, 11, m.Mat_batiment)
+        m.add_bat(x, y, 11, m.Mat_batiment, username)
     elif bat.name == 'Maison 2':
-        m.add_bat(x, y, 12, m.Mat_batiment)
+        m.add_bat(x, y, 12, m.Mat_batiment, username)
     batiment = m.Mat_batiment[y][x]
     batiment.nourriture = bat.nourriture
     batiment.produits = bat.produits
@@ -222,10 +223,12 @@ def devolve(bat):
     # print("is Devolving")
     x = bat.pos_x
     y = bat.pos_y
+    username = bat.username
+
     if bat.name == 'Maison 3':
-        m.add_bat(x, y, 11, m.Mat_batiment)
+        m.add_bat(x, y, 11, m.Mat_batiment, username)
     elif bat.name == 'Maison 2':
-        m.add_bat(x, y, 10, m.Mat_batiment)
+        m.add_bat(x, y, 10, m.Mat_batiment, username)
     batiment = m.Mat_batiment[y][x]
     batiment.nourriture = bat.nourriture
     batiment.produits = bat.produits
@@ -365,7 +368,7 @@ def test_walker_logique():
                                 #print("debug")
                                 x = perso.batiment.pos_x
                                 y = perso.batiment.pos_y
-                                m.add_bat(x,y,10, m.Mat_batiment)
+                                m.add_bat(x,y,10, m.Mat_batiment, perso.batiment.username)
                                 perso.batiment.Walk.remove(perso)
                                 perso.batiment = m.Mat_batiment[y][x]
                                 perso.batiment.Walk.append(perso)
@@ -609,7 +612,16 @@ def event_to_logic(nume, pos_init, pos_final, Name_game = "tmp.pkl"):
 
     elif nume == Nume_load : 
         loadfile(Name_game)
-        
+
+def update_textures():
+    for i in range(0, m.nb_cases_x):
+        for j in range(0, m.nb_cases_y):
+            if m.Mat_batiment[i][j].name == "Granary" and m.Mat_batiment[i][j].nourriture[0][1] <= 100:
+                m.Mat_batiment[i][j].texture = "granary"
+            elif m.Mat_batiment[i][j].name == "Granary" and 200 >= m.Mat_batiment[i][j].nourriture[0][1] > 100:
+                m.Mat_batiment[i][j].texture = "granary_0"
+            elif m.Mat_batiment[i][j].name == "Granary" and m.Mat_batiment[i][j].nourriture[0][1] > 200:
+                m.Mat_batiment[i][j].texture = "granary_1"
 
 # a garder
 init_game()

@@ -4,14 +4,15 @@ from Model import batiment as b
 
 
 class Granary(b.Batiment):
-    def __init__(self, posx, posy):
-        b.Batiment.__init__(self, 3, 71, posx, posy, 100, -4, 1, 2, 2, 6,)
+    def __init__(self, posx, posy, username=b.t.myName):
+        b.Batiment.__init__(self, 3, 71, posx, posy, 100, -4, 1, 2, 2, 6,username)
         self.max_space = 50
         self.occupied_space = 0
         self.name = "Granary"
         self.nourriture = [['ble', 0], ['fruits', 0], ['viande', 0]]
         self.produits = [['argile', 0], ['potterie', 0], ['huile', 0]]
         self.texture = "granary"
+        self.tag = "Unchanged"
 
     def get_delivery(self, chargement):
         #print("chargement", chargement)

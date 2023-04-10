@@ -14,6 +14,7 @@
 
 #define SSOCKET_FILE "./ssocket"
 #define SSOCKET_FILE2 "./ssocket2"
+#define SSOCKET_FILE3 "./ssocket3"
 
 #define TRUE 1
 #define FALSE 0
@@ -21,23 +22,21 @@
 #define PORT2 8490
 #define PORT3 8592 
 #define MAX_IFCONFIG_OUTPUT 4096
-#define BUFSIZE 65536
+#define BUFSIZE 131072
 
 
 // take a string and divide it into words
 char ** parse(char * message, int * numb, char splitter){
+    printf("parse called\n");
     char ** arg = calloc(sizeof(char), 100);
     char *msg = calloc(sizeof(char),100);
     strcpy(msg,message);
     int n = strlen(msg);
     int j = 0;
     char * debut = msg;
+    printf("before for, n=%d\n",n);
     for(int i = 0; i < n; i++){
         if(msg[i] == splitter){
-            while(msg[i] == ' ' || msg[i] == '\n'){
-                i++;
-            }
-            i--;
             arg[j] = debut;
             j++;
             debut = msg+i+1;
@@ -48,6 +47,7 @@ char ** parse(char * message, int * numb, char splitter){
     arg[j] = debut;
     j++;
     *numb = j;
+    printf("end parse\n");
     return arg;
 }
 
@@ -156,6 +156,7 @@ int remove_cell(list_joueur** adlist, list_joueur* cell){
 }
 
 list_joueur * create_connect(char * port, char * ip, list_joueur ** list){
+        printf("called with ip:%s,port:%s\n",ip,port);
         int sockfd;
 	    struct sockaddr_in first;
 	    sockfd = socket(AF_INET , SOCK_STREAM , 0);
@@ -190,7 +191,7 @@ list_joueur * create_connect(char * port, char * ip, list_joueur ** list){
         else{
             *list = new_cell;
         }
-        ////printf("debug4\n");
+        printf("debug4\n");
 	    return new_cell;
 }
 
@@ -228,7 +229,7 @@ int secureRecv(int fd, char * buffer)
 
 
 int sendall(void * buffer, list_joueur * player_list){
-    printf("send all called\n");
+    //printf("send all called\n");
     int test;
     list_joueur * list_it = player_list;
     while (list_it != NULL){
@@ -313,19 +314,35 @@ int main(int argc, char ** argv)
         }
     }
     if (argc == 3){
-        if( remove(SSOCKET_FILE2) == -1 && errno != ENOENT)
-        {
-            stop("remove");
+        if(strncmp(argv[1],"8000",4) == 0){
+            if( remove(SSOCKET_FILE2) == -1 && errno != ENOENT)
+            {
+                stop("remove");
+            }
+        }
+        else{
+            if( remove(SSOCKET_FILE3) == -1 && errno != ENOENT)
+            {
+                stop("remove");
+            }
         }
     }
-
+    //printf("avant la copie\n");
     bzero(&svaddr, sizeof(svaddr));
     svaddr.sun_family = AF_UNIX;
     if (argc == 1){
         strncpy(svaddr.sun_path, SSOCKET_FILE, sizeof(svaddr.sun_path) - 1);
     }
     if (argc == 3){
-        strncpy(svaddr.sun_path, SSOCKET_FILE2, sizeof(svaddr.sun_path) - 1);
+        //printf("%s\n",argv[1]);
+        if(strncmp(argv[1],"8000",4) == 0){
+            strncpy(svaddr.sun_path, SSOCKET_FILE2, sizeof(svaddr.sun_path) - 1);
+            printf("using ssocket2\n");
+        }
+        else{
+            strncpy(svaddr.sun_path, SSOCKET_FILE3, sizeof(svaddr.sun_path) - 1);
+            printf("using ssocket3\n");            
+        }
     }
     if (bind(fd, (struct sockaddr *)&svaddr, sizeof(svaddr)) == -1){
         stop("binding");
@@ -334,13 +351,16 @@ int main(int argc, char ** argv)
     bzero(&claddr, sizeof(claddr));
 
 
-    if (listen(fd, 1) != 0){
+    if (listen(fd, 8) != 0){
         stop("listen");
     }
     else{
-        //printf("listening\n");
+        //printf("listening to python\n");
     }
-    clfd = accept(fd, (struct sockaddr *)&claddr, &clilen);
+    clfd = 0;
+    while (clfd == 0 || clfd == -1){
+        clfd = accept(fd, (struct sockaddr *)&claddr, &clilen);
+    }
     //printf("accepted\n");
     ////printf("%i\n", claddr.sun_family);
 
@@ -372,7 +392,7 @@ int main(int argc, char ** argv)
     if (argc == 1){
         address.sin_port = htons( PORT );
     }
-    if (argc == 4){
+    if (argc == 3 && strncmp(argv[1],"8000",4) != 0){
         address.sin_port = htons( PORT3 );
     }
 
@@ -381,14 +401,14 @@ int main(int argc, char ** argv)
         stop("ERROR binding socket");
          return -1;
     }
-	//printf("binding ok\n");
+	printf("binding ok\n");
 
     if (listen(bindsock, 3) < 0)
     {
         stop("ERROR set listening");
         return -1;
     }
-    //printf("listen ok\n");
+    printf("listen ok\n");
     len = sizeof(address);
     char * temp = calloc(sizeof(char),BUFSIZE+25);
     list_joueur * list = NULL;
@@ -408,6 +428,7 @@ int main(int argc, char ** argv)
         new_cell = create_connect(buffer, temp, &list_bind);
         bzero(buffer,BUFSIZE);
         strcpy(buffer, "?askfortip");
+        printf("askfor ip depuis if\n");
         // message_size = strlen(buffer);
         // if(send(new_cell->sockfd, &message_size, sizeof(message_size), MSG_WAITALL)!=sizeof(int))
         // {
@@ -418,18 +439,25 @@ int main(int argc, char ** argv)
         //     stop("send askfortip");
         // }
         secureSend(new_cell->sockfd, buffer);
+        printf("apres le send\n");
         bzero(buffer,BUFSIZE);
         ////printf("avant le recev\n");
         // if(recv(new_cell->sockfd,buffer,BUFSIZE,0) < 0){
         //     //printf("error recv connect\n");
         // }
         secureRecv(new_cell->sockfd, buffer);
+        printf("after secure ip receive\n");
+        printf("buffer:%s\n",buffer);
         if (strncmp("???",buffer,3) != 0){
+            printf("inif\n");
             strncpy(iptables, buffer, strlen(buffer));
-            char** parseur = parse(buffer,0,';');
+            int nb;
+            char** parseur = parse(buffer,&nb,';');
             char * mot = parseur[0];
             int i = 0;
-            while (mot != NULL){
+            printf("nb=%d\n",nb);
+            while (i < nb-1){
+                printf("debut boucle:%i\n",i);
                 bzero(buffer,strlen(buffer));
                 bzero(temp,strlen(temp));
                 mot = parseur[i];
@@ -439,27 +467,33 @@ int main(int argc, char ** argv)
                 mot = parseur[i];
                 strcpy(temp,mot);
                 i++;
-
+                printf("buffer:%s,temp:%s\n",buffer,temp);
                 create_connect(buffer, temp, &list_bind);
-                mot=parseur[i];
+                printf("after create_connect\n");
             }
-            
         }
+        printf("pastif\n");
         bzero(temp,strlen(temp));
         strcpy(temp,argv[1]);
         temp[strlen(temp)] = ';';
         strcpy(temp+strlen(temp),argv[2]);
         temp[strlen(temp)] = ';';
-        strncpy(iptables+strlen(iptables), temp, strlen(buffer));
+        strncpy(iptables+strlen(iptables), temp, strlen(temp));
+        printf("iptables, in first part:%s",iptables);
 
         list_it = list_bind;
         bzero(buffer,strlen(buffer));
-        if (argc == 3){
+        printf("avant envoi ip\n");
+        if (argc == 3 && strncmp(argv[1],"8000",4) == 0){
             strcpy(buffer,"?heremyip:8490;127.0.0.1;");
+        }
+        else {
+            strcpy(buffer,"?heremyip:8592;127.0.0.1;");
         }
         while (list_it != NULL){
             // send(list_it->sockfd,buffer,strlen(buffer),0);
             secureSend(list_it->sockfd,buffer);
+            printf("one secure send\n");
             list_it = list_it->next;
         }
         bzero(buffer,strlen(buffer));
@@ -467,6 +501,7 @@ int main(int argc, char ** argv)
         // send(new_cell->sockfd,"#newco\n",8,0);
         secureSend(new_cell->sockfd, buffer);
         bzero(buffer,strlen(buffer));
+        printf("technicly its supposed to work\n");
 
 
         // faire une fonction char** getiptables()
@@ -595,6 +630,7 @@ int main(int argc, char ** argv)
                                 }
                                 else{
                                     // send(sd,iptables,strlen(iptables),0);
+                                    printf("sendiptables :%s\n",iptables);
                                     secureSend(sd, iptables);
                                 }
                                 ////printf("after send\n");
@@ -626,8 +662,9 @@ int main(int argc, char ** argv)
 
                                 ////printf("ip avant create connect:%s\n",ip);
                                 strncat(iptables, temp, strlen(temp));
+                                printf("\n\nupdated iptables%s\n\n",iptables);
                                 create_connect(port,ip,&list_bind);
-                                ////printf("after connect\n");
+                                printf("after connect\n");
                             }
                        }
 

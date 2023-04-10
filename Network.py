@@ -67,8 +67,11 @@ class Network:
 
         if whatFor == "New_player":
             threadprogc = threading.Thread(target=subprocess.call, args=[['./transm', port, IP]])
-            self.ssocket_file = path_to_temp_file + '/ssocket2'
-
+            print('port python=',port)
+            if port == '8000':
+                self.ssocket_file = path_to_temp_file + '/ssocket2'
+            else:
+                self.ssocket_file = path_to_temp_file + '/ssocket3'
 
         if whatFor == "New_game":
             threadprogc = threading.Thread(target=subprocess.call, args=['./transm'])
@@ -89,6 +92,7 @@ class Network:
         self.rdescriptors = []
         self.wdescriptors = []
         self.xdescriptors = []
+        print('end init python')
 
     def map_to_file(self, matrice_bat, matrice_walk, SIZE_X, SIZE_Y):
         print("map to file called")
@@ -105,7 +109,7 @@ class Network:
                 if matrice_bat[y][x] not in visited:
                     obj = matrice_bat[y][x]
                     visited.append(obj)
-                    phrase = str(obj.name) + ';' + str(obj.ret_coord()) + ';' + obj.texture
+                    phrase = str(obj.name) + ';' + str(obj.ret_coord()) + ';' + obj.texture + ';' + obj.username
 
                     if issubclass(type(obj), l.m.pa.b.Batiment):
                         phrase += ';' + str(obj.curEmployees)
@@ -208,18 +212,19 @@ class Network:
             m.add_bat(x, y, idbat)
             bat = matrice[y][x]
             bat.texture = arg_parse[2]
+            bat.username = arg_parse[3]
             if issubclass(type(bat), l.m.pa.b.Batiment):
-                bat.curEmployees = int(arg_parse[3])
-                bat.hasRecruteur = int(arg_parse[4])
+                bat.curEmployees = int(arg_parse[4])
+                bat.hasRecruteur = int(arg_parse[5])
                 if issubclass(type(bat), l.m.mais.Maison):
-                    bat.curpop = int(arg_parse[5])
-                    bat.employed = int(arg_parse[6])
-                    bat.nourriture[0][1] = int(arg_parse[7])
+                    bat.curpop = int(arg_parse[6])
+                    bat.employed = int(arg_parse[7])
+                    bat.nourriture[0][1] = int(arg_parse[8])
                 elif issubclass(type(bat), l.m.war.Warehouse) or issubclass(type(bat), l.m.g.Granary) or issubclass(
                         type(bat), l.m.mar.Market):
-                    bat.nourriture[0][1] = int(arg_parse[5])
+                    bat.nourriture[0][1] = int(arg_parse[6])
                 elif issubclass(type(bat), l.m.f.Ferme):
-                    bat.ind_Harv = int(arg_parse[5])
+                    bat.ind_Harv = int(arg_parse[6])
                 else:
                     pass
             else:

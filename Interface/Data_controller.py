@@ -80,7 +80,7 @@ Pos_JP_back = (window_width / 2, winddow_height / 2)
 Pos_JP_support = (window_width / 5, 2 * winddow_height / 3)
 Pos_JP_connect = (window_width / 2, 6 * winddow_height / 10)
 Pos_JP_return = (window_width / 2, (6 * winddow_height / 10) + 20*2)
-Pos_JP_explaination = (window_width / 2 - 650, winddow_height / 2 - 100)
+Pos_JP_explaination = (window_width / 2 - 650, winddow_height / 2 - 200)
 
 # Define all buttons events :
 

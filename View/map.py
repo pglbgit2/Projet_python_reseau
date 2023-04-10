@@ -183,6 +183,16 @@ class Map:
                         render_pos_mini[0] + pg.display.Info().current_w - minimap_offset[0],
                         render_pos_mini[1] + minimap_offset[1]), 2)
 
+                elif tile1 == 5:
+                    pg.draw.circle(screen, RED, (
+                        render_pos_mini[0] + pg.display.Info().current_w - minimap_offset[0],
+                        render_pos_mini[1] + minimap_offset[1]), 2)
+
+                elif tile1 not in (666, 0):
+                    pg.draw.circle(screen, ORANGE, (
+                        render_pos_mini[0] + pg.display.Info().current_w - minimap_offset[0],
+                        render_pos_mini[1] + minimap_offset[1]), 2)
+
                 mini = self.map[x][y]["iso_poly_mini"]
                 mini = [(x + pg.display.Info().current_w - minimap_offset[0], y + minimap_offset[1]) for x, y
                         in mini]
@@ -990,10 +1000,19 @@ class Map:
 
         post_sign = pg.image.load(path_to_House + "/Housng1a_00045.png").convert_alpha()
         houselvl0 = pg.image.load(path_to_House + "/Housng1a_00001.png").convert_alpha()
+        houselvl0_0 = pg.image.load(path_to_House + "/Housng1a_00002.png").convert_alpha()
+        houselvl0_1 = pg.image.load(path_to_House + "/Housng1a_00003.png").convert_alpha()
+        houselvl0_2 = pg.image.load(path_to_House + "/Housng1a_00004.png").convert_alpha()
         bighouselvl0 = pg.image.load(path_to_House + "/Housng1a_00006.png").convert_alpha()
         houselvl1 = pg.image.load(path_to_House + "/Housng1a_00007.png").convert_alpha()
+        houselvl1_0 = pg.image.load(path_to_House + "/Housng1a_00008.png").convert_alpha()
+        houselvl1_1 = pg.image.load(path_to_House + "/Housng1a_00009.png").convert_alpha()
+        houselvl1_2 = pg.image.load(path_to_House + "/Housng1a_00010.png").convert_alpha()
         bighouselvl1 = pg.image.load(path_to_House + "/Housng1a_00012.png").convert_alpha()
         houselvl2 = pg.image.load(path_to_House + "/Housng1a_00013.png").convert_alpha()
+        houselvl2_0 = pg.image.load(path_to_House + "/Housng1a_00014.png").convert_alpha()
+        houselvl2_1 = pg.image.load(path_to_House + "/Housng1a_00015.png").convert_alpha()
+        houselvl2_2 = pg.image.load(path_to_House + "/Housng1a_00016.png").convert_alpha()
         bighouselvl2 = pg.image.load(path_to_House + "/Housng1a_00017.png").convert_alpha()
         houselvl3 = pg.image.load(path_to_House + "/Housng1a_00021.png").convert_alpha()
         bighouselvl3 = pg.image.load(path_to_House + "/Housng1a_00023.png").convert_alpha()
@@ -1002,6 +1021,8 @@ class Map:
 
         warehouse = pg.image.load(path_to_Utilities + "/Warehouse.png").convert_alpha()
         granary = pg.image.load(path_to_Utilities + "/Grange.png").convert_alpha()
+        granary_0 = pg.image.load(path_to_Utilities + "/Grange_0.png").convert_alpha()
+        granary_1 = pg.image.load(path_to_Utilities + "/Grange_1.png").convert_alpha()
         market = pg.image.load(path_to_Utilities + "/Marche.png").convert_alpha()
         farm = pg.image.load(path_to_Utilities + "/farm.png").convert_alpha()
 
@@ -1096,9 +1117,14 @@ class Map:
                 "road11": road11, "road12": road12, "road13": road13, "road14": road14, "road15": road15,
                 "road16": road16, "road17": road17,
                 "direction1": direction1, "direction2": direction2,
-                "post_sign": post_sign, "houselvl0": houselvl0, "houselvl1": houselvl1, "houselvl2": houselvl2,
+                "post_sign": post_sign,
+                "houselvl0": houselvl0, "houselvl0_0": houselvl0_0, "houselvl0_1": houselvl0_1, "houselvl0_2": houselvl0_2,
+                "houselvl1": houselvl1, "houselvl1_0": houselvl1_0, "houselvl1_1": houselvl1_1, "houselvl1_2": houselvl1_2,
+                "houselvl2": houselvl2, "houselvl2_0": houselvl2_0, "houselvl2_1": houselvl2_1, "houselvl2_2": houselvl2_2,
                 "houselvl3": houselvl3,
-                "warehouse": warehouse, "granary": granary, "market": market, "farm": farm,
+                "warehouse": warehouse,
+                "granary": granary, "granary_0": granary_0, "granary_1": granary_1,
+                "market": market, "farm": farm,
                 "security": security, "security_occupied": security_occupied, "engineer": engineer,
                 "engineer_occupied": engineer_occupied, "ruine": ruine, "ruine_in_fire": ruine_in_fire,
                 "well": well, "fountain_empty": fountain_empty, "fountain_full": fountain_full,

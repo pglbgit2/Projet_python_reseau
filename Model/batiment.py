@@ -9,7 +9,7 @@ class Batiment(t.Terrain):
 
 
     class_counter = 0
-    def __init__(self, nbr_cases, id_bat, posx, posy, cst, des, stp, sze, rge, emp):
+    def __init__(self, nbr_cases, id_bat, posx, posy, cst, des, stp, sze, rge, emp, username=t.myName):
         t.Terrain.__init__(self, posx, posy, id_bat)
 
         self.nbr_cases = nbr_cases  # espace occupe par le batiment en termes de cases. À modifier selon le type de
@@ -29,6 +29,7 @@ class Batiment(t.Terrain):
         self.hasCheck = 0
         self.hasRecruteur = 0
         self.burning = 0
+        self.username = username
         Batiment.class_counter += 1
 
     def ret_coord(self):

@@ -13,6 +13,8 @@ except:
  
 Path_font = f"{getcwd()}/Interface/C3_policy.TTF"
 Textefont = pg.font.Font( Path_font , 14 )
+Path_font_2 = f"{getcwd()}/Interface/COMIC.TTF"
+Textefont_2 = pg.font.Font( Path_font , 12)
 Chiffrefont = pg.font.Font(None, 20)
 Test_screen = pg.display.set_mode( ( 0 , 0 ) , pg.FULLSCREEN)
 ( window_width , winddow_height) = Test_screen.get_size()
