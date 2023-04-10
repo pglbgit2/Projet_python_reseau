@@ -15,12 +15,14 @@
 #define SSOCKET_FILE "./ssocket"
 #define SSOCKET_FILE2 "./ssocket2"
 #define SSOCKET_FILE3 "./ssocket3"
+#define SSOCKET_FILE4 "./ssocket4"
 
 #define TRUE 1
 #define FALSE 0
 #define PORT 8000
 #define PORT2 8490
 #define PORT3 8592 
+#define PORT4 8235
 #define MAX_IFCONFIG_OUTPUT 4096
 #define BUFSIZE 131072
 
@@ -320,8 +322,14 @@ int main(int argc, char ** argv)
                 stop("remove");
             }
         }
-        else{
+        if(strncmp(argv[1],"8490",4) == 0){
             if( remove(SSOCKET_FILE3) == -1 && errno != ENOENT)
+            {
+                stop("remove");
+            }
+        }
+        if(strncmp(argv[1],"8592",4) == 0){
+            if( remove(SSOCKET_FILE4) == -1 && errno != ENOENT)
             {
                 stop("remove");
             }
@@ -339,9 +347,13 @@ int main(int argc, char ** argv)
             strncpy(svaddr.sun_path, SSOCKET_FILE2, sizeof(svaddr.sun_path) - 1);
             printf("using ssocket2\n");
         }
-        else{
+        else if(strncmp(argv[1],"8490",4) == 0){
             strncpy(svaddr.sun_path, SSOCKET_FILE3, sizeof(svaddr.sun_path) - 1);
             printf("using ssocket3\n");            
+        }
+        else if(strncmp(argv[1],"8592",4) == 0){
+            strncpy(svaddr.sun_path, SSOCKET_FILE4, sizeof(svaddr.sun_path) - 1);
+            printf("using ssocket4\n");            
         }
     }
     if (bind(fd, (struct sockaddr *)&svaddr, sizeof(svaddr)) == -1){
@@ -361,7 +373,7 @@ int main(int argc, char ** argv)
     while (clfd == 0 || clfd == -1){
         clfd = accept(fd, (struct sockaddr *)&claddr, &clilen);
     }
-    //printf("accepted\n");
+    printf("accepted\n");
     ////printf("%i\n", claddr.sun_family);
 
     int bindsock, len, activity, max_sd, sd, new_socket,valread;
@@ -392,9 +404,13 @@ int main(int argc, char ** argv)
     if (argc == 1){
         address.sin_port = htons( PORT );
     }
-    if (argc == 3 && strncmp(argv[1],"8000",4) != 0){
+    if (argc == 3 && strncmp(argv[1],"8490",4) == 0){
         address.sin_port = htons( PORT3 );
     }
+    if (argc == 3 && strncmp(argv[1],"8592",4) == 0){
+        address.sin_port = htons( PORT4 );
+    }
+  
 
     if (bind(bindsock, (struct sockaddr *)&address, sizeof(address))<0) 
     {
@@ -403,7 +419,7 @@ int main(int argc, char ** argv)
     }
 	printf("binding ok\n");
 
-    if (listen(bindsock, 3) < 0)
+    if (listen(bindsock, 8) < 0)
     {
         stop("ERROR set listening");
         return -1;
@@ -487,8 +503,11 @@ int main(int argc, char ** argv)
         if (argc == 3 && strncmp(argv[1],"8000",4) == 0){
             strcpy(buffer,"?heremyip:8490;127.0.0.1;");
         }
-        else {
+        else if (argc == 3 && strncmp(argv[1],"8490",4) == 0){
             strcpy(buffer,"?heremyip:8592;127.0.0.1;");
+        }
+        else if (argc == 3 && strncmp(argv[1],"8592",4) == 0){
+            strcpy(buffer,"?heremyip:8235;127.0.0.1;");
         }
         while (list_it != NULL){
             // send(list_it->sockfd,buffer,strlen(buffer),0);

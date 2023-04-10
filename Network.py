@@ -70,24 +70,30 @@ class Network:
             print('port python=',port)
             if port == '8000':
                 self.ssocket_file = path_to_temp_file + '/ssocket2'
-            else:
+            if port == '8490':
                 self.ssocket_file = path_to_temp_file + '/ssocket3'
+            if port == '8592':
+                self.ssocket_file = path_to_temp_file + '/ssocket4'
+        
 
         if whatFor == "New_game":
             threadprogc = threading.Thread(target=subprocess.call, args=['./transm'])
             self.ssocket_file = path_to_temp_file + '/ssocket'
-
+        print('test avant thread')
         threadprogc.start()
 
-        #print('avant')
+        print('avant')
         test = 0
         while test == 0:
+            print("in while ctest = 0")
             try:
-                #print("ssocketfile:", self.ssocket_file)
+                print("ssocketfile:", self.ssocket_file)
+                print("test urgence")
                 self.sock.connect(self.ssocket_file)
                 test = 1
-            except:
-                continue
+            except Exception as e:
+                print('alerte')
+                print(e)
         #print('apres')
         self.rdescriptors = []
         self.wdescriptors = []
