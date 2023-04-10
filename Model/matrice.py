@@ -339,7 +339,7 @@ name_id = {"Well": 92, "Reservoir": 90, "Fountain": 91, "Aquaduct": 8, "Engineer
            "Forum1": 84, "Water": 1, "Rock": 2, "Tree": 3, "Senate1": 4, "Maison 1": 10, "Maison 2": 11, "Maison 3": 12,
            "Forum1": 84, "Water": 1, "Rock": 2, "Tree": 3, "Senate1": 4, "Maison 1": 10, "Maison 2": 11, "Maison 3": 12,
            "Maison4": 13, "Farm": 100, "Granary": 71, "Warehouse": 71, "Herb": 0, "Panneau": 7, "Panneau Entree": 115,
-           "Panneau Sortie": 116, "Market": 70, "Enter_Pannel": 115, "Exit_Pannel": 116}
+           "Panneau Sortie": 116, "Market": 70, "Enter_Pannel": 115, "Exit_Pannel": 116, "Ruin": 555}
 
 
 # permet de inserer un batiment dans la matrice sur toute la taille qu'il occupe (non utilisable en jeu)
