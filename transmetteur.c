@@ -269,8 +269,12 @@ char * my_ip_address(){ //Programme donnant l'adresse IP locale de la machine su
             while (inet_address != NULL) {
                 if (inet_address[0] == 'i' && inet_address[1] == 'n' && inet_address[2] == 'e' && inet_address[3] == 't') {
                     inet_address = strtok(NULL, " \t\n");
-                    //printf("%s\n", inet_address);
-                    exit(EXIT_SUCCESS);
+                    if (inet_address[0] == '1' && inet_address[1] == '9')
+                    {
+                        printf("%s\n", inet_address);
+                        return inet_address;
+                    }
+                    
                 }
                 inet_address = strtok(NULL, " \t\n");
             }
@@ -289,6 +293,8 @@ char * my_ip_address(){ //Programme donnant l'adresse IP locale de la machine su
 
 int main(int argc, char ** argv)
 {
+
+    printf("%s",my_ip_address());
 
     if (argc != 1 && argc != 3 && argc != 4){ //pour test le 4
         //printf("Error: you're supposed to either give IP and Port number as arguments, or nothing\n");
@@ -368,7 +374,7 @@ int main(int argc, char ** argv)
     {
         
     }
-    address.sin_addr.s_addr = inet_addr( "127.0.0.1" );
+    address.sin_addr.s_addr = inet_addr( my_ip_address() );
     
     // c'est juste pour tester sur un seul ordi, pour le troisieme, utiliser un troisieme argument random
 
@@ -379,7 +385,7 @@ int main(int argc, char ** argv)
         address.sin_port = htons( (int)strtol(argv[1], NULL, 10) );
     }
 
-  
+    
 
     if (bind(bindsock, (struct sockaddr *)&address, sizeof(address))<0) 
     {
