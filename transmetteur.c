@@ -13,16 +13,17 @@
 #include <sys/un.h>
 
 #define SSOCKET_FILE "./ssocket"
-#define SSOCKET_FILE2 "./ssocket2"
-#define SSOCKET_FILE3 "./ssocket3"
-#define SSOCKET_FILE4 "./ssocket4"
+// #define SSOCKET_FILE2 "./ssocket2"
+// #define SSOCKET_FILE3 "./ssocket3"
+// #define SSOCKET_FILE4 "./ssocket4"
 
 #define TRUE 1
 #define FALSE 0
+#define IP "172.0.0.1"
 #define PORT 8000
-#define PORT2 8490
-#define PORT3 8592 
-#define PORT4 8235
+// #define PORT2 8490
+// #define PORT3 8592 
+// #define PORT4 8235
 #define MAX_IFCONFIG_OUTPUT 4096
 #define BUFSIZE 131072
 
@@ -309,53 +310,18 @@ int main(int argc, char ** argv)
     if((fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
         stop("socket");
     }
-    if (argc == 1){
-        if( remove(SSOCKET_FILE) == -1 && errno != ENOENT)
-        {
-            stop("remove");
-        }
+    
+    if( remove(SSOCKET_FILE) == -1 && errno != ENOENT)
+    {
+        stop("remove");
     }
-    if (argc == 3){
-        if(strncmp(argv[1],"8000",4) == 0){
-            if( remove(SSOCKET_FILE2) == -1 && errno != ENOENT)
-            {
-                stop("remove");
-            }
-        }
-        if(strncmp(argv[1],"8490",4) == 0){
-            if( remove(SSOCKET_FILE3) == -1 && errno != ENOENT)
-            {
-                stop("remove");
-            }
-        }
-        if(strncmp(argv[1],"8592",4) == 0){
-            if( remove(SSOCKET_FILE4) == -1 && errno != ENOENT)
-            {
-                stop("remove");
-            }
-        }
-    }
+
+    
     //printf("avant la copie\n");
     bzero(&svaddr, sizeof(svaddr));
     svaddr.sun_family = AF_UNIX;
-    if (argc == 1){
-        strncpy(svaddr.sun_path, SSOCKET_FILE, sizeof(svaddr.sun_path) - 1);
-    }
-    if (argc == 3){
-        //printf("%s\n",argv[1]);
-        if(strncmp(argv[1],"8000",4) == 0){
-            strncpy(svaddr.sun_path, SSOCKET_FILE2, sizeof(svaddr.sun_path) - 1);
-            printf("using ssocket2\n");
-        }
-        else if(strncmp(argv[1],"8490",4) == 0){
-            strncpy(svaddr.sun_path, SSOCKET_FILE3, sizeof(svaddr.sun_path) - 1);
-            printf("using ssocket3\n");            
-        }
-        else if(strncmp(argv[1],"8592",4) == 0){
-            strncpy(svaddr.sun_path, SSOCKET_FILE4, sizeof(svaddr.sun_path) - 1);
-            printf("using ssocket4\n");            
-        }
-    }
+    strncpy(svaddr.sun_path, SSOCKET_FILE, sizeof(svaddr.sun_path) - 1);
+    
     if (bind(fd, (struct sockaddr *)&svaddr, sizeof(svaddr)) == -1){
         stop("binding");
     }
@@ -395,21 +361,24 @@ int main(int argc, char ** argv)
     }
     //printf("setsockopt ok\n");
     address.sin_family = AF_INET;
+    if (argc == 1){
+        address.sin_port = inet_addr( IP );
+    }
+    if (argc == 3)
+    {
+        
+    }
     address.sin_addr.s_addr = inet_addr( "127.0.0.1" );
     
     // c'est juste pour tester sur un seul ordi, pour le troisieme, utiliser un troisieme argument random
-    if (argc == 3){
-        address.sin_port = htons( PORT2 );
-    }
+
     if (argc == 1){
         address.sin_port = htons( PORT );
     }
-    if (argc == 3 && strncmp(argv[1],"8490",4) == 0){
-        address.sin_port = htons( PORT3 );
+    if (argc == 3){
+        address.sin_port = htons( (int)strtol(argv[1], NULL, 10) );
     }
-    if (argc == 3 && strncmp(argv[1],"8592",4) == 0){
-        address.sin_port = htons( PORT4 );
-    }
+
   
 
     if (bind(bindsock, (struct sockaddr *)&address, sizeof(address))<0) 
@@ -501,14 +470,14 @@ int main(int argc, char ** argv)
         bzero(buffer,strlen(buffer));
         printf("avant envoi ip\n");
         if (argc == 3 && strncmp(argv[1],"8000",4) == 0){
-            strcpy(buffer,"?heremyip:8490;127.0.0.1;");
+            strcpy(buffer,"?heremyip:");
+            strcat(buffer, argv[1]);
+            strcat(buffer,";");
+            strcat(buffer, my_ip_address());
+            strcat(buffer, ";");
+
         }
-        else if (argc == 3 && strncmp(argv[1],"8490",4) == 0){
-            strcpy(buffer,"?heremyip:8592;127.0.0.1;");
-        }
-        else if (argc == 3 && strncmp(argv[1],"8592",4) == 0){
-            strcpy(buffer,"?heremyip:8235;127.0.0.1;");
-        }
+        
         while (list_it != NULL){
             // send(list_it->sockfd,buffer,strlen(buffer),0);
             secureSend(list_it->sockfd,buffer);
