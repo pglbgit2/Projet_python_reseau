@@ -311,8 +311,8 @@ class Network:
         instruction_list = text.split(';')
         for k in range(0, len(instruction_list)):
             print('instruction:',instruction_list[k])
-            exec(instruction_list[k])
-        
+            if (instruction_list[k][0:21] == 'l.destroy_grid_delta(' or instruction_list[k][0:21] == 'l.Add_bat_game_delta('):
+                exec(instruction_list[k])
 
     def sendToServer(self, file_name):  # not actually a server
 
